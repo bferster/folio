@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="UTF-8" />
+	<link REL="SHORTCUT ICON" HREF="efolio.ico">
+	<title>e-Folio</title>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>	
+	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
+	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+	<script src="d3.v3.min.js"></script>
+	<script src="tree.js"></script>
+	<script src="ckeditor/ckeditor.js"></script>
+
+	<style type="text/css">
+		body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
+						text-align:center;padding:10px;
+						}
+		.ef-topBar {	text-align:right;padding-right:10px;
+						color:#999;
+						}
+		.ef-nameBar {  	text-align:center;cursor:pointer;vertical-align:-6px;
+						color:#888;
+						}						
+		.ef-nameBar:hover{	color:#000099;text-decoration:underline;
+						}
+		.ef-doButs {  	text-align:center;cursor:pointer;vertical-align:middle;
+						display:inline-block;text-align:center;padding:10px;font-size:14px;
+						}
+		.ef-tree {  	width:90%;height:100%;
+						}						
+		.ef-pictBox {  	display:inline-block;text-align:left;background-color:#eee;
+						vertical-align:middle;border-radius:12px;
+						}						
+		.ef-metaBox {  	display:inline-block;text-align:left;border:0px solid #999;border-radius:12px;
+						margin-left:24px;padding:12px; background-color:#eee;
+						vertical-align:middle;color:#666;max-width:600px;min-width:420px;
+						}						
+		.ef-label {		font-size:50px;text-align:left;color:#999;font-weight:bolder;letter-spacing:-4px;
+						}
+		.ef-is {		border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;
+						border:1px solid #999;font-size:12px;height;24px;width:90%
+						}
+		.ef-bs {		border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;color:#009900;
+						border:1px solid #999;font-size:12px;height;24px;background-color:#fff;cursor:pointer;
+					}
+		.unselectable { -moz-user-select: none;     -khtml-user-select: none;
+		   			 	-webkit-user-select: none;  -ms-user-select: none;   user-select: none;
+		   				}
+		.selectable { -moz-user-select: text;     -khtml-user-select: text;
+		   			 	-webkit-user-select: text;  -ms-user-select: text;   user-select: text;
+		   				}
+		.ef-folderLab { color:#000099;text-align:center;padding-top:3px;display:inline-block;text-shadow:1px 1px #fff;	
+						width:100%;height:8%;overflow:hidden;font-weight:bold;margin-bottom:-5px;
+						}
+		.ef-folderCon { position:relative;background-color:#fff;width:94%;left:3%;
+						border:1px solid #999;
+						}
+		.ef-pageListBox {  	display:inline-block;text-align:left;border:0px solid #999;border-radius:12px;
+						;padding:12px; background-color:#eee;
+						vertical-align:middle;color:#666;width:200px;
+						}						
+		.ef-pageEditBox {  	display:inline-block;text-align:left;border:0px solid #999;border-radius:12px;
+						margin-left:16px;padding:12px; background-color:#eee;
+						vertical-align:middle;color:#666;
+						}						
+		.ef-pageEditText {  text-align:left;border:1px solid #999;background-color:#fff;
+						background-color:#fff;width:100%;height:100%;
+						}						
+		.ef-pageItemBox {  	display:inline-block;text-align:left;border:0px solid #999;border-radius:12px;
+						margin-left:16px;padding:8px;padding-top:0px;background-color:#eee;
+						vertical-align:bottom;color:#666;width:200px;
+						}						
+		.ef-pageItemLab { color:#000099;text-align:center;text-shadow:1px 1px #fff;	
+						width:100%;font-weight:bold;white-space:normal;padding:8px;padding-left:0px;
+						}
+		.ef-pickPage { 	padding:8px;border-bottom:1px solid #999;text-align:center;
+						}
+		.cke_top {    	zoom:0.75;
+						}
+ 		.node circle {  fill: #fff;stroke:steelblue;stroke-width: 1.5px;cursor:pointer; }
+  		.node text {    font-size:14px;font-family:sans-serif;cursor:pointer; }
+   		.link {    		fill:none;stroke:#ccc;stroke-width:2px;opacity:.8; }
+ 		.templink {    	fill: none;stroke:#990000;stroke-width:3px;	}
+		.ghostCircle.show {  display:block; }
+ 		.ghostCircle, .activeDrag .ghostCircle { display: none; }
+	
+	</style>
+</head>
+<body>
+	<div class="ef-topBar"><span class="ef-nameBar" id="nameBar">Mary Smith</span>&nbsp; 
+		<img id='settingsBut' src="img/settingsbut.gif" style="vertical-align:-8px;cursor:pointer">&nbsp;
+		<a href='https://docs.google.com/document/d/1IEtDo0jMhtaVyFeewcB_UXHWirO2Al_jO6Ri7u1QYoI/edit?usp=sharing' 
+				target='_blank' title='Help document'>
+		<img style="cursor:pointer;vertical-align:-8px;cursor" id='efHelpBut' src="img/helpicon.gif"></a>
+	</div><br><br>
+	<div id="mainDiv" style="text-align:center;opacity:0"></div>	
+<script>
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+// MAIN 
+/////////////////////////////////////////////////////////////////////////////////////////////////
+
+var ef=null;															// Holds main e-folio object									
+		
+$(window).resize(function() {											// ON WINDOW RESIZE
+	if (ef)																	// If loaded
+		ef.Draw();															// Redraw to adjust responsivivly
+	});
+			
+$(document).ready(function() {											// ON PAGE LOADED
+ 	ef=new eFolio();														// Load main
+	});									
+		
+function eFolio()														// CONSTRUCTOR
+{
+	var url=window.location.search.substring(1);							// Get query string
+	if (url && url.match(/clear/i)) 										// If tagged to clear
+		defItems=defItems.slice(0,4);
+	this.InitProject("",defItems);											// Init project
+	this.page="main";														// Init as main page
+	this.Draw();															// Draw 
+}	
+
+eFolio.prototype.InitProject=function(url, data)						// INIT 
+{
+	this.items=data;														// Holds e-folio items
+	this.curItem=0;														
+ }
+
+eFolio.prototype.Draw=function()										// DRAW PAGE
+{
+	var str;
+	var w=window.innerWidth;											
+	if (this.page == "main") {
+		str="<div class='ef-doButs'><img id='addBut' src='img/addbut.gif'>";
+		str+="<p style='color:#990000'>Add</p></div>";
+		str+="<div class='ef-doButs'><img id='editBut' src='img/editbut.gif'>";
+		str+="<p style='color:#009900'>Edit</p></div>";
+		str+="<div class='ef-doButs'><img  id='shareBut' src='img/sharebut.gif'>";
+		str+="<p style='color:#000099'>Share</p></div>";
+		str+="<br><br><br><br><img id='elogo' src='img/efolio.png'>";
+		$("#mainDiv").html(str);
+		w=w/6;
+		$("#addBut").prop("width",w);
+		$("#editBut").prop("width",w);
+		$("#shareBut").prop("width",w);
+		$("#elogo").prop("width",w*2);
+		$("#addBut").click(function() 	{ ef.page="add"; 	ef.Draw() });			
+		$("#editBut").click(function() 	{ ef.page="edit"; 	ef.Draw() });			
+		$("#shareBut").click(function() { ef.page="share"; 	ef.Draw() });			
+
+		$("#efHelpBut").click(function() { 
+			Sound("click");
+			});			
+
+		}
+	else if ((this.page == "add") || (this.page == "edit")) {
+		if (this.page == "add") {
+			this.items.push({ iid:this.items.length+1, pid:0, title:"None", type:"Document" });
+			this.curItem=this.items.length-1;
+			}
+		str="<div style='white-space:nowrap'><div id='pictBox' class='ef-pictBox'></div>";
+		str+=this.DrawAddEditPage(this.page == "edit");
+		$("#mainDiv").html(str+"</div>");
+		$("#metaBox").width(w*.50);
+		$("#treeBox").height($("#metaBox").height()*2);
+		this.UpdateMetaBox();
+		
+		$("#efCancelBut").click(function() { 
+			if (ef.page == "add")
+				ef.items.pop();
+			Sound("delete");
+			ef.page="main"; 
+			ef.Draw();
+			ef.curItem=0;
+			});			
+
+		
+		$("#efAddBut").click(function() {										// ON ADD TO FOLIO
+			Sound("ding");															// Ding
+			var o=ef.items[ef.curItem];
+			o.date=$("#efDate").val(); 
+			o.type=$("#efType").val(); 
+			o.title=$("#efTitle").val(); 
+			o.desc=$("#efDesc").val(); 
+			o.src=$("#efSrc").val(); 
+			o.reflect=$("#efReflect").val(); 
+			o.tags=$("#efTags").val(); 
+			if (ef.page == "add")
+				ef.page="main"; 
+			else														
+				ef.page="edit"; 
+			ef.Draw();																
+			});			
+				
+	 	var dropZone=document.getElementById('efSrc');
+	
+	    dropZone.addEventListener('dragover', function(e) {
+	        e.stopPropagation();
+	        e.preventDefault();
+	        e.dataTransfer.dropEffect='copy';
+	    	});
+	
+	    dropZone.addEventListener('drop', function(e) {
+	        e.stopPropagation();
+	        e.preventDefault();
+	        var file=e.dataTransfer.files[0]; 
+	    	onFileSelect(null,file);
+	     	});
+	
+	
+		$("#efSrc").on("change",function(e) { 									// ON SRC CHANGE
+			if ($(this).val().match(/.php|\.asp|\.htm/i))	{						// A web page?
+				$("#efType").val("Web");											// Change select									
+				this.items[this.curItem].type="Web";								// Set in struct
+				}
+			});			
+	
+		function onFileSelect(evt, file) 										// ON FILE SELECT
+		{
+		    if (!file)
+			    file=document.getElementById('files').files[0];						// Get first selected file
+			if (!file) 	 															// If not found
+				return;																// Quit
+			if (file.name.match(/\.png|.gif|\.jpg|\.jpeg|\.tif|\.psd|\.ai/i))		// If image type
+				$("#efType").val("Media");											// Set type
+			else if (file.name.match(/\.mp3|\.mp4|\.mpa|\.mov|\.ogg|.swf/i))		// If media type
+				$("#efType").val("Media");											// Set type
+			else if (file.name.match(/\.doc|\.pdf|\.txt|\.rdf|\.txt/i))				// If document
+				$("#efType").val("Document");										// Set type
+			else if (file.name.match(/\.htm|\.php|\.asp/i))							// If web
+				$("#efType").val("Web");											// Set type
+			$("#efSrc").val(file.name);												// Save name
+			ef.items[ef.curItem].src=file.name;										// Set in struct
+			ef.items[ef.curItem].type=$("#efType").val();							// Set in struct
+			Sound("click");
+	 		}
+		
+		$("#files").change(onFileSelect)
+		}																			// Add item closure
+	else if (this.page == "share") {
+		str=this.DrawSharePage();
+		$("#mainDiv").html(str);
+		}
+	else if (this.page == "view") {
+		this.DrawEditViewPage(this.curItem);
+		}
+ 	
+	$("#mainDiv").animate({ opacity:1},500, function() {				
+		$("#mainDiv").css("opacity",1);
+		});				 
+}		
+	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ADD/EDIT
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+eFolio.prototype.DrawAddEditPage=function(editMode)								// DRAW ADD/EDIT PAGE
+{
+	var str=this.DrawMetaEditor(editMode);
+	str+="<br><br><br><hr style='width:80%'><div class='ef-tree' id='treeBox'></div>";
+	str+="<span style='color:#999'><i>Drag dots with shift key down to rearrange folders/items.</i></span>";
+	DrawTree("treeBox",this.items);
+	return(str)
+}	
+
+eFolio.prototype.UpdateMetaBox=function()										// UPDATE METADATA BOX
+{
+	var str="";
+	var o=this.items[this.curItem];
+	if (!o.date) {
+		o.date=new Date();
+		o.date=(o.date.getMonth()+1)+"/"+o.date.getDate()+"/"+o.date.getFullYear()
+		}
+	var parent=FindItemById(o.pid)
+	parent=(parent != -1) ? parent=this.items[parent].title : "";
+	if (o.src) {
+		if (o.src.match(/\.png|.gif|\.jpg|\.jpeg|\.tif|\.psd|\.ai/i))				// If image type
+			o.type="Media";															// Set type
+		else if (o.src.match(/\.doc|\.pdf|\.txt|\.rdf|\.txt/i))						// If document
+			o.type="Document";														// Set type
+		else if (o.src.match(/\.mp3|\.mp4|\.mpa|\.mov|\.ogg|.swf/i))				// If media type
+			o.type="Media";															// Set type
+		else if (o.src.match(/\.htm|\.php|\.asp/i))									// If web
+			$("#efType").val("Web");												// Set type
+		o.thumb=o.src;																// Set thumb
+		}
+	$("#efDate").val(o.date);
+	$("#efType").val(o.type);
+	$("#efParent").text(parent);
+	$("#efTitle").val(o.title ? o.title : "");
+	$("#efDesc").val(o.desc ? o.desc : "");
+	$("#efSrc").val(o.src ? o.src : "");
+	$("#efReflect").val(o.reflect ? o.reflect : "");
+	$("#efTags").val(o.tags ? o.tags : "");
+	
+	
+	
+	if (o.type == "Folder") {
+		str="<div class='ef-pictBox ef-folderLab' id='folderLabel' style='position:relative;";
+		str+="width:40%;height:40px;top:-20px;left:20px'></div>";
+		str+="<div id='folderContent'><br><img src='img/efolio.png' width='90%'></div>";
+		}
+	else if (o.type == "Web") {
+		str=" &nbsp; <img src='img/webdots.png' style='vertical-align:3px'>";
+		str+="<div id='folderLabel' class='ef-folderLab' style='width:80%'></div>";
+		str+="<div id='folderContent' style='position:relative;background-color:#fff;width:94%;height:87%;left:3%'></div>";
+		}
+	else if (o.type == "Media") {
+		str="<div id='folderLabel' class='ef-folderLab'></div>";
+		str+="<div id='folderContent' class='ef-folderCon' style='height:81%;margin-bottom:5px'></div>";
+		str+="<img src='img/mediadots.png' width:'100%' style='position:relative;width:100%'>";
+		}
+	else if (o.type == "View") {
+		str="<div id='folderLabel' class='ef-folderLab'></div><br><br>";
+		str+="<div id='folderContent' style='text-align:center'><br><img src='img/view.png' width='70%'></div><br><br>";
+		str+="<div id='efButDiv' style='text-align:center;'><button id='efEditBut' class='ef-bs'>Edit</i></button></div>";
+		}
+	else{
+		str="<div id='folderLabel' class='ef-folderLab'></div>";
+		str+="<div id='folderContent' class='ef-folderCon' style='height:87%;border:none'></div>";
+		}
+		
+	$("#pictBox").html(str);
+	if (o.thumb)
+		$("#folderContent").html("<img width='100%' height='100%' src='"+o.thumb+"'>");
+	$("#pictBox").height($("#metaBox").height()+24);
+	$("#pictBox").width($("#pictBox").height()*1.5);
+	$("#folderLabel").text($("#efTitle").val());
+ 
+ 	$("#efEditBut").click(function() {											// ON EDIT VIEW
+		Sound("click");	
+		ef.page="view"; 
+		ef.Draw();																
+		});			
+  }
+
+eFolio.prototype.DrawMetaEditor=function(edit)									// DRAW METADATA BOX
+{
+	var i;
+	var str="<div id='metaBox' class='ef-metaBox'><table>";
+	str+="<tr><td style='padding-right:8px'>Date</td><td style='width:100%'><input class='ef-is' style='width:100px' type='text' id='efDate'><tr>";	
+	str+="<td style='padding-right:8px'>Type</td><td><select class='ef-is' id='efType' style='width:150px'>";
+	str+="<option>Document</option>";
+	str+="<option>Web</option>";
+	str+="<option>Media</option>";
+	str+="<option>Folder</option>";
+	str+="<option>View</option>";
+	str+="<option>Other</option>";
+	str+="</select>&nbsp; in \"<b><span id='efParent'></span></b>\" folder";
+	str+="<tr><td style='padding-right:8px'>Title<span style='color:#990000'>*</span></td><td><input class='ef-is' type='text' id='efTitle'></td><tr>";	
+	str+="<tr><td style='padding-right:8px'>Description</td><td><textarea rows='2' class='ef-is' type='text' id='efDesc'></textarea></td><tr>";	
+	str+="<tr><td style='padding-right:8px'>File/Url</td>";
+	str+="<td><input style='display:inline-block;width:90px;color:#eee;text-align:left;font-size:12px' type='file' id='files' name='files[]'>";
+	str+="or drag/type here:&nbsp; <input class='ef-is'style='width:30%' type='text' id='efSrc'></td><tr>";	
+	str+="<tr><td style='padding-right:8px'>Reflections</td><td><textarea rows='2' class='ef-is'  type='text' id='efReflect'></textarea></td><tr>";	
+	str+="<tr><td style='padding-right:8px'>Tags</td><td><input class='ef-is' type='text' id='efTags'></td><tr>";	
+	str+="<tr><td colspan='2' style='text-align:center'><br>";
+	str+="<button id='efAddBut' class='ef-bs' >"+(edit ? "Save changes" : "Add to e-Folio")+"</i></button> &nbsp;";
+	str+="<button id='efCancelBut'class='ef-bs'>"+(edit ? "Done" : "Cancel")+"</i></button></td></tr>";
+	str+="</table></div>";
+	return(str)
+}	
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// VIEW
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+eFolio.prototype.DrawEditViewPage=function(num)									// DRAW EDIT VIEW PAGE
+{
+	var fol=this.items[num];
+	var str="<div style='white-space:nowrap'>";
+	str+=this.DrawPageList(num);
+	str+=this.DrawPageEditor(num);
+	str+="<br><br><br><hr style='width:80%'><div class='ef-tree' id='treeBox'></div>";
+	$("#mainDiv").html(str);
+	DrawTree("treeBox",this.items);
+	$("#treeBox").height($("#pageEditBox").height()*.75);
+	CKEDITOR.replace("pageEditText", { width:"100%", height:$("#pageEditBox").height()-72 } );		
+
+	for (i=0;i<fol.numPages;++i) {
+		$("#pickpag"+i).on("click", function(e) {								// ON ROW CLICK
+				var id=e.currentTarget.id.substr(7);							// Extract id
+				if (id == undefined)											// If deselecting
+					return;														// Quit
+			Sound("click");														// Click
+			$("#pageEditNum").html("<i>"+(id-0+1)+" of "+fol.numPages+"</i>");	// Show page
+			});
+		}
+
+	$("#efDoneEditBut").click(function() {										// ON DONE
+		Sound("click");															
+		ef.page="edit"; 
+		ef.Draw();																
+		});			
+
+	$("#efAddItemPageBut").click(function() {									// ON ADD ITEM
+		var src;
+		var o=ef.items[ef.curItem];
+		if (!o)
+			return;
+		if (o.src) {
+			if (o.src.match(/\.png|.gif|\.jpg|\.jpeg|\.tif|\.psd|\.ai/i))			// If image type
+				o.type="Media";														// Set type
+			else if (o.src.match(/\.doc|\.pdf|\.txt|\.rdf|\.txt/i))					// If document
+				o.type="Document";													// Set type
+			else if (o.src.match(/\.mp3|\.mp4|\.mpa|\.mov|\.ogg|.swf/i))			// If media type
+				o.type="Media";														// Set type
+			else if (o.src.match(/\.htm|\.php|\.asp/i))								// If web
+				$("#efType").val("Web");											// Set type
+			o.thumb=o.src;															// Set thumb
+			}
+		if (o.type == "Folder")
+			src="img/efolio.png"
+		else if (o.type == "View")
+			src="img/view.png"
+		else 
+			src=o.thumb;
+		var str="<p style='text-align:center'><span style='color:rgb(204, 51, 0)'><strong><span style='font-size:20px'>";
+		str+=o.title+"</span></strong></span></p>";
+		str+="<p style='text-align:center'><img src='"+src+"' style='width:80%'/></p>";
+//		str+="' style='border-style:solid; border-width:1px; line-height:1.6em;width:80%";
+		str+="<hr />"
+		if (o.desc)
+			str+="<p>"+o.desc+"</p>";
+		if (o.reflect)
+			str+="<blockquote><p>"+o.reflect+"</p></blockquote>"
+		CKEDITOR.instances.pageEditText.setData(str);
+		Sound("ding");															
+		});			
+}	
+
+eFolio.prototype.DrawPageList=function(num)										// DRAW PAGE LIST
+{
+	var i,o;
+	var fol=this.items[num];
+	var h=window.innerHeight*.66;											
+	var trsty=" style='height:80px;background-color:#f8f8f8' onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";
+	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
+	var str="<div id='pageListBox' class='ef-pageListBox' style='height:"+h+"px'>";
+	str+="<div style='height:"+(h-20)+"px;overflow-x:hidden;overflow-y:auto;background-color:#f8f8f8";
+	str+="border:1px solid #999;border-radius:8px;'>";								// Scrollable container
+
+	for (i=0;i<fol.numPages;++i) {
+		str+="<div id='pickpag"+i+"'"+trsty+" class='ef-pickPage'><b>Page</b> "+(i+1)+"</div>";
+		}
+	str+="</div>";
+	str+="<div style='position:relative;text-align:center;margin-top:8px'>";
+	str+="<button id='efAddPageBut' class='ef-bs'>Add new page</i></button> &nbsp; &nbsp; ";
+	str+="<button id='efDoneEditBut' class='ef-bs'>Done</i></button></div>";
+	str+"</div>";
+	for (i=0;i<fol.numPages;++i) {
+		$("#pickpag"+i).on("click", function(e) {							// ON ROW CLICK
+				var id=e.currentTarget.id.substr(7);						// Extract id
+				if (id == undefined)										// If deselecting
+					return;													// Quit
+				Sound("click");
+				ef.UpdatePageItem(id)
+				});
+		}
+	return str+"</div>";
+}
+
+eFolio.prototype.DrawPageEditor=function(num)										// DRAW PAGE EDITOR
+{
+	var fol=this.items[num];
+	var h=window.innerHeight*.66;											
+	var str="<div id='pageEditBox' class='ef-pageEditBox' style='height:"+h+"px;width:"+(h*.773)+"px'>";
+	str+="<textarea id='pageEditText' style='height:"+(h-22)+"px;' class='ef-pageEditText'></textarea><br>";
+	str+="<img src='img/revbut.gif' style='position:relative;text-align:center;cursor:pointer;top:-10px;left:2px;'>";
+	str+="<img src='img/playbut.gif' style='position:relative;text-align:center;cursor:pointer;top:-10px;left:"+(h*.773-15)+"px'>";
+	str+="<div id='pageEditNum' style='position:relative;text-align:center;width:100%;top:-26px'>";
+	str+="<i>1 of "+fol.numPages+"</i></div></div>";
+	str+="<div id='pageItemBox' class='ef-pageItemBox'>";
+	str+="<div id='pageItemLab' class='ef-pageItemLab' ></div>";
+	str+="<img id='pageItemPic' width='100%' src='img/efolio.png'><br>";
+	str+="<p id='pageItemDesc' style='white-space:normal'></p>";
+	str+="<div style='text-align:center;'><button id='efAddItemPageBut' class='ef-bs'>Add item to page</i></button></div></div>";
+	return str+"</div>";
+}
+  
+eFolio.prototype.UpdatePageItem=function(num)									// UPDATE ITEM INFO
+{
+	var src;
+	var o=this.items[num];
+	if (!o)
+		return;
+	if (o.type == "Folder")
+		src="img/efolio.png"
+	else if (o.type == "View")
+		src="img/view.png"
+	else 
+		src=o.thumb;
+	$("#pageItemLab").text(o.title);
+	$("#pageItemPic").attr("src",src);
+	$("#pageItemDesc").html(o.desc ? o.desc : "");
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// SHARE
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+eFolio.prototype.DrawSharePage=function()										// DRAW SHARE PAGE
+{
+	var str="This page will help students share their work with others";
+	str+="<br><br><a href='' id='efShareDone'>Back</a>";
+	return(str)
+
+	$("#edShareDone").click(function() {										// ON DONE
+		Sound("click");															
+		ef.page="edit"; 
+		ef.Draw();																
+		});			
+}
+	
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// HELPERS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+	function Sound(sound, mode)												// PLAY SOUND
+	{	
+		var snd=new Audio();
+		if (!snd.canPlayType("audio/mpeg"))
+			snd=new Audio(sound+".ogg");
+		else	
+			snd=new Audio(sound+".mp3");
+		if (mode != "init")
+			snd.play();
+		}
+
+	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
+	{
+		if (p4 != undefined)
+			console.log(msg,p1,p2,p3,p4);
+		else if (p3 != undefined)
+			console.log(msg,p1,p2,p3);
+		else if (p2 != undefined)
+			console.log(msg,p1,p2);
+		else if (p1 != undefined)
+			console.log(msg,p1);
+		else
+			console.log(msg);
+	}
+
+	function FindItemById(id)
+	{
+		var i;
+  		for (i=0;i<ef.items.length;++i)
+  			if (id == ef.items[i].iid)
+  				return i;
+  		return -1;
+ 	}
+
+	function SetCookie(cname, cvalue, exdays)								// SET COOKIE
+	{
+		var d=new Date();
+		d.setTime(d.getTime()+(exdays*24*60*60*1000));
+		var expires = "expires="+d.toGMTString();
+		document.cookie = cname + "=" + cvalue + "; " + expires;
+	}
+	
+	function GetCookie(cname) 												// GET COOKIE
+	{
+		var name=cname+"=",c;
+		var ca=document.cookie.split(';');
+		for (var i=0;i<ca.length;i++)  {
+		  c=ca[i].trim();
+		  if (c.indexOf(name) == 0) 
+		  	return c.substring(name.length,c.length);
+		  }
+		return "";
+	}
+
+	function ShowLightBox(title, content)									// LIGHTBOX
+	{
+		var str="<div id='lightBoxDiv' style='position:fixed;width:100%;height:100%;";	
+		str+="background:url(images/overlay.png) repeat;top:0px;left:0px';</div>";
+		$("body").append(str);														
+		var	width=500;
+		var x=$("#lightBoxDiv").width()/2-250;
+		if (this.version == 1) 
+			x=Math.max(x,950)
+		var y=$("#lightBoxDiv").height()/2-200;
+		if (this.xPos != undefined)
+			x=this.xPos;
+		str="<div id='lightBoxIntDiv' class='unselectable' style='position:absolute;padding:16px;width:400px;font-size:12px";
+		str+=";border-radius:12px;z-index:2003;"
+		str+="border:1px solid; left:"+x+"px;top:"+y+"px;background-color:#f8f8f8'>";
+		str+="<img src='img/elogo32r.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span id='lightBoxTitle' style='font-size:18px;text-shadow:1px 1px #ccc'><b>"+title+"</b></span>";
+		str+="<div id='lightContentDiv'>"+content+"</div>";					
+		$("#lightBoxDiv").append(str);	
+		$("#lightBoxDiv").css("z-index",2500);						
+	}
+	
+	function LightBoxAlert(msg) 											//	SHOW LIGHTBOX ALERT
+	{
+		Sound("delete");														
+		$("#lightBoxTitle").html("<span style='color:#990000'>"+msg+"</span>");	
+	}
+	
+	function MakeColorDot(title, name, color)								// MAKE COLORPICKER DOT
+	{
+		var str=title+"&nbsp;&nbsp;<div id='"+name+"' "; 
+		str+="style='vertical-align:-2px;display:inline-block;height:12px;width:12px;border-radius:12px;border:1px ";
+		if (!color || (color == -1)  || (color == "none")) 	
+			str+="dashed #000;background-color:#fff"; 	
+		else
+			str+="solid #000;background-color:"+color; 	
+		str+="' onclick='ColorPicker(\""+name+"\")'>";
+		str+="</div>";
+		return str;
+	}		
+	
+	function ColorPicker(name, transCol) 									//	DRAW COLORPICKER
+	{
+		if (!transCol)															// If no transparent color set
+			transCol="";														// Use null
+		$("#colorPickerDiv").remove();											// Remove old one
+		var x=$("#"+name).offset().left+10;										// Get left
+		var y=$("#"+name).offset().top+10;										// Top
+		var	str="<div id='colorPickerDiv' style='position:absolute;left:"+x+"px;top:"+y+"px;width:160px;height:225px;z-index:100;border-radius:12px;background-color:#eee'>";
+		$("body").append("</div>"+str);											// Add palette to dialog
+		$("#colorPickerDiv").draggable();										// Make it draggable
+		str="<p style='text-shadow:1px 1px white' align='center'><b>Choose a new color</b></p>";
+		str+="<img src='colorpicker.gif' style='position:absolute;left:5px;top:28px' />";
+		str+="<input id='shivaDrawColorInput' type='text' style='position:absolute;left:22px;top:29px;width:96px;background:transparent;border:none;'>";
+		$("#colorPickerDiv").html(str);											// Fill div
+		$("#colorPickerDiv").on("click",onColorPicker);							// Mouseup listener
+	
+		function onColorPicker(e) {
+			
+			var col;
+			var cols=["000000","444444","666666","999999","CCCCCC","EEEEEE","E7E7E7","FFFFFF",
+					  "FF0000","FF9900","FFFF00","00FF00","00FFFF","0000FF","9900FF","FF00FF",	
+					  "F4CCCC","FCE5CD","FFF2CC","D9EAD3","D0E0E3","CFE2F3","D9D2E9","EDD1DC",
+					  "EA9999","F9CB9C","FFE599","BED7A8","A2C4C9","9FC5E8","B4A7D6","D5A6BD",
+					  "E06666","F6B26B","FFD966","9C347D","76A5AF","6FA8DC","8E7CC3","C27BA0",
+					  "CC0000","E69138","F1C232","6AA84F","45818E","3D85C6","674EA7","A64D79",
+					  "990000","B45F06","BF9000","38761D","134F5C","0B5394","351C75","741B47",
+					  "660000","783F04","7F6000","274E13","0C343D","073763","20124D","4C1130"
+					 ];
+			var x=e.pageX-this.offsetLeft;										// Offset X from page
+			var y=e.pageY-this.offsetTop;										// Y
+			if ((x < 102) && (y < 45))											// In text area
+				return;															// Quit
+			$("#colorPickerDiv").off("click",this.onColorPicker);				// Remove mouseup listener
+			if ((x > 102) && (x < 133) && (y < 48))	{							// In OK area
+				if ($("#shivaDrawColorInput").val())							// If something there
+					col="#"+$("#shivaDrawColorInput").val();					// Get value
+				else															// Blank
+					x=135;														// Force a quit
+				}
+			$("#colorPickerDiv").remove();										// Remove
+			if ((x > 133) && (y < 48)) 											// In quit area
+				return;															// Return
+			if (y > 193) 														// In trans area
+				col=transCol;													// Set trans
+			else if (y > 48) {													// In color grid
+				x=Math.floor((x-14)/17);										// Column
+				y=Math.floor((y-51)/17);										// Row
+				col="#"+cols[x+(y*8)];											// Get color
+				}
+			if (col == transCol)												// No color 
+				$("#"+name).css({ "border":"1px dashed #000","background-color":"#fff" }); 	// Set dot
+			else				
+				$("#"+name).css({ "border":"1px solid #000","background-color":col }); 		// Set dot
+			$("#"+name).data(name,col);											// Set color
+		}
+
+	}
+
+
+	function AlertBox(title, content, callback)								// ALERT BOX
+	{
+		$("#alertBoxDiv").remove();												
+		Sound("delete");														
+		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
+		var str="<p><img src='img/elogo32r.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#990000'><b>"+title+"</b></span></p>";
+		str+="<div style='font-size:14px;margin:16px'>"+content+"</div>";
+		$("#alertBoxDiv").append(str);	
+		$("#alertBoxDiv").dialog({ width:400, buttons:{"OK": function() { $(this).remove(); if (callback) callback(); }}});	
+		$(".ui-dialog-titlebar").hide();
+		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
+		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
+  		$(".ui-button").css({"border-radius":"30px","outline":"none"});
+	}
+
+	function ConfirmBox(content, callback)									// COMFIRM BOX
+	{
+		Sound("delete");														
+		$("#alertBoxDiv").remove();												
+		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
+		var str="<p><img src='img/elogo32r.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#990000'><b>Are you sure?</b></span><p>";
+		str+="<div style='font-size:14px;margin:14px'>"+content+"</div>";
+		$("#alertBoxDiv").append(str);	
+		$("#alertBoxDiv").dialog({ width:400, buttons: {
+					            	"Yes": function() { $(this).remove(); callback() },
+					            	"No":  function() { $(this).remove(); }
+									}});	
+		$(".ui-dialog-titlebar").hide();
+		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
+		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
+ 		$(".ui-button").css({"border-radius":"30px","outline":"none"});
+ 	}
+
+	function GetTextBox(title, content, def, callback)					// GET TEXT LINE BOX
+	{
+		Sound("click");														
+		$("#alertBoxDiv").remove();											
+		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
+		var str="<p><img src='img/elogo32r.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span id='gtBoxTi'style='font-size:18px;text-shadow:1px 1px #ccc;color:#990000'><b>"+title+"</b></span><p>";
+		str+="<div style='font-size:14px;margin:14px'>"+content;
+		str+="<p><input class='ef-is' type='text' id='gtBoxTt' value='"+def+"'></p></div>";
+		$("#alertBoxDiv").append(str);	
+		$("#alertBoxDiv").dialog({ width:400, buttons: {
+					            	"OK": 		function() { callback($("#gtBoxTt").val()); $(this).remove(); },
+					            	"Cancel":  	function() { $(this).remove(); }
+									}});	
+		$(".ui-dialog-titlebar").hide();
+		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
+		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
+ 		$(".ui-button").css({"border-radius":"30px","outline":"none"});
+ 	}
+
+
+var defItems=[
+	{	"iid":0, "pid":"","date":"12/1/2014",	 "type":"Folder",
+		"title":"My e-Folio" },
+	{	"iid":1, "pid":0,	"date":"12/1/2014",	 "type":"Folder",
+		"title":"Classes" },
+	{	"iid":2, "pid":0,	"date":"12/1/2014",	 "type":"Folder",
+		"title":"Jobs" },
+	{	"iid":3, "pid":0,	"date":"12/1/2014",	 "type":"Folder",
+		"title":"Internships" },
+	{	"iid":4, "pid":1,	"date":"12/12/2014", "type":"Folder",
+		"title":"History" },
+	{	"iid":5, "pid":4,	"date":"1/4/2015",	 "type":"Document",
+		"thumb":"http://ltlatnd.files.wordpress.com/2009/10/wordlecloud.gif",
+		"desc":"This paper explores the the aftermath of the Civil War and reconstruction. The term Reconstruction Era has two senses: the first covers the complete history of the entire country from 1865 to 1877 following the Civil War; the second focuses on the transformation of the Southern United States from 1863 to 1877.",
+		"reflect":"Reconstruction was a significant chapter in the history of civil rights in the United States, but most historians consider it a failure because the South became a poverty-stricken backwater attached to agriculture.",
+		"title":"Essay on Reconstruction" },
+	{	"iid":6, "pid":4,	"date":"1/5/2015",	 "type":"Media",
+		"thumb":"http://hushhushbiz.com/wp-content/uploads/2013/04/hyde-park-on-hudson-MOVIE-review.jpg",
+		"desc":"A movie about Franklin Delano Roosevelt. FDR, was an American statesman and political leader who served as the 32nd President of the United States. A Democrat, he won a record four elections and served from March 1933 to his death in April 1945.",
+		"title":"Movie about FDR" },
+	{	"iid":7, "pid":4,	"date":"1/4/2015",	 "type":"Web",
+		"desc":"Custom website about the Great Migration. The Great Migration was the movement of 6 million African Americans out of the rural Southern United States to the urban Northeast, Midwest, and West that occurred between 1910 and 1970. ",
+		"thumb":"http://www.iaamuseum.org/wp-content/uploads/2012/11/migration.jpg",
+		"title":"Website on Great Migration" },
+	{	"iid":22, "pid":4,	"date":"1/4/2015",	 "type":"Web",
+		"thumb":"http://www.johndclare.net/images/Armwrestling.gif",
+		"desc":"Timeline of Cuban Missile Crisis, showing a 13-day confrontation in October 1962 between the United States and the Soviet Union over Soviet ballistic missiles deployed in Cuba.",
+		"title":"Cuban Missile Crisis" },
+	{	"iid":8, "pid":1,	"date":"2/4/2015",	 "type":"Folder",
+		"title":"Political science" },
+	{	"iid":9,  "pid":8,	"date":"2/4/2015",	 "type":"Document",
+		"thumb":"http://ltlatnd.files.wordpress.com/2009/10/wordlecloud.gif",
+		"desc":"This paper explores the political crises in Ukraine after Russia's 2014 invasion.",
+		"title":"Paper on Ukraine" },
+	{	"iid":10,"pid":8,	"date":"2/4/2015",	 "type":"Document",
+		"thumb":"http://ltlatnd.files.wordpress.com/2009/10/wordlecloud.gif",
+		"desc":"This essay explores the social justice issues involved in modern day Russia.",
+		"title":"Essay on social justice in Russia" },
+	{	"iid":11,"pid":8,	"date":"2/1/2015",	 "type":"Web",
+		"thumb":"https://upload.wikimedia.org/wikipedia/commons/6/63/Map_of_the_Crimea.png",
+		"desc":"This WordPress site contains at timeline of the crisis in Crimea.",
+		"title":"WordPress site on Crimea" },
+	{	"iid":12,"pid":8,	"date":"2/2/2015",	 "type":"Web",
+		"thumb":"http://img1.wikia.nocookie.net/__cb20130916112016/bigbangtheory/images/a/a3/Games.jpg",
+		"desc":"This game let's players see the effects of expanding world empires.",
+		"title":"Expanding empires game" },
+	{	"iid":13, "pid":1,	"date":"2/5/2015",	 "type":"Folder",
+		"title":"Physics" },
+	{	"iid":14,  "pid":13,	"date":"3/14/2015",	 "type":"Web",
+		"thumb":"http://images.fineartamerica.com/images-medium-large/8-gravity-simulation-ted-kinsman.jpg",
+		"desc":"A Java-based simulation of gravity.",
+		"title":"Gravity simulation" },
+	{	"iid":15, "pid":2,	"date":"8/12/2014", "type":"Other",
+		"thumb":"http://www.theicarusgreen.com/wp-content/uploads/2014/07/Men-at-Work.jpg",
+		"title":"Bodo's Bagels" },
+	{	"iid":16, "pid":3,	"date":"6/12/2014", "type":"Other",
+		"thumb":"http://upload.wikimedia.org/wikipedia/en/e/e0/MSU_Libraries_Special_Collections.jpg",
+		"title":"Special Collections" },
+	{	"iid":18, "pid":3,	"date":"8/12/2014", "type":"Other",
+		"thumb":"http://www.shsu.edu/dotAsset/b4c0294e-d241-4cb2-8655-f2f6b7eb8261.jpg",
+		"title":"Histology lab" },
+	{	"iid":17, "pid":3,	"date":"7/12/2014", "type":"Folder",
+		"title":"Superior Court" },
+	{	"iid":19, "pid":17,	"date":"7/12/2014", "type":"Document",
+		"thumb":"http://ltlatnd.files.wordpress.com/2009/10/wordlecloud.gif",
+		"desc":"Trancription of court case.",
+		"title":"Marbury vs Madison brief" },
+	{	"iid":20, "pid":17,	"date":"7/13/2014", "type":"Document",
+		"desc":"Trancription of court case brief.",
+		"thumb":"http://ltlatnd.files.wordpress.com/2009/10/wordlecloud.gif",
+		"desc":"Claim chart for patent 5,789,778",
+		"title":"Patent 5,789,778" },
+	{	"iid":21, "pid":17,	"date":"7/14/2014", "type":"Document",
+		"desc":"Trancription of court case.",
+		"thumb":"http://ltlatnd.files.wordpress.com/2009/10/wordlecloud.gif",
+		"title":"Dred Scott brief" },
+	{	"iid":23, "pid":4,	"date":"2/14/2015", "type":"View",
+		"desc":"A portfolio for sharing my work.",
+		"numPages":8,
+		"title":"History Folio" }
+	];
+	
+	
+		
+/*	
+	<div id="addCircle" style="display:inline-block;width:200px">	
+	<svg width="100%" height="100%" viewBox="0 0 100 100">
+		<circle cx="50" cy="50" r="40" fill="#990000" />
+		<rect x="30" y="45" width="40" height="10" fill="#fff" />
+		<rect x="45" y="30" width="10" height="40" fill="#fff" />
+	</svg>
+<br><span style"text-align:center">Add</span>
+</div>	
+<div id="editCircle" style="display:inline-block;width:200px">	
+	<svg width="100%" height="100%" viewBox="0 0 100 100">
+		<circle cx="50" cy="50" r="40" fill="#009900" />
+       	<line x1="65" y1="35" x2="70" y2="30" stroke-width="10" stroke="#fff" />
+      	<line x1="40" y1="60" x2="64" y2="36" stroke-width="10" stroke="#fff" />
+     	<polygon points="30,70,35.7,57,42.7,64" fill="#fff" />
+	</svg>
+<br>Add
+</div>
+<div id="shareCircle" style="display:inline-block;width:200px">	
+
+	<svg width="100%" height="100%" viewBox="0 0 100 100">
+		<circle cx="50" cy="50" r="40" fill="#000099" />
+		<circle cx="30" cy="50" r="8" fill="#fff" />
+		<circle cx="60" cy="33" r="8" fill="#fff" />
+		<circle cx="60" cy="67" r="8" fill="#fff" />
+        <line x1="30" y1="50" x2="60" y2="33" stroke-width="4" stroke="#fff" />
+       	<line x1="30" y1="50" x2="60" y2="67" stroke-width="4" stroke="#fff" />
+	</svg>
+</div>
+
+*/	
+	</script>
+</body>
+</html>
+	
