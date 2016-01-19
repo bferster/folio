@@ -196,10 +196,88 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 	function Sound(sound, mode)												// PLAY SOUND
 	{	
 		var snd=new Audio();
-		snd=new Audio(sound+".mp3");
+		if (!snd.canPlayType("audio/mpeg"))
+			snd=new Audio(sound+".ogg");
+		else	
+			snd=new Audio(sound+".mp3");
 		if (mode != "init")
 			snd.play();
+		}
+
+	function SetCookie(cname, cvalue, exdays)								// SET COOKIE
+	{
+		var d=new Date();
+		d.setTime(d.getTime()+(exdays*24*60*60*1000));
+		var expires = "expires="+d.toGMTString();
+		document.cookie = cname + "=" + cvalue + "; " + expires;
 	}
+	
+	function GetCookie(cname) 												// GET COOKIE
+	{
+		var name=cname+"=",c;
+		var ca=document.cookie.split(';');
+		for (var i=0;i<ca.length;i++)  {
+		  c=ca[i].trim();
+		  if (c.indexOf(name) == 0) 
+		  	return c.substring(name.length,c.length);
+		  }
+		return "";
+	}
+
+	function AlertBox(title, content, callback)								// ALERT BOX
+	{
+		$("#alertBoxDiv").remove();												
+		Sound("delete");														
+		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
+		var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#990000'><b>"+title+"</b></span></p>";
+		str+="<div style='font-size:14px;margin:16px'>"+content+"</div>";
+		$("#alertBoxDiv").append(str);	
+		$("#alertBoxDiv").dialog({ width:400, buttons:{"OK": function() { $(this).remove(); if (callback) callback(); }}});	
+		$(".ui-dialog-titlebar").hide();
+		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
+		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
+  		$(".ui-button").css({"border-radius":"30px","outline":"none"});
+	}
+
+	function ConfirmBox(content, callback)									// COMFIRM BOX
+	{
+		Sound("delete");														
+		$("#alertBoxDiv").remove();												
+		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
+		var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#990000'><b>Are you sure?</b></span><p>";
+		str+="<div style='font-size:14px;margin:14px'>"+content+"</div>";
+		$("#alertBoxDiv").append(str);	
+		$("#alertBoxDiv").dialog({ width:400, buttons: {
+					            	"Yes": function() { $(this).remove(); callback() },
+					            	"No":  function() { $(this).remove(); }
+									}});	
+		$(".ui-dialog-titlebar").hide();
+		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
+		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
+ 		$(".ui-button").css({"border-radius":"30px","outline":"none"});
+ 	}
+
+	function GetTextBox(title, content, def, callback)					// GET TEXT LINE BOX
+	{
+		Sound("click");														
+		$("#alertBoxDiv").remove();											
+		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
+		var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span id='gtBoxTi'style='font-size:18px;text-shadow:1px 1px #ccc;color:#990000'><b>"+title+"</b></span><p>";
+		str+="<div style='font-size:14px;margin:14px'>"+content;
+		str+="<p><input class='sf-is' type='text' id='gtBoxTt' value='"+def+"'></p></div>";
+		$("#alertBoxDiv").append(str);	
+		$("#alertBoxDiv").dialog({ width:400, buttons: {
+					            	"OK": 		function() { callback($("#gtBoxTt").val()); $(this).remove(); },
+					            	"Cancel":  	function() { $(this).remove(); }
+									}});	
+		$(".ui-dialog-titlebar").hide();
+		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
+		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
+ 		$(".ui-button").css({"border-radius":"30px","outline":"none"});
+ 	}
 
 	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
 	{
