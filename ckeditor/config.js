@@ -1,5 +1,5 @@
 CKEDITOR.editorConfig = function( config ) {
-	config.extraPlugins = 'font,panelbutton,colorbutton';
+	config.extraPlugins = 'font,panelbutton,colorbutton,justify';
 	config.toolbarGroups = [
 		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
 		{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
