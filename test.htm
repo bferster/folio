@@ -11,24 +11,68 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 	<script src="ckeditor/ckeditor.js"></script>
 	<style>
+		.sf-header {	font-family:arial;padding:10px;width:200px;
+						color:#888;
+						}
+
 	</style>
 </head>
 
 <body>
-			This is content
+Mandala Folio is a tool to select and organize elements created in the Mandala Digital Ecology and create scholarly arguments and attractive presentations to share with others. Any web-addressable element can be included into the presentation, directly embedded or as a clickable link, including:
 			
-			<div contenteditable="true">
-				<p>
-					Lorem ipsum dolor sit amet enim. Etiam ullamcorper. Suspendisse a pellentesque dui, non felis. Maecenas malesuada elit lectus felis, malesuada ultricies.
-				</p>
+			<div class="sf-header" id="header" contenteditable="true">
+				There are two parts to Mandala Folio: A simple authoring tool for collecting, organizing, and annotating the presentations, and a collection of display modules that render the result of that authoring on multiple display platforms, independently of how they will be displayed.
 
-				<p>
-					Curabitur et ligula. Ut molestie a, ultricies porta urna. Vestibulum commodo volutpat a, convallis ac, laoreet enim. Phasellus fermentum in, dolor. Pellentesque facilisis. Nulla imperdiet sit amet magna. Vestibulum dapibus, mauris nec malesuada fames
-					ac.
-				</p>
+			</div>
+			<div class="sf-header" id="footer" contenteditable="true">
+				There are two parts to Mandala Folio: A simple authoring tool for collecting, organizing, and annotating the presentations, and a collection of display modules that render the result of that authoring on multiple display platforms, independently of how they will be displayed.
+
 			</div>
 	
-	<script>
+<script>
+
+	$(document).ready(function() {											// ON PAGE LOADED
+		$("#header").on("blur",function(){ 
+				$("#header").prop("contenteditable","false");
+				trace($("#header").prop("contenteditable"));
+			 	});
+		$("#header").on("focus",function(){ 
+				$("#header").prop("contenteditable","true");
+				trace($("#header").prop("contenteditable"));
+				trace(2);
+			 	});
+		
+		
+		});									
+
+
+
+
+
+
+
+	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
+	{
+		if (p4 != undefined)
+			console.log(msg,p1,p2,p3,p4);
+		else if (p3 != undefined)
+			console.log(msg,p1,p2,p3);
+		else if (p2 != undefined)
+			console.log(msg,p1,p2);
+		else if (p1 != undefined)
+			console.log(msg,p1);
+		else
+			console.log(msg);
+	}
+
+
+
+
+	CKEDITOR.on( 'focus', function ( event ) {
+			trace(44)
+	});
+
 
 	CKEDITOR.on( 'instanceCreated', function ( event ) {
 		var editor = event.editor,
