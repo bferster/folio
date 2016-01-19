@@ -2,10 +2,10 @@ CKEDITOR.editorConfig = function( config ) {
 	config.extraPlugins = 'font,panelbutton,colorbutton,justify';
 	config.toolbarGroups = [
 		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
+		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
 		{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
 		{ name: 'links', groups: [ 'links' ] },
 		{ name: 'insert', groups: [ 'insert' ] },
-		{ name: 'forms', groups: [ 'forms' ] },
 		{ name: 'tools', groups: [ 'tools' ] },
 		{ name: 'document', groups: [ 'mode', 'document', 'doctools' ] },
 		{ name: 'others', groups: [ 'others' ] },
@@ -15,6 +15,5 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
 		{ name: 'colors', groups: [ 'colors' ] }
 	];
-
-	config.removeButtons = 'Cut,Copy,Paste,PasteText,Anchor,Maximize,Format,PasteFromWord,Source';
+	config.removeButtons = 'Cut,Copy,Paste,PasteText,Anchor,Maximize,Format,PasteFromWord,Source,Strike,Iframe';
 };
