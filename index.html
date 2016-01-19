@@ -17,11 +17,11 @@
 						}
 		.sf-menu {		width:100%;height:30px;color:#666;;border:1px solid #ddd;
 						background-color:#ddd;opacity:inherit;
+						border-top-left-radius:6px;border-top-right-radius:6px;
 						}
 		.sf-body {		width:100%;min-height:300px;color:#666;border:1px solid #ddd;
 						background-color:#fff;opacity:inherit;
 						}
-
 		.sf-menuItem {	margin-left:50px;cursor:pointer;
 						}
 		.sf-menuItem:hover { color:#00aa00;
@@ -34,6 +34,16 @@
 		.sf-bs {		border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;color:#009900;
 						border:1px solid #999;font-size:12px;height;24px;background-color:#fff;cursor:pointer;
 						}
+		.sf-gallery {  	display:inline-block;text-align:center;padding:12px;padding-top:0px;padding-bottom:26px;margin-top:0px;height:100%-60; 
+						background-color:#ddd;vertical-align:middle;color:#999;width:150px;
+						}
+		.sf-galleryContent {				
+						overflow-x:hidden;overflow-y:auto;background-color:#f8f8f8;
+						border:1px solid #bbb;
+						}
+		.sf-galleryLab { 	padding:8px;border-bottom:1px solid #999;text-align:center;
+						}
+						
 		.unselectable { -moz-user-select: none;     -khtml-user-select: none;
 		   			 	-webkit-user-select: none;  -ms-user-select: none;   user-select: none;
 		   				}
@@ -48,7 +58,7 @@
 			<img src="img/menuheader.png">
 			<span style="vertical-align:10px">
 				S H A N T l
-				<span id="editMenu" class="sf-menuItem" style="margin-left:80px"> Edit</span>
+				<span id="editMenu" class="sf-menuItem" style="margin-left:100px"> Edit</span>
 				<span id="projectMenu" class="sf-menuItem"> Project</span>
 				<span id="viewMenu" class="sf-menuItem">View</span>
 				<span id="pageMenu" class="sf-menuItem">Page</span>
@@ -72,7 +82,7 @@ $(window).resize(function() {											// ON WINDOW RESIZE
 	});
 			
 $(document).ready(function() {											// ON PAGE LOADED
- 	sf=new folio();														// Load main
+ 	new folio();														// Load main
 	$("#mainDiv").animate({ opacity:1},1000, function() {				
 		$("#mainDiv").css("opacity",1);
 		});				 
@@ -105,6 +115,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 		
 function folio()														// CONSTRUCTOR
 {
+	sf=this;																// Point to folio
 	this.queryString=window.location.search.substring(1);					// Get query string
 	this.InitProject("");													// Init project
 	this.page="project";													// Init as project page
@@ -119,8 +130,9 @@ folio.prototype.InitProject=function(data)								// INIT
 
 folio.prototype.Draw=function()											// DRAW PAGE
 {
-	this.DrawMenu();
-	this.DrawBody();
+	$("#bodyDiv").height(window.innerHeight-50);							// Set body height
+	this.DrawMenu();														// Set menu
+	this.DrawBody();														// Draw body
 }		
 	
 folio.prototype.DrawMenu=function()										// DRAW MENU AREA
@@ -140,18 +152,46 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 		$("#pageMenu").css("color","#00aa00");								// Highlight it
 		$("#breadMenu").html("My Project &nbsp;|&nbsp; My view &nbsp;|&nbsp; 1");
 		}
-
-
-
 }
 
 folio.prototype.DrawBody=function()										// DRAW BODY AREA
 {
+	var str="<br>"
+	str=MakeGallery();
+	$("#bodyDiv").html(str);	
 }	
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+function MakeGallery()													// MAKE GALLERY WIDGET
+{
+	var i,o;
+	var h=$("#bodyDiv").height()-60;											
+	var numElements=4;
+	var trsty=" style='height:60px;background-color:#f8f8f8' onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";
+	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
+	var title=sf.page.substr(0,1).toUpperCase()+sf.page.substr(1)+"s";
+	var str="<div id='gallery' class='sf-gallery'><p><b><i>"+title+"</b></i></p>";
+	str+="<div class='sf-galleryContent' style='height:"+(h-14)+"px'>";		// Scrollable container
+	for (i=0;i<numElements;++i) {
+		str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'>"+(i+1)+"</div>";
+		}
+	str+="</div>";
+	str+="<div style='position:relative;text-align:center;margin-top:8px'>";
+	str+"</div>";
+	for (i=0;i<numElements;++i) {
+		$("#pickpag"+i).on("click", function(e) {							// ON ROW CLICK
+				var id=e.currentTarget.id.substr(7);						// Extract id
+				if (id == undefined)										// If deselecting
+					return;													// Quit
+				Sound("click");
+//				ef.UpdatePageItem(id)
+				});
+		}
+	return str+"</div>";
+	}
 
 	function Sound(sound, mode)												// PLAY SOUND
 	{	
