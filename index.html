@@ -15,11 +15,11 @@
 						}
 		.sf-main {		
 						}
-		.sf-menu {		width:100%;height:30px;color:#666;;border:1px solid #ddd;
+		.sf-menu {		width:100%;height:30px;color:#666;border:2px solid #ddd;
 						background-color:#ddd;opacity:inherit;
 						border-top-left-radius:6px;border-top-right-radius:6px;
 						}
-		.sf-body {		width:100%;min-height:300px;color:#666;border:1px solid #ddd;
+		.sf-body {		width:100%;min-height:300px;color:#666;border:2px solid #ddd;
 						background-color:#fff;opacity:inherit;
 						}
 		.sf-menuItem {	margin-left:50px;cursor:pointer;
@@ -27,6 +27,7 @@
 		.sf-menuItem:hover { color:#00aa00;
 						}
 		.sf-breadItem {	text-align:left;float:right;margin-right:12px;margin-top:8px;
+						color:#888;
 						}
 		.sf-is {		border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;
 						border:1px solid #999;font-size:12px;height;24px;width:90%
@@ -34,16 +35,19 @@
 		.sf-bs {		border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;color:#009900;
 						border:1px solid #999;font-size:12px;height;24px;background-color:#fff;cursor:pointer;
 						}
-		.sf-gallery {  	display:inline-block;text-align:center;padding:12px;padding-top:0px;padding-bottom:26px;margin-top:0px;height:100%-60; 
+		.sf-gallery {  	display:inline-block;text-align:center;padding:12px;padding-top:0px;padding-bottom:8px;height:100%-60; 
 						background-color:#ddd;vertical-align:middle;color:#999;width:150px;
 						}
 		.sf-galleryContent {				
 						overflow-x:hidden;overflow-y:auto;background-color:#f8f8f8;
 						border:1px solid #bbb;
 						}
-		.sf-galleryLab { 	padding:8px;border-bottom:1px solid #999;text-align:center;
+		.sf-galleryLab { padding:8px;border-bottom:1px solid #999;text-align:center;
 						}
-						
+		.sf-galleryTool { text-align:left;padding-top:3px;
+						}
+		.sf-galleryBut { cursor:pointer;margin-right:25px;
+						}
 		.unselectable { -moz-user-select: none;     -khtml-user-select: none;
 		   			 	-webkit-user-select: none;  -ms-user-select: none;   user-select: none;
 		   				}
@@ -126,11 +130,13 @@ function folio()														// CONSTRUCTOR
 folio.prototype.InitProject=function(data)								// INIT 
 {
 	this.curProject=0;
+	this.firstName="Teresa";
+	this.lastName="Sullivan";
 }
 
 folio.prototype.Draw=function()											// DRAW PAGE
 {
-	$("#bodyDiv").height(window.innerHeight-50);							// Set body height
+	$("#bodyDiv").height(window.innerHeight-54);							// Set body height
 	this.DrawMenu();														// Set menu
 	this.DrawBody();														// Draw body
 }		
@@ -140,18 +146,21 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 	$("#projectMenu").css("color","#000000");								// Reset
 	$("#viewMenu").css("color","#000000");									// Reset
 	$("#pageMenu").css("color","#000000");									// Reset
+	var str="<b>"+this.firstName+" "+this.lastName+"</b>";					// Add name
+	
 	if (this.page == "project")	{											// If project
 		$("#projectMenu").css("color","#00aa00");							// Highlight it
-		$("#breadMenu").html(" My Project");
+		str+=" &nbsp;|&nbsp; My Project";									// Add to breadcrumb
 		}
 	else if (this.page == "view") {											// If view
 		$("#viewMenu").css("color","#00aa00");								// Highlight it
-		$("#breadMenu").html("My project &nbsp;|&nbsp; My view");
-		}
+		str+="&nbsp;|&nbsp;My project &nbsp;|&nbsp; My view";				// Add to breadcrumb
+	}
 	else if (this.page == "page") {											// If page
 		$("#pageMenu").css("color","#00aa00");								// Highlight it
-		$("#breadMenu").html("My Project &nbsp;|&nbsp; My view &nbsp;|&nbsp; 1");
+		str+="&nbsp;|&nbsp;My Project &nbsp;|&nbsp; My view &nbsp;|&nbsp; 1"; 	// Add to breadcrumb
 		}
+	$("#breadMenu").html(str);												// Set breadcrumb
 }
 
 folio.prototype.DrawBody=function()										// DRAW BODY AREA
@@ -173,8 +182,8 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 	var trsty=" style='height:60px;background-color:#f8f8f8' onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";
 	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
 	var title=sf.page.substr(0,1).toUpperCase()+sf.page.substr(1)+"s";
-	var str="<div id='gallery' class='sf-gallery'><p><b><i>"+title+"</b></i></p>";
-	str+="<div class='sf-galleryContent' style='height:"+(h-14)+"px'>";		// Scrollable container
+	var str="<div id='gallery' class='sf-gallery'><p><b>"+title+"</b></p>";
+	str+="<div class='sf-galleryContent' style='height:"+(h-20)+"px'>";		// Scrollable container
 	for (i=0;i<numElements;++i) {
 		str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'>"+(i+1)+"</div>";
 		}
@@ -190,6 +199,14 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 //				ef.UpdatePageItem(id)
 				});
 		}
+	str+="<div class='sf-galleryTool'>";
+	str+="<img id='galleryAddBut' class='sf-galleryBut' src='img/addbut.gif'>";
+	str+="<img id='galleryCartBut' class='sf-galleryBut'src='img/cartbut.gif'>";
+	str+="<img id='gallerySettingsBut' class='sf-galleryBut' src='img/settingsbut.gif'>";
+	str+="<img id='galleryTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='margin-right:0px'>";
+	str+="</div>";
+	
+	
 	return str+"</div>";
 	}
 
