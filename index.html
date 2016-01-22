@@ -36,8 +36,7 @@
 						border:1px solid #ccc;font-size:12px;height;24px;background-color:#fff;cursor:pointer;
 						}
 		.sf-gallery {  	display:inline-block;text-align:center;padding:12px;padding-top:0px;padding-bottom:8px;
-						height:100%-60; 
-						background-color:#ddd;vertical-align:middle;color:#999;width:150px;
+						height:100%-60;background-color:#ddd;vertical-align:middle;color:#999;width:150px;
 						}
 		.sf-galleryContent { overflow-x:hidden;overflow-y:auto;background-color:#f8f8f8;
 						border:1px solid #bbb;
@@ -196,6 +195,12 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 		$("#pCollab").on("change",function() { 								// If changed
 			projects[sf.curProject].collab=$("#pCollab").val();				// Set it	
 			});
+		for (i=0;i<projects.length;++i)										// For each project
+			$("#galleryLab"+i).on("click", function(e) {					// ON PROJECT CLICK
+				sf.curProject=e.currentTarget.id.substr(10)-0;				// Extract id
+				Sound("click");												// Click
+				sf.Draw();													// Redraw
+				});
 		}
 }	
 	
@@ -236,29 +241,23 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 
 function MakeGallery()													// MAKE GALLERY WIDGET
 {
-	var i,o;
+	var i,o,labs=[];
 	var h=$("#bodyDiv").height()-60;											
-	var numElements=4;
-	var trsty=" style='height:60px;background-color:#f8f8f8' onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";
+	var numElements=projects.length;
+	var trsty=" style='height:40px;background-color:#f8f8f8' onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";
 	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
 	var title=sf.page.substr(0,1).toUpperCase()+sf.page.substr(1)+"s";
 	var str="<div id='gallery' class='sf-gallery'><p><b>"+title+"</b></p>";
 	str+="<div class='sf-galleryContent' style='height:"+(h-20)+"px'>";		// Scrollable container
+	
+	
 	for (i=0;i<numElements;++i) {
-		str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'>"+(i+1)+"</div>";
+		labs[i]=projects[i].title;
+		str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'>"+labs[i]+"</div>";
 		}
 	str+="</div>";
 	str+="<div style='position:relative;text-align:center;margin-top:8px'>";
 	str+"</div>";
-	for (i=0;i<numElements;++i) {
-		$("#pickpag"+i).on("click", function(e) {							// ON ROW CLICK
-				var id=e.currentTarget.id.substr(7);						// Extract id
-				if (id == undefined)										// If deselecting
-					return;													// Quit
-				Sound("click");
-//				ef.UpdatePageItem(id)
-				});
-		}
 	str+="<div class='sf-galleryTool'>";
 	str+="<img id='galleryAddBut' class='sf-galleryBut' src='img/addbut.gif'>";
 	str+="<img id='galleryCartBut' class='sf-galleryBut'src='img/cartbut.gif'>";
@@ -410,11 +409,19 @@ var items=[ {
 	}
 ];
 	
-var projects=[ {
+var projects=[ 
+	{
 	title:"Hip voting",
 	desc:"To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election. The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
 	cite:"(c) 2016 University of Virginia www.hipvoter.com",
 	tags:"Politics, MDST 3703",
+	collab:"Manny, Moe, Jack"
+	},
+	{
+	title:"A tale of two tours",
+	desc:"Welcome to our Tale of Two Tours where we will lead you through a digital experience of Paul McCartney's 1989 World Tour and his 2009 Summer Tour. Here you will find setlist information, tour member biographies, and individual concert facts.",
+	cite:"(c) 2016 University of Virginia",
+	tags:"Entertainment, MDST 3703",
 	collab:"Manny, Moe, Jack"
 	}
 ];
