@@ -39,9 +39,10 @@
 						height:100%-60;background-color:#ddd;vertical-align:middle;color:#999;width:150px;
 						}
 		.sf-galleryContent { overflow-x:hidden;overflow-y:auto;background-color:#f8f8f8;
-						border:1px solid #bbb;
+						border:1px solid #bbb;width:100%;
 						}
 		.sf-galleryLab { padding:8px;border-bottom:1px solid #999;text-align:center;
+						height:40px;background-color:#f8f8f8;
 						}
 		.sf-galleryTool { text-align:left;padding-top:3px;
 						}
@@ -49,7 +50,7 @@
 						}
 		.sf-projectPage { position:fixed;overflow-x:hidden;overflow-y:auto;top:44px;left:184px;
 						width:400px;margin:12px;color:#aaa;border-right:1px solid #ccc;
-						padding-right:12px;
+						padding-right:16px;
 						}
 		.sf-projectItems {
 						border-top:1px solid #ccc;width:100%;text-align:center;color:#ccc;
@@ -216,18 +217,18 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 		}
 	str+="<div id='projectDiv' class='sf-projectPage'>";					// Project container
 	str+="<table style='width:100%'>";
-	str+="<tr ><td width='1%'>Title</td>";
+	str+="<tr height='32'><td width='1%'>Title</td>";
 	str+="<td><input class='sf-is' id='pTitle' ";
 	str+="type='text' value='"+pTitle+"'></td></tr>";
-	str+="<tr><td>Description</td><td><textarea class='sf-is' id='pDesc' ";
+	str+="<tr height='28'><td>Description</td><td><textarea class='sf-is' id='pDesc' ";
 	str+="style='font-family:sans-serif'>"+pDesc+"</textarea></td></tr>";
-	str+="<tr><td>Citation</td>";
+	str+="<tr height='28'><td>Citation</td>";
 	str+="<td><input class='sf-is' id='pCitation' ";
 	str+="type='text' value='"+pCite+"'></td></tr>";
-	str+="<tr><td>Tags</td>";
+	str+="<tr height='28'><td>Tags</td>";
 	str+="<td><input class='sf-is' id='pTags' ";
 	str+="type='text' value='"+pTags+"'></td></tr>";
-	str+="<tr><td>Collaborators&nbsp;&nbsp;</td>";
+	str+="<tr height='28'><td>Collaborators&nbsp;&nbsp;</td>";
 	str+="<td>"+MakeSelect("pCollab",false,["Add new collaborator"])+"</td></tr>";
 	str+="</table><br>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'>";
@@ -244,7 +245,7 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 	var i,o,labs=[];
 	var h=$("#bodyDiv").height()-60;											
 	var numElements=projects.length;
-	var trsty=" style='height:40px;background-color:#f8f8f8' onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";
+	var trsty=" onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";
 	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
 	var title=sf.page.substr(0,1).toUpperCase()+sf.page.substr(1)+"s";
 	var str="<div id='gallery' class='sf-gallery'><p><b>"+title+"</b></p>";
