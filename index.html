@@ -35,7 +35,7 @@
 		.sf-bs {		border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;color:#009900;
 						border:1px solid #ccc;font-size:12px;height;24px;background-color:#fff;cursor:pointer;
 						}
-		.sf-gallery {  	display:inline-block;text-align:center;padding:18px;padding-top:0px;padding-bottom:8px;padding-left:12px;
+		.sf-gallery {  	display:inline-block;text-align:center;padding:12px;padding-top:0px;padding-bottom:8px;
 						height:100%-60; 
 						background-color:#ddd;vertical-align:middle;color:#999;width:150px;
 						}
@@ -48,9 +48,9 @@
 						}
 		.sf-galleryBut { cursor:pointer;margin-right:25px;
 						}
-		.sf-projectPage { position:fixed;overflow-x:hidden;overflow-y:auto;top:44px;left:187px;
-						width:400px;height:100%;padding:12px;color:#aaa;background-color:#fff;
-						border-top-left-radius:6px;
+		.sf-projectPage { position:fixed;overflow-x:hidden;overflow-y:auto;top:44px;left:184px;
+						width:400px;margin:12px;color:#aaa;border-right:1px solid #ccc;
+						padding-right:12px;
 						}
 		.sf-projectItems {
 						border-top:1px solid #ccc;width:100%;text-align:center;color:#ccc;
@@ -128,14 +128,14 @@ $(document).ready(function() {											// ON PAGE LOADED
 function folio()														// CONSTRUCTOR
 {
 	sf=this;																// Point to folio
+	this.curProject=this.curView=this.curPage=-1;							// Assume not chosen
 	this.queryString=window.location.search.substring(1);					// Get query string
-	this.InitProject("");													// Init project
+	this.InitFolio("");														// Init project
 	this.page="project";													// Init as project page
-	this.curProject=this.curView=this.curPage=-1;
 	this.Draw();															// Draw 
-}	
+		}	
 
-folio.prototype.InitProject=function(data)								// INIT 
+folio.prototype.InitFolio=function(data)								// INIT 
 {
 	this.curProject=0;
 	this.firstName="Teresa";
@@ -144,9 +144,11 @@ folio.prototype.InitProject=function(data)								// INIT
 
 folio.prototype.Draw=function()											// DRAW PAGE
 {
-	$("#bodyDiv").height(window.innerHeight-54);							// Set body height
+	var h=window.innerHeight;												// Get  height
+	$("#bodyDiv").height(h-54);												// Set body height
 	this.DrawMenu();														// Set menu
 	this.DrawBody();														// Draw body
+	$("#projectDiv").height(h-78);											// Set project height
 }		
 	
 folio.prototype.DrawMenu=function()										// DRAW MENU AREA
@@ -178,26 +180,53 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 	if (this.page == "project")												// If a project
 		str+=this.MakeProjectPage();										// Add project pagw
 	$("#bodyDiv").html(str);
+	if (this.page == "project")	{											// If a project
+		$("#pTitle").on("change",function() { 								// If changed
+			projects[sf.curProject].title=$("#pTitle").val();				// Set it	
+			});
+		$("#pDesc").on("change",function() { 								// If changed
+			projects[sf.curProject].desc=$("#pDesc").val();					// Set it	
+			});
+		$("#pCite").on("change",function() { 								// If changed
+			projects[sf.curProject].cite=$("#pCite").val();					// Set it	
+			});
+		$("#pTags").on("change",function() { 								// If changed
+			projects[sf.curProject].tags=$("#pTags").val();					// Set it	
+			});
+		$("#pCollab").on("change",function() { 								// If changed
+			projects[sf.curProject].collab=$("#pCollab").val();				// Set it	
+			});
+		}
 }	
 	
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
 	var str="<br>"
+	var pTitle="",pDesc="",pCite="",pTags="";
+	if (this.curProject >= 0) {
+		if (projects[this.curProject].title) pTitle=projects[this.curProject].title;
+		if (projects[this.curProject].desc)  pDesc=projects[this.curProject].desc;
+		if (projects[this.curProject].cite)  pCite=projects[this.curProject].cite;
+		if (projects[this.curProject].tags)  pTags=projects[this.curProject].tags;
+		}
 	str+="<div id='projectDiv' class='sf-projectPage'>";					// Project container
 	str+="<table style='width:100%'>";
 	str+="<tr ><td width='1%'>Title</td>";
 	str+="<td><input class='sf-is' id='pTitle' ";
-	str+="type='text' value=''></td></tr>";
-	str+="<tr><td>Description</td><td><textarea class='sf-is' id='pDesc'></textarea></td></tr>";
+	str+="type='text' value='"+pTitle+"'></td></tr>";
+	str+="<tr><td>Description</td><td><textarea class='sf-is' id='pDesc' ";
+	str+="style='font-family:sans-serif'>"+pDesc+"</textarea></td></tr>";
 	str+="<tr><td>Citation</td>";
 	str+="<td><input class='sf-is' id='pCitation' ";
-	str+="type='text' value=''></td></tr>";
+	str+="type='text' value='"+pCite+"'></td></tr>";
+	str+="<tr><td>Tags</td>";
+	str+="<td><input class='sf-is' id='pTags' ";
+	str+="type='text' value='"+pTags+"'></td></tr>";
 	str+="<tr><td>Collaborators&nbsp;&nbsp;</td>";
 	str+="<td>"+MakeSelect("pCollab",false,["Add new collaborator"])+"</td></tr>";
 	str+="</table><br>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'>";
 	str+="<p style='text-align:center'>Drag items to include in project here</p></div>";
-
 	return "</div>"+str;													// Return prokect page
 }	
 	
@@ -369,7 +398,7 @@ var items=[ {
 	src:"kaltura_player_1_c7z7zuiv",
 	thumb:"https://cfvod.kaltura.com/p/343772/sp/34377200/thumbnail/entry_id/1_c7z7zuiv/version/100011/acv/121",
 	title:"Hip Voter video",
-	desc:"To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election. The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
+	desc:"A video to encourage millenial voting",
 	citation:"(c) 2015 University of Virginia www.hipvoter.com",
 	startDate:"12/12/2015",
 	placeName:"Charlottesville, VA",
@@ -381,7 +410,15 @@ var items=[ {
 	}
 ];
 	
-		
+var projects=[ {
+	title:"Hip voting",
+	desc:"To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election. The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
+	cite:"(c) 2016 University of Virginia www.hipvoter.com",
+	tags:"Politics, MDST 3703",
+	collab:"Manny, Moe, Jack"
+	}
+];
+			
 	
 
 
