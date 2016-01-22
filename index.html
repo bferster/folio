@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta charset="UTF-8" />
-	<link REL="SHORTCUT ICON" HREF="folio.ico">
+	<link REL="SHORTCUT ICON" HREF="shanti.ico">
 	<title>SHANTI folio</title>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
 	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
@@ -30,16 +30,16 @@
 						color:#888;
 						}
 		.sf-is {		border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;
-						border:1px solid #999;font-size:12px;height;24px;width:90%
+						border:1px solid #ccc;font-size:12px;height;24px;width:95%;color:#999;
 						}
 		.sf-bs {		border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;color:#009900;
-						border:1px solid #999;font-size:12px;height;24px;background-color:#fff;cursor:pointer;
+						border:1px solid #ccc;font-size:12px;height;24px;background-color:#fff;cursor:pointer;
 						}
-		.sf-gallery {  	display:inline-block;text-align:center;padding:12px;padding-top:0px;padding-bottom:8px;height:100%-60; 
+		.sf-gallery {  	display:inline-block;text-align:center;padding:18px;padding-top:0px;padding-bottom:8px;padding-left:12px;
+						height:100%-60; 
 						background-color:#ddd;vertical-align:middle;color:#999;width:150px;
 						}
-		.sf-galleryContent {				
-						overflow-x:hidden;overflow-y:auto;background-color:#f8f8f8;
+		.sf-galleryContent { overflow-x:hidden;overflow-y:auto;background-color:#f8f8f8;
 						border:1px solid #bbb;
 						}
 		.sf-galleryLab { padding:8px;border-bottom:1px solid #999;text-align:center;
@@ -48,6 +48,14 @@
 						}
 		.sf-galleryBut { cursor:pointer;margin-right:25px;
 						}
+		.sf-projectPage { position:fixed;overflow-x:hidden;overflow-y:auto;top:44px;left:187px;
+						width:400px;height:100%;padding:12px;color:#aaa;background-color:#fff;
+						border-top-left-radius:6px;
+						}
+		.sf-projectItems {
+						border-top:1px solid #ccc;width:100%;text-align:center;color:#ccc;
+						}
+
 		.unselectable { -moz-user-select: none;     -khtml-user-select: none;
 		   			 	-webkit-user-select: none;  -ms-user-select: none;   user-select: none;
 		   				}
@@ -166,8 +174,31 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 folio.prototype.DrawBody=function()										// DRAW BODY AREA
 {
 	var str="<br>"
-	str=MakeGallery();
-	$("#bodyDiv").html(str);	
+	str=MakeGallery();														// Add Gallery
+	if (this.page == "project")												// If a project
+		str+=this.MakeProjectPage();										// Add project pagw
+	$("#bodyDiv").html(str);
+}	
+	
+folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
+{
+	var str="<br>"
+	str+="<div id='projectDiv' class='sf-projectPage'>";					// Project container
+	str+="<table style='width:100%'>";
+	str+="<tr ><td width='1%'>Title</td>";
+	str+="<td><input class='sf-is' id='pTitle' ";
+	str+="type='text' value=''></td></tr>";
+	str+="<tr><td>Description</td><td><textarea class='sf-is' id='pDesc'></textarea></td></tr>";
+	str+="<tr><td>Citation</td>";
+	str+="<td><input class='sf-is' id='pCitation' ";
+	str+="type='text' value=''></td></tr>";
+	str+="<tr><td>Collaborators&nbsp;&nbsp;</td>";
+	str+="<td>"+MakeSelect("pCollab",false,["Add new collaborator"])+"</td></tr>";
+	str+="</table><br>";
+	str+="<div id='projectItemsDiv' class='sf-projectItems'>";
+	str+="<p style='text-align:center'>Drag items to include in project here</p></div>";
+
+	return "</div>"+str;													// Return prokect page
 }	
 	
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -205,10 +236,29 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 	str+="<img id='gallerySettingsBut' class='sf-galleryBut' src='img/settingsbut.gif'>";
 	str+="<img id='galleryTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='margin-right:0px'>";
 	str+="</div>";
-	
-	
 	return str+"</div>";
 	}
+
+	function MakeSelect(id, multi, items, sel, extra, values)				// CREATE HTML SELECT
+	{
+		var	str="<select class='sf-is' id='"+id+"'";							// Header
+		str+="style='width:auto'";
+		if (multi)																// Multi select
+			str+="multiple='multiple' size='"+multi+"'";						// Add flag
+		if (extra)																// If extra param
+			str+=extra;															// Add them
+		str+=">";																// End header
+		for (i=0;i<items.length;++i) {											// For each option
+			str+="<option";														// Add tag
+			if (sel == items[i])												// If selected
+				str+=" selected='selected'"										// Add tag
+			if (values && values[i])											// If has a value
+				str+=" value='"+values[i]+"'";									// Add it
+			str+=">"+items[i]+"</option>";										// End option
+			}	
+		return str+"</select>";													// End select				
+	}
+
 
 	function Sound(sound, mode)												// PLAY SOUND
 	{	
@@ -309,6 +359,35 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 		else
 			console.log(msg);
 		}
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// DATA
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+var items=[ {
+	type:"Kaltura",
+	src:"kaltura_player_1_c7z7zuiv",
+	thumb:"https://cfvod.kaltura.com/p/343772/sp/34377200/thumbnail/entry_id/1_c7z7zuiv/version/100011/acv/121",
+	title:"Hip Voter video",
+	desc:"To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election. The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
+	citation:"(c) 2015 University of Virginia www.hipvoter.com",
+	startDate:"12/12/2015",
+	placeName:"Charlottesville, VA",
+	permissions:"r",
+	autoStart:"false",
+	start:"0",
+	end:"1:45",
+	volume:"50"
+	}
+];
+	
+		
+	
+
+
+
+
+
 
 </script>
 </body>
