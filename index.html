@@ -94,7 +94,7 @@ $(window).resize(function() {											// ON WINDOW RESIZE
 	});
 			
 $(document).ready(function() {											// ON PAGE LOADED
- 	new folio();														// Load main
+ 	new folio();															// Load main object
 	$("#mainDiv").animate({ opacity:1},1000, function() {				
 		$("#mainDiv").css("opacity",1);
 		});				 
@@ -128,12 +128,13 @@ $(document).ready(function() {											// ON PAGE LOADED
 function folio()														// CONSTRUCTOR
 {
 	sf=this;																// Point to folio
+	this.changed=false;														// No changes yet
 	this.curProject=this.curView=this.curPage=-1;							// Assume not chosen
 	this.queryString=window.location.search.substring(1);					// Get query string
 	this.InitFolio("");														// Init project
 	this.page="project";													// Init as project page
 	this.Draw();															// Draw 
-		}	
+	}	
 
 folio.prototype.InitFolio=function(data)								// INIT 
 {
@@ -160,15 +161,23 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 	
 	if (this.page == "project")	{											// If project
 		$("#projectMenu").css("color","#00aa00");							// Highlight it
-		str+=" &nbsp;|&nbsp; My Project";									// Add to breadcrumb
+		str+=" &nbsp;|&nbsp; ";												// Add to breadcrumb
+		if ((this.curProject != -1) && projects[this.curProject].title)		// A valid project
+			str+=ShortenString(projects[this.curProject].title,20);			// Add title
 		}
 	else if (this.page == "view") {											// If view
 		$("#viewMenu").css("color","#00aa00");								// Highlight it
-		str+="&nbsp;|&nbsp;My project &nbsp;|&nbsp; My view";				// Add to breadcrumb
-	}
+		str+="&nbsp;|&nbsp; ";												// Add to breadcrumb
+		if ((this.curProject != -1) && projects[this.curProject].title)		// A valid project
+			str+=ShortenString(projects[this.curProject].title,20);			// Add title
+		str+=" &nbsp;|&nbsp; My view";										// Add to breadcrumb
+		}
 	else if (this.page == "page") {											// If page
 		$("#pageMenu").css("color","#00aa00");								// Highlight it
-		str+="&nbsp;|&nbsp;My Project &nbsp;|&nbsp; My view &nbsp;|&nbsp; 1"; 	// Add to breadcrumb
+		str+="&nbsp;|&nbsp; ";												// Add to breadcrumb
+		if ((this.curProject != -1) && projects[this.curProject].title)		// A valid project
+			str+=ShortenString(projects[this.curProject].title,20);			// Add title
+		str+=" &nbsp;|&nbsp; My view &nbsp;|&nbsp; 1";						// Add to breadcrumb
 		}
 	$("#breadMenu").html(str);												// Set breadcrumb
 }
@@ -183,39 +192,91 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 	if (this.page == "project")	{											// If a project
 		$("#pTitle").on("change",function() { 								// If changed
 			projects[sf.curProject].title=$("#pTitle").val();				// Set it	
+			sf.changed=true;												// Something changed
 			});
+		
 		$("#pDesc").on("change",function() { 								// If changed
 			projects[sf.curProject].desc=$("#pDesc").val();					// Set it	
+			sf.changed=true;												// Something changed
 			});
+		
 		$("#pCite").on("change",function() { 								// If changed
 			projects[sf.curProject].cite=$("#pCite").val();					// Set it	
+			sf.changed=true;												// Something changed
 			});
+		
 		$("#pTags").on("change",function() { 								// If changed
 			projects[sf.curProject].tags=$("#pTags").val();					// Set it	
+			sf.changed=true;												// Something changed
 			});
-		$("#pCollab").on("change",function() { 								// If changed
-			projects[sf.curProject].collab=$("#pCollab").val();				// Set it	
-			});
+		
 		for (i=0;i<projects.length;++i)										// For each project
 			$("#galleryLab"+i).on("click", function(e) {					// ON PROJECT CLICK
 				sf.curProject=e.currentTarget.id.substr(10)-0;				// Extract id
 				Sound("click");												// Click
 				sf.Draw();													// Redraw
 				});
-		}
+
+		$("#galleryAddBut").on("click",function() { 						// ADD NEW PROJECT
+			projects.push({ title:"New project" });							// Add shell					
+			sf.curProject=projects.length-1;								// Point at it
+			Sound("ding");													// Ding
+			sf.changed=true;												// Something changed
+			sf.Draw();														// Redraw
+			});
+		
+		$("#galleryTrashBut").on("click",function() { 						// DELETE PROJECT
+				ConfirmBox("This will delete the project:<br><br><b><i>"+projects[sf.curProject].title+"</b></i>", function() {
+				projects.splice(sf.curProject,1);							// Remove it
+				sf.curProject--;											// Go to previous projcet
+				Sound("delete");											// Delete
+				sf.changed=true;											// Something changed
+				sf.Draw();													// Redraw
+				});
+			});
+
+		$("#collabAddBut").on("click",function() { 							// ADD NEW COLLABORATOR
+ 			GetTextBox("Type name of collaborator", "", "", function(s) {	// Ask for name
+				if (projects[sf.curProject].collab)							// If not first one
+					projects[sf.curProject].collab+=","+s;					// Add new collaborator
+				else														// Frist one one
+					projects[sf.curProject].collab=s;						// Add first collaborator
+				Sound("ding");												// Ding
+				sf.changed=true;											// Something changed
+				sf.Draw();													// Redraw
+				$("#pCollab").val(s);
+			});
+		});
+
+		$("#collabTrashBut").on("click",function() { 						// DELETE PROJECT
+				var s=$("#pCollab").val();
+				if (!s)														// Nothing selected
+					return;													// Quit
+			ConfirmBox("This will delete <b>"+s+" </b>from the project", function() {
+				var v=projects[sf.curProject].collab.split(",");			// Make into array		
+				v.splice($("#pCollab").prop('selectedIndex'),1);			// Delete it
+				projects[sf.curProject].collab=v.toString();				// Combine into string
+				Sound("delete");											// Delete
+				sf.changed=true;											// Something changed
+				sf.Draw();													// Redraw
+				});
+			});
+
+	}
 }	
 	
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
+	var pTitle="",pDesc="",pCite="",pTags="",pCollab=[];
 	var str="<br>"
-	var pTitle="",pDesc="",pCite="",pTags="";
-	if (this.curProject >= 0) {
-		if (projects[this.curProject].title) pTitle=projects[this.curProject].title;
-		if (projects[this.curProject].desc)  pDesc=projects[this.curProject].desc;
-		if (projects[this.curProject].cite)  pCite=projects[this.curProject].cite;
-		if (projects[this.curProject].tags)  pTags=projects[this.curProject].tags;
-		}
 	str+="<div id='projectDiv' class='sf-projectPage'>";					// Project container
+	if (this.curProject < 0) 												// No project selected
+		return "</div>"+str;												// Return empty page
+	if (projects[this.curProject].title)  pTitle=projects[this.curProject].title;
+	if (projects[this.curProject].desc)   pDesc=projects[this.curProject].desc;
+	if (projects[this.curProject].cite)   pCite=projects[this.curProject].cite;
+	if (projects[this.curProject].tags)   pTags=projects[this.curProject].tags;
+	if (projects[this.curProject].collab) pCollab=projects[this.curProject].collab.split(",");
 	str+="<table style='width:100%'>";
 	str+="<tr height='32'><td width='1%'>Title</td>";
 	str+="<td><input class='sf-is' id='pTitle' ";
@@ -229,7 +290,9 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<td><input class='sf-is' id='pTags' ";
 	str+="type='text' value='"+pTags+"'></td></tr>";
 	str+="<tr height='28'><td>Collaborators&nbsp;&nbsp;</td>";
-	str+="<td>"+MakeSelect("pCollab",false,["Add new collaborator"])+"</td></tr>";
+	str+="<td>"+MakeSelect("pCollab",false,pCollab);
+	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:20px;margin-right:10px'>";
+	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px'></td></tr>";
 	str+="</table><br>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'>";
 	str+="<p style='text-align:center'>Drag items to include in project here</p></div>";
@@ -244,7 +307,6 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 {
 	var i,o,labs=[];
 	var h=$("#bodyDiv").height()-60;											
-	var numElements=projects.length;
 	var trsty=" onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";
 	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
 	var title=sf.page.substr(0,1).toUpperCase()+sf.page.substr(1)+"s";
@@ -252,9 +314,14 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 	str+="<div class='sf-galleryContent' style='height:"+(h-20)+"px'>";		// Scrollable container
 	
 	
-	for (i=0;i<numElements;++i) {
-		labs[i]=projects[i].title;
-		str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'>"+labs[i]+"</div>";
+	if (sf.page == "project") {												// Project gallery
+		for (i=0;i<projects.length;++i) {
+			labs[i]=projects[i].title;
+			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span"
+			if (i == sf.curProject)											// If the current project
+				str+=" style='color:#009900'"								// Color it
+			str+=">"+labs[i]+"</span></div>";								// Close
+			}
 		}
 	str+="</div>";
 	str+="<div style='position:relative;text-align:center;margin-top:8px'>";
@@ -338,7 +405,7 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 
 	function ConfirmBox(content, callback)									// COMFIRM BOX
 	{
-		Sound("delete");														
+		Sound("click");														
 		$("#alertBoxDiv").remove();												
 		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
 		var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
@@ -374,6 +441,13 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
  		$(".ui-button").css({"border-radius":"30px","outline":"none"});
  	}
+
+	function ShortenString(str, len)									// SHORTEN A STRING TO LENGTH
+	{
+		if (str.length > len)												// Too long
+			str=str.substr(0,(len-3)/2)+"..."+str.slice((len-3)/-2);			// Shorten	
+		return str;															// Return string
+	}
 
 	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
 	{
@@ -416,14 +490,14 @@ var projects=[
 	desc:"To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election. The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
 	cite:"(c) 2016 University of Virginia www.hipvoter.com",
 	tags:"Politics, MDST 3703",
-	collab:"Manny, Moe, Jack"
+	collab:"Mike, James, Hanna, Michelle"
 	},
 	{
 	title:"A tale of two tours",
 	desc:"Welcome to our Tale of Two Tours where we will lead you through a digital experience of Paul McCartney's 1989 World Tour and his 2009 Summer Tour. Here you will find setlist information, tour member biographies, and individual concert facts.",
 	cite:"(c) 2016 University of Virginia",
 	tags:"Entertainment, MDST 3703",
-	collab:"Manny, Moe, Jack"
+	collab:"Imani, Ashlyn, Liz"
 	}
 ];
 			
