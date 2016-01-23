@@ -52,6 +52,9 @@
 						width:400px;margin:12px;color:#aaa;border-right:1px solid #ccc;
 						padding-right:16px;
 						}
+		.sf-itemsPicker { position:fixed;overflow-x:hidden;overflow-y:auto;top:44px;left:616px;
+						margin:12px;color:#aaa;
+						}
 		.sf-projectItems {
 						border-top:1px solid #ccc;width:100%;text-align:center;color:#ccc;
 						}
@@ -145,12 +148,16 @@ folio.prototype.InitFolio=function(data)								// INIT
 
 folio.prototype.Draw=function()											// DRAW PAGE
 {
-	var h=window.innerHeight;												// Get  height
+	var h=window.innerHeight;												// Get height
+	var w=window.innerWidth;												// Get width
 	$("#bodyDiv").height(h-54);												// Set body height
 	this.DrawMenu();														// Set menu
 	this.DrawBody();														// Draw body
 	$("#projectDiv").height(h-78);											// Set project height
-}		
+	$("#itemPickerDiv").height(h-78);										// Set picker width height
+	$("#itemPickerDiv").width(w-648);										// Set picker width 
+}
+		
 	
 folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 {
@@ -186,8 +193,10 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 {
 	var str="<br>"
 	str=MakeGallery();														// Add Gallery
-	if (this.page == "project")												// If a project
-		str+=this.MakeProjectPage();										// Add project pagw
+	if (this.page == "project") {											// If a project
+		str+=this.MakeProjectPage();										// Add project page
+		str+=this.MakeItemsPicker();										// Add project items picker
+		}
 	$("#bodyDiv").html(str);
 	if (this.page == "project")	{											// If a project
 		$("#pTitle").on("change",function() { 								// If changed
@@ -296,9 +305,22 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="</table><br>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'>";
 	str+="<p style='text-align:center'>Drag items to include in project here</p></div>";
-	return "</div>"+str;													// Return prokect page
+	return "</div>"+str;													// Return project page
 }	
 	
+folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
+{
+	str="<div id='itemPickerDiv' class='sf-itemsPicker'>";					// Item picker container
+	if (this.curProject < 0) 												// No project selected
+		return "</div>"+str;												// Return empty page
+	str+="<div style='text-align:center'>Filter items by &nbsp;";			// Label
+	str+="<input type='text' class='sf-is' id='pFilter' style='width:150px'</div>"; // Filter
+	str+="<table style='width:100%'>";
+	str+="</table>";
+	return "</div>"+str;													// Return prokect page
+}	
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // HELPERS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
