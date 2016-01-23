@@ -319,14 +319,16 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 	var str="<div id='itemPickerDiv' class='sf-itemsPicker'>";				// Item picker container
 	if (this.curProject < 0) 												// No project selected
 		return "</div>"+str;												// Return empty page
-	str+="<div style='text-align:center'>Filter items by &nbsp;";			// Label
-	str+="<input type='text' class='sf-is' id='pFilter' style='width:150px'</div><br><br>"; // Filter
+	str+="<div style='text-align:center'>Show only these items &nbsp;";			
+	str+=MakeSelect("pType",false,["All types","Kaltura","Mandala","Images","Maps","Visualizations","WordPress"]);
+	str+=" &nbsp;and filter  by &nbsp;<input type='text' class='sf-is' id='pFilter' style='width:150px'> &nbsp;"
+	str+="</div><br><br>"; 
 
-var v=["webitem","imageitem","qmediaitem","kalturaitem","mapitem","wordpressitem"];
+var v=["webitem","imageitem","qmediaitem","kalturaitem","mapitem","wordpressitem","pdfitem"];
 
 	for (i=0;i<30;++i) {
 		str+="<div id='item-"+i+"' class='sf-item'>";
-		pic=v[Math.round((Math.random()*5))];
+		pic=v[Math.round((Math.random()*6))];
 		str+="<img src='img/"+pic+".png' class='sf-itemPic';>Item "+(i+1)+"'s title</div>";
 		}
 	return "</div>"+str;													// Return prokect page
