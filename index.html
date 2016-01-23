@@ -41,19 +41,23 @@
 		.sf-galleryContent { overflow-x:hidden;overflow-y:auto;background-color:#f8f8f8;
 						border:1px solid #bbb;width:100%;
 						}
-		.sf-galleryLab { padding:8px;border-bottom:1px solid #999;text-align:center;
+		.sf-galleryLab  { padding:8px;border-bottom:1px solid #999;text-align:center;
 						height:40px;background-color:#f8f8f8;
 						}
 		.sf-galleryTool { text-align:left;padding-top:3px;
 						}
-		.sf-galleryBut { cursor:pointer;margin-right:25px;
+		.sf-galleryBut  { cursor:pointer;margin-right:25px;
 						}
-		.sf-projectPage { position:fixed;overflow-x:hidden;overflow-y:auto;top:44px;left:184px;
+		.sf-projectPage { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:184px;
 						width:400px;margin:12px;color:#aaa;border-right:1px solid #ccc;
 						padding-right:16px;
 						}
-		.sf-itemsPicker { position:fixed;overflow-x:hidden;overflow-y:auto;top:44px;left:616px;
-						margin:12px;color:#aaa;
+		.sf-itemsPicker { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:616px;
+						margin:12px;color:#aaa;text-align:left;
+						}
+		.sf-item	    { display:inline-block;width:128px;height:64px;margin-bottom:36px;margin-right:16px;
+						}
+		.sf-itemPic    { width:128px;height:64px;border:1px solid #ccc;cursor:pointer;
 						}
 		.sf-projectItems {
 						border-top:1px solid #ccc;width:100%;text-align:center;color:#ccc;
@@ -310,13 +314,15 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	
 folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 {
-	str="<div id='itemPickerDiv' class='sf-itemsPicker'>";					// Item picker container
+	var str="<div id='itemPickerDiv' class='sf-itemsPicker'>";				// Item picker container
 	if (this.curProject < 0) 												// No project selected
 		return "</div>"+str;												// Return empty page
 	str+="<div style='text-align:center'>Filter items by &nbsp;";			// Label
-	str+="<input type='text' class='sf-is' id='pFilter' style='width:150px'</div>"; // Filter
-	str+="<table style='width:100%'>";
-	str+="</table>";
+	str+="<input type='text' class='sf-is' id='pFilter' style='width:150px'</div><br><br>"; // Filter
+	for (i=0;i<30;++i) {
+		str+="<div class='sf-item'>";
+		str+="<img src='img/webitem.png' class='sf-itemPic';>hello</div>";
+		}
 	return "</div>"+str;													// Return prokect page
 }	
 
