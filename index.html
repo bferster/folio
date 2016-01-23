@@ -13,7 +13,7 @@
 		body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
 						padding:0px;border:0px;
 						}
-		.sf-main {		
+		.sf-main {		min-width:1024px;
 						}
 		.sf-menu {		width:100%;height:30px;color:#666;border:2px solid #ddd;
 						background-color:#ddd;opacity:inherit;
@@ -53,9 +53,10 @@
 						padding-right:16px;
 						}
 		.sf-itemsPicker { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:616px;
-						margin:12px;color:#aaa;text-align:left;
+						margin:12px;color:#aaa;text-align:left;min-width:160px;
 						}
-		.sf-item	    { display:inline-block;width:128px;height:64px;margin-bottom:36px;margin-right:16px;
+		.sf-item	    { display:inline-block;width:128px;height:64px;margin-bottom:36px;
+						text-align:center;margin-right:16px;
 						}
 		.sf-itemPic    { width:128px;height:64px;border:1px solid #ccc;cursor:pointer;
 						}
@@ -322,7 +323,7 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 	str+="<div style='text-align:center'>Show only these items &nbsp;";			
 	str+=MakeSelect("pType",false,["All types","Kaltura","Mandala","Images","Maps","Visualizations","WordPress"]);
 	str+=" &nbsp;and filter  by &nbsp;<input type='text' class='sf-is' id='pFilter' style='width:150px'> &nbsp;"
-	str+="</div><br><br>"; 
+	str+="</div><br>"; 
 
 var v=["webitem","imageitem","qmediaitem","kalturaitem","mapitem","wordpressitem","pdfitem"];
 
