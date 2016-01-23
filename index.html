@@ -275,6 +275,8 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 				});
 			});
 
+for (i=0;i<30;++i) $("#item-"+i).draggable({ revert:true});
+
 	}
 }	
 	
@@ -319,9 +321,13 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 		return "</div>"+str;												// Return empty page
 	str+="<div style='text-align:center'>Filter items by &nbsp;";			// Label
 	str+="<input type='text' class='sf-is' id='pFilter' style='width:150px'</div><br><br>"; // Filter
+
+var v=["webitem","imageitem","qmediaitem","kalturaitem","mapitem","wordpressitem"];
+
 	for (i=0;i<30;++i) {
-		str+="<div class='sf-item'>";
-		str+="<img src='img/webitem.png' class='sf-itemPic';>hello</div>";
+		str+="<div id='item-"+i+"' class='sf-item'>";
+		pic=v[Math.round((Math.random()*5))];
+		str+="<img src='img/"+pic+".png' class='sf-itemPic';>Item "+(i+1)+"'s title</div>";
 		}
 	return "</div>"+str;													// Return prokect page
 }	
