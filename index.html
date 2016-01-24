@@ -337,6 +337,8 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 			switch (items[i].type) {											// Route on type
 				case 	"kaltura": 	pic+="kalturaitem"; 		break;			// Set
 				case 	"youtube": 	pic+="youtubeitem"; 		break;			// Set
+				case 	"vimeo": 	pic+="vimeoitem"; 			break;			// Set
+				case 	"qmedia": 	pic+="qmediaitem"; 			break;			// Set
 				default: 			pic+="webitem"; 			break;			// All others use web oic
 				}
 			pic+=".png";														// Add ext
@@ -526,7 +528,7 @@ var items=[ {
 	type:"kaltura",
 	src:"kaltura_player_1_c7z7zuiv",
 	thumb:"https://cfvod.kaltura.com/p/343772/sp/34377200/thumbnail/entry_id/1_c7z7zuiv/version/100011/acv/121",
-	title:"HipVoter intro video",
+	title:"HipVoter.com intro video",
 	desc:"A video to encourage millenial voting",
 	citation:"© 2015 University of Virginia. http://www.hipvoter.com",
 	startDate:"12/12/2015",
@@ -536,22 +538,29 @@ var items=[ {
 	start:"0",
 	end:"1:45",
 	volume:"50"
-	},
-	{
+	},{
 	type:"web",
-	src:"https://www.barackobama.com",
+	src:"//www.barackobama.com",
 	title:"Barack Obama website",
 	citation:"© 2016 Organizing for Action. All Rights Reserved.",
-	thumb:"http://www.logodesignlove.com/images/monograms/obama-08-logo-15.jpg"
-	},
-	{
+	thumb:"//www.logodesignlove.com/images/monograms/obama-08-logo-15.jpg"
+	},{
+	type:"qmedia",
+	src:"712",
+	title:"A tale of two tours",
+	citation:"© 2015 Imani Nichols, Ashlyn Royer and Liz Carter",
+	},{
+	type:"vimeo",
+	src:"https://vimeo.com/80413179",
+	title:"NBC Politics Nation promo",
+	citation:"© 2013 Arturo Echeverria / NBC",
+	thumb:"//i.vimeocdn.com/video/456322759_640.jpg"
+	},{
 	type:"youtube",
-	src:"https://www.youtube.com/embed/lrk4oY7UxpQ?list=PL8dPuuaLjXtOfse2ncvffeelTrqvhrz8H",
+	src:"//www.youtube.com/embed/lrk4oY7UxpQ?list=PL8dPuuaLjXtOfse2ncvffeelTrqvhrz8H",
 	title:"Crash course in US politics video",
 	citation:"© 2015 Craig Benzin/PBS http://youtube.com/pbsdigitalstudios"
-	}
-	
-];
+	}];
 
 var projects=[ 
 	{
