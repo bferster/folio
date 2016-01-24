@@ -55,10 +55,10 @@
 		.sf-itemsPicker { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:616px;
 						margin:12px;color:#aaa;text-align:left;min-width:160px;margin-top:20px;
 						}
-		.sf-item	    { display:inline-block;width:128px;height:64px;margin-bottom:36px;
-						text-align:center;margin-right:16px;
+		.sf-item	    { display:inline-block;width:130px;height:64px;padding-bottom:36px;
+						text-align:center;margin-right:16px;color:#888;overflow:hidden;
 						}
-		.sf-itemPic    { width:128px;height:64px;border:1px solid #ccc;cursor:pointer;
+		.sf-itemPic    { width:128px;height:64px;border:1px solid #999;cursor:pointer;
 						}
 		.sf-projectItems {
 						border-top:1px solid #ccc;width:100%;text-align:center;color:#ccc;
@@ -325,14 +325,32 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 	str+=" &nbsp;and filter  by &nbsp;<input type='text' class='sf-is' id='pFilter' style='width:150px'> &nbsp;"
 	str+="</div><br>"; 
 
-var v=["webitem","imageitem","qmediaitem","kalturaitem","mapitem","wordpressitem","pdfitem"];
-
-	for (i=0;i<30;++i) {
-		str+="<div id='item-"+i+"' class='sf-item'>";
-		pic=v[Math.round((Math.random()*6))];
-		str+="<img src='img/"+pic+".png' class='sf-itemPic';>Item "+(i+1)+"'s title</div>";
+	var pic,lab;
+	for (i=0;i<items.length;++i) {												// For each item
+		str+="<div id='item-"+i+"' class='sf-item'>";							// Add item container
+		if (items[i].title)														// If a title
+			lab=ShortenString(items[i].title,35);								// Add it
+		if (items[i].thumb)														// If a thumb
+			pic=items[i].thumb;													// Add it
+		else{																	// Use generic images
+			pic="img/";															// Add folder
+			switch (items[i].type) {											// Route on type
+				case 	"kaltura": 	pic+="kalturaitem"; 		break;			// Set
+				case 	"youtube": 	pic+="youtubeitem"; 		break;			// Set
+				default: 			pic+="webitem"; 			break;			// All others use web oic
+				}
+			pic+=".png";														// Add ext
+			}	
+		str+="<img src='"+pic+"' class='sf-itemPic'>"+lab+"</div>";				// Add pic	
 		}
-	return "</div>"+str;													// Return prokect page
+
+var v=["webitem","imageitem","qmediaitem","kalturaitem","mapitem","wordpressitem","pdfitem","mandalaitem","veitem"];
+	for (i=items.length;i<30;++i) {
+		str+="<div id='item-"+i+"' class='sf-item'>";							// Add item container
+		pic=v[Math.round((Math.random()*8))];
+		str+="<img src='img/"+pic+".png' class='sf-itemPic'>Item "+(i+1)+"'s title</div>";
+		}
+	return "</div>"+str;													// Return project page
 }	
 
 
@@ -505,12 +523,12 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var items=[ {
-	type:"Kaltura",
+	type:"kaltura",
 	src:"kaltura_player_1_c7z7zuiv",
 	thumb:"https://cfvod.kaltura.com/p/343772/sp/34377200/thumbnail/entry_id/1_c7z7zuiv/version/100011/acv/121",
-	title:"Hip Voter video",
+	title:"HipVoter intro video",
 	desc:"A video to encourage millenial voting",
-	citation:"(c) 2015 University of Virginia www.hipvoter.com",
+	citation:"© 2015 University of Virginia. http://www.hipvoter.com",
 	startDate:"12/12/2015",
 	placeName:"Charlottesville, VA",
 	permissions:"r",
@@ -518,12 +536,26 @@ var items=[ {
 	start:"0",
 	end:"1:45",
 	volume:"50"
+	},
+	{
+	type:"web",
+	src:"https://www.barackobama.com",
+	title:"Barack Obama website",
+	citation:"© 2016 Organizing for Action. All Rights Reserved.",
+	thumb:"http://www.logodesignlove.com/images/monograms/obama-08-logo-15.jpg"
+	},
+	{
+	type:"youtube",
+	src:"https://www.youtube.com/embed/lrk4oY7UxpQ?list=PL8dPuuaLjXtOfse2ncvffeelTrqvhrz8H",
+	title:"Crash course in US politics video",
+	citation:"© 2015 Craig Benzin/PBS http://youtube.com/pbsdigitalstudios"
 	}
-];
 	
+];
+
 var projects=[ 
 	{
-	title:"Hip voting",
+	title:"Hip voting ",
 	desc:"To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election. The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
 	cite:"(c) 2016 University of Virginia www.hipvoter.com",
 	tags:"Politics, MDST 3703",
