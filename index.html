@@ -341,18 +341,23 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 				case 	"youtube": 	pic+="youtubeitem"; 		break;			
 				case 	"vimeo": 	pic+="vimeoitem"; 			break;			
 				case 	"qmedia": 	pic+="qmediaitem"; 			break;			
+				case 	"image": 	pic+="imageitem"; 			break;			
 				case 	"pdf": 		pic+="pdfitem"; 			break;			
-				default: 			pic+="webitem"; 			break;			// All others use web pic
+				case 	"map": 		pic+="mapitem"; 			break;			
+				case 	"shiva": 	pic+="shivaitem"; 			break;			
+				case 	"ve": 		pic+="veitem"; 				break;			
+				case 	"mandala": 	pic+="mandalaitem"; 		break;			
+				default: 			pic+="webitem"; 			break;		// All others use web pic
 				}
 			pic+=".png";														// Add ext
 			}	
 		str+="<img src='"+pic+"' class='sf-itemPic'>"+lab+"</div>";				// Add pic	
 		}
 
-var v=["webitem","imageitem","kalturaitem","mapitem","wordpressitem","pdfitem","mandalaitem","veitem"];
+var v=["webitem","imageitem","kalturaitem","mapitem","wordpressitem","pdfitem","mandalaitem","veitem","youtubeitem"];
 	for (i=items.length;i<30;++i) {
 		str+="<div id='item-"+i+"' class='sf-item'>";							// Add item container
-		pic=v[Math.round((Math.random()*7))];
+		pic=v[Math.round((Math.random()*8))];
 		str+="<img src='img/"+pic+".png' class='sf-itemPic'>Item "+(i+1)+"'s title</div>";
 		}
 	return "</div>"+str;													// Return project page
@@ -548,7 +553,7 @@ var items=[ {
 	citation:"© 2016 Organizing for Action. All Rights Reserved.",
 	thumb:"//www.logodesignlove.com/images/monograms/obama-08-logo-15.jpg"
 	},{
-	type:"qmedia",
+	type:"ve",
 	src:"712",
 	title:"A tale of two tours",
 	citation:"© 2015 Imani Nichols, Ashlyn Royer and Liz Carter",
@@ -559,11 +564,36 @@ var items=[ {
 	citation:"Weber, M. (1965). Politics as a Vocation. Philadelphia, PA: Fortress Press.",
 	desc:"\"Politics as a Vocation\" is an essay by German economist and sociologist Max Weber. It originated in the second lecture of a series he gave in Munich to the \"Free Students Union\" of Bavaria on 28 January 1919.",
 	},{
+	type:"qmedia",
+	src:"1",
+	title:"Clinton's TED talk",
+	citation:"© 2013 Bill Ferster",
+	},{
+	type:"map",
+	src:"/www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d11746813.386643479!2d-94.15516106249316!3d44.04465067207314!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1453647957378",
+	title:"Map of the US",
+	citation:"© 2016 Google INEGI",
+	},{
 	type:"vimeo",
 	src:"https://vimeo.com/80413179",
 	title:"NBC Politics Nation promo",
-	citation:"© 12013 Arturo Echeverria / NBC",
-	thumb:"//i.vimeocdn.com/video/456322759_640.jpg"
+	citation:"© 2013 Arturo Echeverria / NBC",
+	},{
+	type:"image",
+	src:"//www.viseyes.org/shiva/qmedia/clinton01.jpg",
+	title:"Bill Clinton at TED",
+	citation:"© 2007 TED conference",
+	thumb:"//www.viseyes.org/shiva/qmedia/clinton01.jpg"
+	},{
+	type:"shiva",
+	src:"//www.viseyes.org/shiva/go.htm?e=1121",
+	title:"Clinton network visualization",
+	citation:"© 2013 Bill Ferster",
+	},{
+	type:"mandala",
+	src:"//http://texts.drupal-dev.shanti.virginia.edu/book_pubreader/9623",
+	title:"An introduction to Lhasa",
+	citation:"© 2009 David Germano",
 	},{
 	type:"youtube",
 	src:"//www.youtube.com/embed/lrk4oY7UxpQ?list=PL8dPuuaLjXtOfse2ncvffeelTrqvhrz8H",
