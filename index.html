@@ -139,6 +139,8 @@ function folio()														// CONSTRUCTOR
 {
 	sf=this;																// Point to folio
 	this.changed=false;														// No changes yet
+	this.itemFilter="";														// No filter
+	this.itemType="All types";												// All types
 	this.curProject=this.curView=this.curPage=-1;							// Assume not chosen
 	this.queryString=window.location.search.substring(1);					// Get query string
 	this.InitFolio("");														// Init project
@@ -208,22 +210,22 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 	if (this.page == "project")	{											// If a project
 		$("#pTitle").on("change",function() { 								// If changed
 			projects[sf.curProject].title=$("#pTitle").val();				// Set it	
-			sf.changed=true;												// Something changed
+			sf.Do()															// Something changed
 			});
 		
 		$("#pDesc").on("change",function() { 								// If changed
 			projects[sf.curProject].desc=$("#pDesc").val();					// Set it	
-			sf.changed=true;												// Something changed
+			sf.Do()															// Something changed
 			});
 		
 		$("#pCite").on("change",function() { 								// If changed
 			projects[sf.curProject].cite=$("#pCite").val();					// Set it	
-			sf.changed=true;												// Something changed
+			sf.Do()															// Something changed
 			});
 		
 		$("#pTags").on("change",function() { 								// If changed
 			projects[sf.curProject].tags=$("#pTags").val();					// Set it	
-			sf.changed=true;												// Something changed
+			sf.Do()															// Something changed
 			});
 		
 		for (i=0;i<projects.length;++i)										// For each project
@@ -233,11 +235,21 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 				sf.Draw();													// Redraw
 				});
 
+		$("#pFilter").on("change",function() { 								// If changed
+			sf.itemFilter=$("#pFilter").val();								// Set it	
+			sf.Draw();														// Redraw
+			});
+	
+		$("#pType").on("change",function() { 								// If changed
+			sf.itemType=$("#pType").val();									// Set it	
+			sf.Draw();														// Redraw
+			});
+
 		$("#galleryAddBut").on("click",function() { 						// ADD NEW PROJECT
 			projects.push({ title:"New project" });							// Add shell					
 			sf.curProject=projects.length-1;								// Point at it
 			Sound("ding");													// Ding
-			sf.changed=true;												// Something changed
+			sf.Do()															// Something changed
 			sf.Draw();														// Redraw
 			});
 		
@@ -246,7 +258,7 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 				projects.splice(sf.curProject,1);							// Remove it
 				sf.curProject--;											// Go to previous projcet
 				Sound("delete");											// Delete
-				sf.changed=true;											// Something changed
+				sf.Do()														// Something changed
 				sf.Draw();													// Redraw
 				});
 			});
@@ -258,7 +270,7 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 				else														// Frist one one
 					projects[sf.curProject].collab=s;						// Add first collaborator
 				Sound("ding");												// Ding
-				sf.changed=true;											// Something changed
+				sf.Do()														// Something changed
 				sf.Draw();													// Redraw
 				$("#pCollab").val(s);
 			});
@@ -273,7 +285,7 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 				v.splice($("#pCollab").prop('selectedIndex'),1);			// Delete it
 				projects[sf.curProject].collab=v.toString();				// Combine into string
 				Sound("delete");											// Delete
-				sf.changed=true;											// Something changed
+				sf.Do()											// Something changed
 				sf.Draw();													// Redraw
 				});
 			});
@@ -309,13 +321,18 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="type='text' value='"+pTags+"'></td></tr>";
 	str+="<tr height='28'><td>Collaborators&nbsp;&nbsp;</td>";
 	str+="<td>"+MakeSelect("pCollab",false,pCollab);
-	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:20px;margin-right:10px'>";
-	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px'></td></tr>";
+	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:20px;margin-right:10px' title='Add new collaborator'>";
+	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
 	str+="</table><br>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'>";
 	str+="<p style='text-align:center'>Drag items to include in project here</p></div>";
 	return "</div>"+str;													// Return project page
 }	
+
+folio.prototype.Do=function()											// DO
+{
+	this.changed=true;														// Set change flag
+}
 	
 folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 {
@@ -323,12 +340,22 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 	if (this.curProject < 0) 												// No project selected
 		return "</div>"+str;												// Return empty page
 	str+="<div style='text-align:center'>Show only these items &nbsp;";			
-	str+=MakeSelect("pType",false,["All types","Kaltura","Mandala","Images","Maps","Visualizations","WordPress"]);
-	str+=" &nbsp;and filter  by &nbsp;<input type='text' class='sf-is' id='pFilter' style='width:150px'> &nbsp;"
+	str+=MakeSelect("pType",false,["All types","Web","Image","Map","Kaltura","WordPress","Mandala","SHIVA","Qmedia","VisualEyes"],this.itemType);
+	str+=" &nbsp;and filter  by &nbsp;<input type='text' class='sf-is' id='pFilter' value='"+this.itemFilter+"' style='width:150px'> &nbsp;"
 	str+="</div><br>"; 
 
 	var pic,lab;
+	var typ=this.itemType.toLowerCase();										// Type as lc
+	var fil=this.itemFilter.toLowerCase();										// Filter as lc
 	for (i=0;i<items.length;++i) {												// For each item
+		if (typ != "all types")													// If filtering by type
+			if (items[i].type != typ)											// Not the right one
+				continue;														// Skip it
+		if (fil) {																// If filtering by text
+			lab=items[i].title+items[i].desc+items[i].citation+items[i].tags;	// Get certain fields
+			if (lab.toLowerCase().indexOf(fil) == -1) 							// If not in there
+				continue;														// Skip it
+			}
 		str+="<div id='item-"+i+"' class='sf-item'>";							// Add item container
 		if (items[i].title)														// If a title
 			lab=ShortenString(items[i].title,35);								// Add it
@@ -337,17 +364,17 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 		else{																	// Use generic images
 			pic="img/";															// Add folder
 			switch (items[i].type) {											// Route on type
-				case 	"kaltura": 	pic+="kalturaitem"; 		break;			// Set
-				case 	"youtube": 	pic+="youtubeitem"; 		break;			
-				case 	"vimeo": 	pic+="vimeoitem"; 			break;			
-				case 	"qmedia": 	pic+="qmediaitem"; 			break;			
-				case 	"image": 	pic+="imageitem"; 			break;			
-				case 	"pdf": 		pic+="pdfitem"; 			break;			
-				case 	"map": 		pic+="mapitem"; 			break;			
-				case 	"shiva": 	pic+="shivaitem"; 			break;			
-				case 	"ve": 		pic+="veitem"; 				break;			
-				case 	"mandala": 	pic+="mandalaitem"; 		break;			
-				default: 			pic+="webitem"; 			break;		// All others use web pic
+				case 	"kaltura": 		pic+="kalturaitem"; 		break;		// Set
+				case 	"youtube": 		pic+="youtubeitem"; 		break;			
+				case 	"vimeo": 		pic+="vimeoitem"; 			break;			
+				case 	"qmedia": 		pic+="qmediaitem"; 			break;			
+				case 	"image": 		pic+="imageitem"; 			break;			
+				case 	"pdf": 			pic+="pdfitem"; 			break;			
+				case 	"map": 			pic+="mapitem"; 			break;			
+				case 	"shiva": 		pic+="shivaitem"; 			break;			
+				case 	"visualeyes": 	pic+="veitem"; 				break;			
+				case 	"mandala": 		pic+="mandalaitem"; 		break;			
+				default: 				pic+="webitem"; 			break;		// All others use web pic
 				}
 			pic+=".png";														// Add ext
 			}	
@@ -356,6 +383,7 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 
 var v=["webitem","imageitem","kalturaitem","mapitem","wordpressitem","pdfitem","mandalaitem","veitem","youtubeitem"];
 	for (i=items.length;i<30;++i) {
+		if ((typ != "all types") || fil)	continue;
 		str+="<div id='item-"+i+"' class='sf-item'>";							// Add item container
 		pic=v[Math.round((Math.random()*8))];
 		str+="<img src='img/"+pic+".png' class='sf-itemPic'>Item "+(i+1)+"'s title</div>";
@@ -392,10 +420,10 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 	str+="<div style='position:relative;text-align:center;margin-top:8px'>";
 	str+"</div>";
 	str+="<div class='sf-galleryTool'>";
-	str+="<img id='galleryAddBut' class='sf-galleryBut' src='img/addbut.gif'>";
-	str+="<img id='galleryCartBut' class='sf-galleryBut'src='img/cartbut.gif'>";
-	str+="<img id='gallerySettingsBut' class='sf-galleryBut' src='img/settingsbut.gif'>";
-	str+="<img id='galleryTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='margin-right:0px'>";
+	str+="<img id='galleryAddBut' class='sf-galleryBut' src='img/addbut.gif' title='Add new project'>";
+	str+="<img id='galleryCopyBut' class='sf-galleryBut'src='img/copybut.gif'  title='Copy a project'>";
+	str+="<img id='gallerySettingsBut' class='sf-galleryBut' src='img/settingsbut.gif' title='Project settings'>";
+	str+="<img id='galleryTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='margin-right:0px' title='Remove a project'>";
 	str+="</div>";
 	return str+"</div>";
 	}
@@ -553,7 +581,7 @@ var items=[ {
 	citation:"© 2016 Organizing for Action. All Rights Reserved.",
 	thumb:"//www.logodesignlove.com/images/monograms/obama-08-logo-15.jpg"
 	},{
-	type:"ve",
+	type:"visualeyes",
 	src:"712",
 	title:"A tale of two tours",
 	citation:"© 2015 Imani Nichols, Ashlyn Royer and Liz Carter",
