@@ -7,6 +7,7 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
 	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
+	<script src="jquery.ui.touch-punch.min.js"></script>
 	<script src="ckeditor/ckeditor.js"></script>
 
 	<style type="text/css">
@@ -102,6 +103,7 @@ $(window).resize(function() {											// ON WINDOW RESIZE
 	});
 			
 $(document).ready(function() {											// ON PAGE LOADED
+	isMobile=navigator.userAgent.match(/(ipad|iphone|ipod|android)/i) ? true : false; // Set mobile flag
  	new folio();															// Load main object
 	$("#mainDiv").animate({ opacity:1},1000, function() {				
 		$("#mainDiv").css("opacity",1);
@@ -336,20 +338,21 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 			pic="img/";															// Add folder
 			switch (items[i].type) {											// Route on type
 				case 	"kaltura": 	pic+="kalturaitem"; 		break;			// Set
-				case 	"youtube": 	pic+="youtubeitem"; 		break;			// Set
-				case 	"vimeo": 	pic+="vimeoitem"; 			break;			// Set
-				case 	"qmedia": 	pic+="qmediaitem"; 			break;			// Set
-				default: 			pic+="webitem"; 			break;			// All others use web oic
+				case 	"youtube": 	pic+="youtubeitem"; 		break;			
+				case 	"vimeo": 	pic+="vimeoitem"; 			break;			
+				case 	"qmedia": 	pic+="qmediaitem"; 			break;			
+				case 	"pdf": 		pic+="pdfitem"; 			break;			
+				default: 			pic+="webitem"; 			break;			// All others use web pic
 				}
 			pic+=".png";														// Add ext
 			}	
 		str+="<img src='"+pic+"' class='sf-itemPic'>"+lab+"</div>";				// Add pic	
 		}
 
-var v=["webitem","imageitem","qmediaitem","kalturaitem","mapitem","wordpressitem","pdfitem","mandalaitem","veitem"];
+var v=["webitem","imageitem","kalturaitem","mapitem","wordpressitem","pdfitem","mandalaitem","veitem"];
 	for (i=items.length;i<30;++i) {
 		str+="<div id='item-"+i+"' class='sf-item'>";							// Add item container
-		pic=v[Math.round((Math.random()*8))];
+		pic=v[Math.round((Math.random()*7))];
 		str+="<img src='img/"+pic+".png' class='sf-itemPic'>Item "+(i+1)+"'s title</div>";
 		}
 	return "</div>"+str;													// Return project page
@@ -550,10 +553,16 @@ var items=[ {
 	title:"A tale of two tours",
 	citation:"© 2015 Imani Nichols, Ashlyn Royer and Liz Carter",
 	},{
+	type:"pdf",
+	src:"http://anthropos-lab.net/wp/wp-content/uploads/2011/12/Weber-Politics-as-a-Vocation.pdf",
+	title:"Politics as a Vocation by Max Weber",
+	citation:"Weber, M. (1965). Politics as a Vocation. Philadelphia, PA: Fortress Press.",
+	desc:"\"Politics as a Vocation\" is an essay by German economist and sociologist Max Weber. It originated in the second lecture of a series he gave in Munich to the \"Free Students Union\" of Bavaria on 28 January 1919.",
+	},{
 	type:"vimeo",
 	src:"https://vimeo.com/80413179",
 	title:"NBC Politics Nation promo",
-	citation:"© 2013 Arturo Echeverria / NBC",
+	citation:"© 12013 Arturo Echeverria / NBC",
 	thumb:"//i.vimeocdn.com/video/456322759_640.jpg"
 	},{
 	type:"youtube",
@@ -561,6 +570,7 @@ var items=[ {
 	title:"Crash course in US politics video",
 	citation:"© 2015 Craig Benzin/PBS http://youtube.com/pbsdigitalstudios"
 	}];
+
 
 var projects=[ 
 	{
