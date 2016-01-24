@@ -50,10 +50,10 @@
 		.sf-galleryBut  { cursor:pointer;margin-right:25px;
 						}
 		.sf-projectPage { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:184px;
-						width:400px;margin:12px;color:#aaa;border-right:1px solid #ccc;
+						width:456px;margin:12px;color:#aaa;border-right:1px solid #ccc;
 						padding-right:16px;
 						}
-		.sf-itemsPicker { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:616px;
+		.sf-itemsPicker { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:672px;
 						margin:12px;color:#aaa;text-align:left;min-width:160px;margin-top:20px;
 						}
 		.sf-item	    { display:inline-block;width:130px;height:64px;padding-bottom:36px;
@@ -61,8 +61,7 @@
 						}
 		.sf-itemPic    { width:128px;height:64px;border:1px solid #999;cursor:pointer;
 						}
-		.sf-projectItems {
-						border-top:1px solid #ccc;width:100%;text-align:center;color:#ccc;
+		.sf-projectItems {	width:100%;text-align:center;color:#aaa;
 						}
 
 		.unselectable { -moz-user-select: none;     -khtml-user-select: none;
@@ -162,12 +161,12 @@ folio.prototype.Draw=function()											// DRAW PAGE
 	$("#bodyDiv").height(h-54);												// Set body height
 	this.DrawMenu();														// Set menu
 	this.DrawBody();														// Draw body
+	this.AddItems("projectItemsDiv");										// Add project items
 	$("#projectDiv").height(h-78);											// Set project height
 	$("#itemPickerDiv").height(h-78);										// Set picker width height
-	$("#itemPickerDiv").width(w-648);										// Set picker width 
+	$("#itemPickerDiv").width(w-704);										// Set picker width 
 }
 		
-	
 folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 {
 	$("#projectMenu").css("color","#000000");								// Reset
@@ -246,11 +245,23 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 			});
 
 		$("#galleryAddBut").on("click",function() { 						// ADD NEW PROJECT
-			projects.push({ title:"New project" });							// Add shell					
+			projects.push({ title:"New project", items:[] });				// Add shell					
 			sf.curProject=projects.length-1;								// Point at it
 			Sound("ding");													// Ding
 			sf.Do()															// Something changed
 			sf.Draw();														// Redraw
+			});
+		
+		$("#galleryCopyBut").on("click",function() { 							// ADD NEW COLLABORATOR
+ 			GetTextBox("Type project name", "This is the name of the new project made from the current one", "", function(s) {	// Ask for name
+				var o=JSON.stringify(projects[sf.curProject]);					// Deep copy current project as JSON
+				projects.push($.parseJSON(o));									// Add copy as object					
+				sf.curProject=projects.length-1;								// Point at it
+				projects[projects.length-1].title=s;							// Change title
+				Sound("ding");													// Ding
+				sf.Do()															// Something changed
+				sf.Draw();														// Redraw
+				});
 			});
 		
 		$("#galleryTrashBut").on("click",function() { 						// DELETE PROJECT
@@ -285,18 +296,30 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 				v.splice($("#pCollab").prop('selectedIndex'),1);			// Delete it
 				projects[sf.curProject].collab=v.toString();				// Combine into string
 				Sound("delete");											// Delete
-				sf.Do()											// Something changed
+				sf.Do()														// Something changed
 				sf.Draw();													// Redraw
 				});
 			});
 
-for (i=0;i<30;++i) $("#item-"+i).draggable({ revert:true});
+		$("#projectDiv").droppable({
+			 drop: function(event, ui) {									// On drop
+		 		projects[sf.curProject].items.push(ui.draggable.prop("id").substr(5));	// Add to items
+				sf.Do()														// Something changed
+				sf.AddItems("projectItemsDiv");								// Add project items
+				}
+			 });
+		
+		for (i=0;i<30;++i) 													// For each item
+			$("#item-"+i).draggable({ 										// Make itesm draggable
+				helper:'clone',appendTo:'body',revert:true 					// Beyond parent frame
+				});
 
 	}
 }	
 	
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
+	var i;
 	var pTitle="",pDesc="",pCite="",pTags="",pCollab=[];
 	var str="<br>"
 	str+="<div id='projectDiv' class='sf-projectPage'>";					// Project container
@@ -323,10 +346,45 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<td>"+MakeSelect("pCollab",false,pCollab);
 	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:20px;margin-right:10px' title='Add new collaborator'>";
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
-	str+="</table><br>";
-	str+="<div id='projectItemsDiv' class='sf-projectItems'>";
-	str+="<p style='text-align:center'>Drag items to include in project here</p></div>";
+	str+="</table>";
+	str+="<div id='projectItemsDiv' class='sf-projectItems'></div>";		// Items div
 	return "</div>"+str;													// Return project page
+}
+	
+folio.prototype.AddItems=function(div)										// ADD ITEMS
+{
+	var o,i,n,lab,pic;
+	var str="<p style='text-align:center'>Drag items to include in project here</p>";
+	if (div == "projectItemsDiv")
+		n=projects[this.curProject].items.length;
+	for (i=0;i<n;++i) {															// For each item
+		if (div == "projectItemsDiv")											// If project items
+			o=items[projects[this.curProject].items[i]];						// Point at item
+		str+="<div id='pitem-"+i+"' class='sf-item'>";							// Add item container
+		if (o.title)															// If a title
+			lab=ShortenString(o.title,35);										// Add it
+		if (o.thumb)															// If a thumb
+			pic=o.thumb;														// Add it
+		else{																	// Use generic images
+			pic="img/";															// Add folder
+			switch (o.type) {													// Route on type
+				case 	"kaltura": 		pic+="kalturaitem"; 		break;		// Set
+				case 	"youtube": 		pic+="youtubeitem"; 		break;			
+				case 	"vimeo": 		pic+="vimeoitem"; 			break;			
+				case 	"qmedia": 		pic+="qmediaitem"; 			break;			
+				case 	"image": 		pic+="imageitem"; 			break;			
+				case 	"pdf": 			pic+="pdfitem"; 			break;			
+				case 	"map": 			pic+="mapitem"; 			break;			
+				case 	"shiva": 		pic+="shivaitem"; 			break;			
+				case 	"visualeyes": 	pic+="veitem"; 				break;			
+				case 	"mandala": 		pic+="mandalaitem"; 		break;			
+				default: 				pic+="webitem"; 			break;		// All others use web pic
+				}
+			pic+=".png";														// Add ext
+			}	
+		str+="<img src='"+pic+"' class='sf-itemPic'>"+lab+"</div>";				// Add pic	
+		}
+	$("#"+div).html(str);
 }	
 
 folio.prototype.Do=function()											// DO
@@ -379,14 +437,6 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 			pic+=".png";														// Add ext
 			}	
 		str+="<img src='"+pic+"' class='sf-itemPic'>"+lab+"</div>";				// Add pic	
-		}
-
-var v=["webitem","imageitem","kalturaitem","mapitem","wordpressitem","pdfitem","mandalaitem","veitem","youtubeitem"];
-	for (i=items.length;i<30;++i) {
-		if ((typ != "all types") || fil)	continue;
-		str+="<div id='item-"+i+"' class='sf-item'>";							// Add item container
-		pic=v[Math.round((Math.random()*8))];
-		str+="<img src='img/"+pic+".png' class='sf-itemPic'>Item "+(i+1)+"'s title</div>";
 		}
 	return "</div>"+str;													// Return project page
 }	
@@ -636,14 +686,17 @@ var projects=[
 	desc:"To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election. The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
 	cite:"(c) 2016 University of Virginia www.hipvoter.com",
 	tags:"Politics, MDST 3703",
-	collab:"Mike, James, Hanna, Michelle"
+	collab:"Mike, James, Hanna, Michelle",
+	items:[0,1]
 	},
 	{
 	title:"A tale of two tours",
 	desc:"Welcome to our Tale of Two Tours where we will lead you through a digital experience of Paul McCartney's 1989 World Tour and his 2009 Summer Tour. Here you will find setlist information, tour member biographies, and individual concert facts.",
 	cite:"(c) 2016 University of Virginia",
 	tags:"Entertainment, MDST 3703",
-	collab:"Imani, Ashlyn, Liz"
+	collab:"Imani, Ashlyn, Liz",
+	items:[2]
+	
 	}
 ];
 			
