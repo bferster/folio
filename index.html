@@ -29,6 +29,11 @@
 						}
 		.sf-breadItem {	text-align:left;float:right;margin-right:12px;margin-top:8px;
 						}
+		.sf-lightBox	{ position:absolute;padding:16px;border-radius:6px;z-index:2500;
+						background-color:#f8f8f8;font-size:12px;
+						}
+		.sf-lightBoxTitle { color:#000;font-weight:bold;font-size:18px;
+						}
 		.sf-is {		border-radius:12px;padding-left:8px;padding-right:8px;padding-top:3px;padding-bottom:2px;
 						border:1px solid #ccc;font-size:12px;width:95%;color:#999;
 						}
@@ -63,6 +68,9 @@
 						text-align:center;margin-right:16px;color:#888;overflow:hidden;
 						}
 		.sf-itemPic    { width:128px;height:64px;border:1px solid #999;cursor:pointer;
+						}
+		
+		.sf-previewTitle { margin-top:8px;margin-bottom:-4px;color:#999;font-weight:bold;
 						}
 		.unselectable { -moz-user-select: none;     -khtml-user-select: none;
 		   			 	-webkit-user-select: none;  -ms-user-select: none;   user-select: none;
@@ -321,7 +329,11 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 		
 		for (i=0;i<items.length;++i) {										// For each item
 			$("#item-"+i).on("dblclick",function() {						// ON DOUBLE CLICK
-				trace(33);
+				var id=$(this).prop("id").substr(5);
+				var str="<div class='sf-previewTitle'>"+items[id].title+"</div><br>";
+				var h=window.innerHeight-350;
+				str+="<iframe frameborder='0' height='"+h+"' width='100%' style='opacity:0,border:1px solid #666' src='"+items[id].src+"'/>";
+				ShowLightBox(500,"Preview",str);
 				});
 			
 			$("#item-"+i).draggable({ 										// Make item draggable
@@ -562,6 +574,23 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 		return "";
 	}
 
+
+	function ShowLightBox(width, title, content)
+	{
+		var str="<div id='lightBoxDiv' style='position:fixed;width:100%;height:100%;";	
+		str+="background:url(img/overlay.png) repeat;top:0px;left:0px';</div>";
+		$("body").append(str);														
+		var x=$("#lightBoxDiv").width()/2-width/2;
+		str="<div id='lightBoxIntDiv' class='unselectable sf-lightBox' ";
+		str+="style='width:"+width+"px;left:"+x+"px;top:100px;'>";
+		str+="<img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span id='lightBoxTitle' class='sf-lightBoxTitle'>"+title+"</span>";
+		str+="<img src='img/x.gif' style='cursor:pointer;position:absolute;top:22px;left:"+width+"px' "; 
+		str+="onclick='$(\"#lightBoxDiv\").remove(),Sound(\"click\")'>";
+		str+="<div id='lightContentDiv'>"+content+"</div>";					
+		$("#lightBoxDiv").append(str);	
+}
+
 	function AlertBox(title, content, callback)								// ALERT BOX
 	{
 		$("#alertBoxDiv").remove();												
@@ -644,7 +673,7 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 
 var items=[ {
 	type:"media",
-	src:"kaltura_player_1_c7z7zuiv",
+	src:"//www.kaltura.com/p/2003471/sp/0/playManifest/entryId/1_c7z7zuiv/format/url/flavorParamId/2003471/video.mp4",
 	thumb:"https://cfvod.kaltura.com/p/343772/sp/34377200/thumbnail/entry_id/1_c7z7zuiv/version/100011/acv/121",
 	title:"HipVoter.com intro video",
 	desc:"A video to encourage millenial voting",
@@ -664,7 +693,7 @@ var items=[ {
 	thumb:"//www.logodesignlove.com/images/monograms/obama-08-logo-15.jpg"
 	},{
 	type:"visualeyes",
-	src:"712",
+	src:"//viseyes.org/visualeyes?712",
 	title:"A tale of two tours",
 	citation:"© 2015 Imani Nichols, Ashlyn Royer and Liz Carter",
 	},{
@@ -675,17 +704,17 @@ var items=[ {
 	desc:"\"Politics as a Vocation\" is an essay by German economist and sociologist Max Weber. It originated in the second lecture of a series he gave in Munich to the \"Free Students Union\" of Bavaria on 28 January 1919.",
 	},{
 	type:"qmedia",
-	src:"1",
+	src:"//qmediaplayer.com?1",
 	title:"Clinton's TED talk",
 	citation:"© 2013 Bill Ferster",
 	},{
 	type:"map",
-	src:"/www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d11746813.386643479!2d-94.15516106249316!3d44.04465067207314!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1453647957378",
+	src:"https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d11746813.386643479!2d-94.15516106249316!3d44.04465067207314!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1453647957378",
 	title:"Map of the US",
 	citation:"© 2016 Google INEGI",
 	},{
 	type:"media",
-	src:"80413179",
+	src:"//player.vimeo.com/video/80413179",
 	title:"NBC Politics Nation promo",
 	citation:"© 2013 Arturo Echeverria / NBC",
 	},{
@@ -711,7 +740,7 @@ var items=[ {
 	citation:"© 2016 Matt Mullenweg / Automattic LLC"
 	},{
 	type:"media",
-	src:"lrk4oY7UxpQ",
+	src:"//www.youtube.com/embed/lrk4oY7UxpQ",
 	title:"Crash course in US politics video",
 	citation:"© 2015 Craig Benzin/PBS http://youtube.com/pbsdigitalstudios"
 	}];
