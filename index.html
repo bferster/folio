@@ -329,11 +329,7 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 		
 		for (i=0;i<items.length;++i) {										// For each item
 			$("#item-"+i).on("dblclick",function() {						// ON DOUBLE CLICK
-				var id=$(this).prop("id").substr(5);
-				var str="<div class='sf-previewTitle'>"+items[id].title+"</div><br>";
-				var h=window.innerHeight-350;
-				str+="<iframe frameborder='0' height='"+h+"' width='100%' style='opacity:0,border:1px solid #666' src='"+items[id].src+"'/>";
-				ShowLightBox(500,"Preview",str);
+				sf.PreviewItem($(this).prop("id").substr(5));				// Preview		
 				});
 			
 			$("#item-"+i).draggable({ 										// Make item draggable
@@ -342,6 +338,14 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 			}
 	}
 }	
+
+folio.prototype.PreviewItem=function(id)								// PREVIEW ITEM
+{
+	var str="<div class='sf-previewTitle'>"+items[id].title+"</div><br>";
+	var h=window.innerHeight-350;
+	str+="<iframe frameborder='0' height='"+h+"' width='100%' style='opacity:0,border:1px solid #666' src='"+items[id].src+"'/>";
+	ShowLightBox(500,"Preview",str);
+}
 	
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
@@ -415,7 +419,7 @@ folio.prototype.AddItems=function(div)										// ADD ITEMS
 	$("#"+div).html(str);
 	
 	if (div == "projectItemsDiv") 												// If filling project items
-		for (i=0;i<n;++i) 														// For each item in project
+		for (i=0;i<n;++i) {														// For each item in project
 			$("#pitem-"+i).draggable({ 											// Make item draggable
 				helper:'clone',appendTo:'body',			 						// Beyond parent frame
 				stop: function(e, ui) {											// On stop dragging
@@ -427,6 +431,12 @@ folio.prototype.AddItems=function(div)										// ADD ITEMS
 						}
 					}
 				});
+				
+			$("#pitem-"+i).on("dblclick",function() {							// ON DOUBLE CLICK
+				var id=$(this).prop("id").substr(6);							// Get id of project item
+					sf.PreviewItem(projects[sf.curProject].items[id]);			// Preview		
+				});
+		}
 }	
 
 folio.prototype.Do=function()											// DO
