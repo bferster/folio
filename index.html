@@ -28,19 +28,19 @@
 		.sf-menuItem:hover { color:#00aa00;
 						}
 		.sf-breadItem {	text-align:left;float:right;margin-right:12px;margin-top:8px;
-						color:#888;
 						}
-		.sf-is {		border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;
-						border:1px solid #ccc;font-size:12px;height;24px;width:95%;color:#999;
+		.sf-is {		border-radius:12px;padding-left:8px;padding-right:8px;padding-top:3px;padding-bottom:2px;
+						border:1px solid #ccc;font-size:12px;width:95%;color:#999;
 						}
 		.sf-bs {		border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;color:#009900;
 						border:1px solid #ccc;font-size:12px;height;24px;background-color:#fff;cursor:pointer;
 						}
-		.sf-gallery {  	display:inline-block;text-align:center;padding:12px;padding-top:0px;padding-bottom:8px;
-						height:100%-60;background-color:#ddd;vertical-align:middle;color:#999;width:150px;
+		.sf-gallery {  	display:inline-block;text-align:center;width:150px;
+						padding-top:0px;padding-bottom:8px;padding-left:12px;padding-right:14px;
+						background-color:#ddd;vertical-align:middle;color:#999;
 						}
 		.sf-galleryContent { overflow-x:hidden;overflow-y:auto;background-color:#f8f8f8;
-						border:1px solid #bbb;width:100%;
+						border:1px solid #bbb;
 						}
 		.sf-galleryLab  { padding:8px;border-bottom:1px solid #999;text-align:center;
 						height:40px;background-color:#f8f8f8;
@@ -49,21 +49,21 @@
 						}
 		.sf-galleryBut  { cursor:pointer;margin-right:25px;
 						}
-		.sf-projectPage { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:184px;
-						width:456px;margin:12px;color:#aaa;border-right:1px solid #ccc;
-						padding-right:16px;
+		.sf-projectPage { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:186px;
+						width:430px;margin:12px;color:#aaa;border-right:1px solid #ccc;
+						padding-right:16px;margin-right:0px;
 						}
-		.sf-itemsPicker { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:672px;
-						margin:12px;color:#aaa;text-align:left;min-width:160px;margin-top:20px;
+		.sf-projectItems { width:440px;text-align:center;color:#aaa;margin-top:-8px;
+						}
+		.sf-itemsPicker { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:644px;
+						margin:18px;color:#aaa;text-align:left;min-width:160px;margin-top:20px;
+						margin-right:0px;
 						}
 		.sf-item	    { display:inline-block;width:130px;height:64px;padding-bottom:36px;
 						text-align:center;margin-right:16px;color:#888;overflow:hidden;
 						}
 		.sf-itemPic    { width:128px;height:64px;border:1px solid #999;cursor:pointer;
 						}
-		.sf-projectItems {	width:100%;text-align:center;color:#aaa;
-						}
-
 		.unselectable { -moz-user-select: none;     -khtml-user-select: none;
 		   			 	-webkit-user-select: none;  -ms-user-select: none;   user-select: none;
 		   				}
@@ -163,8 +163,8 @@ folio.prototype.Draw=function()											// DRAW PAGE
 	this.DrawBody();														// Draw body
 	this.AddItems("projectItemsDiv");										// Add project items
 	$("#projectDiv").height(h-78);											// Set project height
-	$("#itemPickerDiv").height(h-78);										// Set picker width height
-	$("#itemPickerDiv").width(w-704);										// Set picker width 
+	$("#itemPickerDiv").height(h-90);										// Set picker width height
+	$("#itemPickerDiv").width(w-666);										// Set picker width 
 }
 		
 folio.prototype.DrawMenu=function()										// DRAW MENU AREA
@@ -207,6 +207,9 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 		}
 	$("#bodyDiv").html(str);
 	if (this.page == "project")	{											// If a project
+ 		if (this.curProject < 0)											// If not a valid project										
+ 				return;														// Quit
+		
 		$("#pTitle").on("change",function() { 								// If changed
 			projects[sf.curProject].title=$("#pTitle").val();				// Set it	
 			sf.Do()															// Something changed
@@ -247,25 +250,29 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 		$("#galleryAddBut").on("click",function() { 						// ADD NEW PROJECT
 			projects.push({ title:"New project", items:[] });				// Add shell					
 			sf.curProject=projects.length-1;								// Point at it
-			Sound("ding");													// Ding
+			Sound("add");													// Add
 			sf.Do()															// Something changed
 			sf.Draw();														// Redraw
 			});
 		
-		$("#galleryCopyBut").on("click",function() { 							// ADD NEW COLLABORATOR
+		$("#galleryCopyBut").on("click",function() { 						// COPY A PROJECT
+ 			if (sf.curProject < 0)											// If not a valid project										
+ 				return;														// Quit
  			GetTextBox("Type project name", "This is the name of the new project made from the current one", "", function(s) {	// Ask for name
-				var o=JSON.stringify(projects[sf.curProject]);					// Deep copy current project as JSON
-				projects.push($.parseJSON(o));									// Add copy as object					
-				sf.curProject=projects.length-1;								// Point at it
-				projects[projects.length-1].title=s;							// Change title
-				Sound("ding");													// Ding
-				sf.Do()															// Something changed
-				sf.Draw();														// Redraw
+				var o=JSON.stringify(projects[sf.curProject]);				// Deep copy current project as JSON
+				projects.push($.parseJSON(o));								// Add copy as object					
+				sf.curProject=projects.length-1;							// Point at it
+				projects[projects.length-1].title=s;						// Change title
+				Sound("add");												// Add
+				sf.Do()														// Something changed
+				sf.Draw();													// Redraw
 				});
 			});
 		
 		$("#galleryTrashBut").on("click",function() { 						// DELETE PROJECT
-				ConfirmBox("This will delete the project:<br><br><b><i>"+projects[sf.curProject].title+"</b></i>", function() {
+ 			if (sf.curProject < 0)											// If not a valid project										
+ 				return;														// Quit
+			ConfirmBox("This will delete the project:<br><br><b><i>"+projects[sf.curProject].title+"</b></i>", function() {
 				projects.splice(sf.curProject,1);							// Remove it
 				sf.curProject--;											// Go to previous projcet
 				Sound("delete");											// Delete
@@ -280,7 +287,7 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 					projects[sf.curProject].collab+=","+s;					// Add new collaborator
 				else														// Frist one one
 					projects[sf.curProject].collab=s;						// Add first collaborator
-				Sound("ding");												// Ding
+				Sound("add");												// Add
 				sf.Do()														// Something changed
 				sf.Draw();													// Redraw
 				$("#pCollab").val(s);
@@ -303,17 +310,24 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 
 		$("#projectDiv").droppable({
 			 drop: function(event, ui) {									// On drop
-		 		projects[sf.curProject].items.push(ui.draggable.prop("id").substr(5));	// Add to items
-				sf.Do()														// Something changed
-				sf.AddItems("projectItemsDiv");								// Add project items
+				if (ui.draggable.prop("id").substr(0,5)== "item-") {		// From items corpus
+			 		projects[sf.curProject].items.push(ui.draggable.prop("id").substr(5));	// Add to items
+					Sound("add");											// Add
+					sf.Do()													// Something changed
+					sf.AddItems("projectItemsDiv");							// Add project items
+					}
 				}
 			 });
 		
-		for (i=0;i<30;++i) 													// For each item
-			$("#item-"+i).draggable({ 										// Make itesm draggable
-				helper:'clone',appendTo:'body',revert:true 					// Beyond parent frame
+		for (i=0;i<items.length;++i) {										// For each item
+			$("#item-"+i).on("dblclick",function() {						// ON DOUBLE CLICK
+				trace(33);
 				});
-
+			
+			$("#item-"+i).draggable({ 										// Make item draggable
+				helper:'clone',appendTo:'body'			 					// Beyond parent frame
+				});
+			}
 	}
 }	
 	
@@ -355,8 +369,11 @@ folio.prototype.AddItems=function(div)										// ADD ITEMS
 {
 	var o,i,n,lab,pic;
 	var str="<p style='text-align:center'>Drag items to include in project here</p>";
-	if (div == "projectItemsDiv")
-		n=projects[this.curProject].items.length;
+	if (div == "projectItemsDiv") {												// If filling project items
+		if (this.curProject < 0)												// No project												
+			return;																// Quit
+		n=projects[this.curProject].items.length;								// Number of items
+		}
 	for (i=0;i<n;++i) {															// For each item
 		if (div == "projectItemsDiv")											// If project items
 			o=items[projects[this.curProject].items[i]];						// Point at item
@@ -376,6 +393,7 @@ folio.prototype.AddItems=function(div)										// ADD ITEMS
 				case 	"shiva": 		pic+="shivaitem"; 			break;			
 				case 	"visualeyes": 	pic+="veitem"; 				break;			
 				case 	"mandala": 		pic+="mandalaitem"; 		break;			
+				case 	"wordpress": 	pic+="wordpressitem"; 		break;			
 				default: 				pic+="webitem"; 			break;		// All others use web pic
 				}
 			pic+=".png";														// Add ext
@@ -383,6 +401,20 @@ folio.prototype.AddItems=function(div)										// ADD ITEMS
 		str+="<img src='"+pic+"' class='sf-itemPic'>"+lab+"</div>";				// Add pic	
 		}
 	$("#"+div).html(str);
+	
+	if (div == "projectItemsDiv") 												// If filling project items
+		for (i=0;i<n;++i) 														// For each item in project
+			$("#pitem-"+i).draggable({ 											// Make item draggable
+				helper:'clone',appendTo:'body',			 						// Beyond parent frame
+				stop: function(e, ui) {											// On stop dragging
+					if ((ui.position.left > 600) || (ui.position.left < 100)){	// Out of project items box
+				 		projects[sf.curProject].items.splice(e.target.id.substr(6),1);	// Remove it
+						Sound("delete");										// Delete
+						sf.Do()													// Something changed
+						sf.AddItems("projectItemsDiv");							// Add project items
+						}
+					}
+				});
 }	
 
 folio.prototype.Do=function()											// DO
@@ -395,9 +427,9 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 	var str="<div id='itemPickerDiv' class='sf-itemsPicker'>";				// Item picker container
 	if (this.curProject < 0) 												// No project selected
 		return "</div>"+str;												// Return empty page
-	str+="<div style='text-align:center'>Show only these items &nbsp;";			
-	str+=MakeSelect("pType",false,["All types","Web","Image","Map","Kaltura","WordPress","Mandala","SHIVA","Qmedia","VisualEyes"],this.itemType);
-	str+=" &nbsp;and filter  by &nbsp;<input type='text' class='sf-is' id='pFilter' value='"+this.itemFilter+"' style='width:150px'> &nbsp;"
+	str+="<div style='text-align:center'>Show only&nbsp;";			
+	str+=MakeSelect("pType",false,["All types","Web","Image","Map","Media","WordPress","Mandala","SHIVA","Qmedia","VisualEyes"],this.itemType);
+	str+="&nbsp; filtered&nbsp;by&nbsp;&nbsp;<input type='text' class='sf-is' id='pFilter' value='"+this.itemFilter+"' style='width:80px'> &nbsp;";
 	str+="</div><br>"; 
 
 	var pic,lab;
@@ -428,13 +460,14 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 				case 	"shiva": 		pic+="shivaitem"; 			break;			
 				case 	"visualeyes": 	pic+="veitem"; 				break;			
 				case 	"mandala": 		pic+="mandalaitem"; 		break;			
+				case 	"wordpress": 	pic+="wordpressitem"; 		break;			
 				default: 				pic+="webitem"; 			break;		// All others use web pic
 				}
 			pic+=".png";														// Add ext
 			}	
 		str+="<img src='"+pic+"' class='sf-itemPic'>"+lab+"</div>";				// Add pic	
 		}
-	return "</div>"+str;													// Return project page
+	return "</div>"+str;														// Return project page
 }	
 
 
@@ -454,6 +487,9 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 	
 	
 	if (sf.page == "project") {												// Project gallery
+		if (!projects.length)												// No projects yet
+			str+="<br>Add a new project by clicking on the + icon below"
+		
 		for (i=0;i<projects.length;++i) {
 			labs[i]=projects[i].title;
 			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span"
@@ -668,6 +704,11 @@ var items=[ {
 	src:"//http://texts.drupal-dev.shanti.virginia.edu/book_pubreader/9623",
 	title:"An introduction to Lhasa",
 	citation:"© 2009 David Germano",
+	},{
+	type:"wordpress",
+	src:"//wordpress.com/themes/",
+	title:"Available themes",
+	citation:"© 2016 Matt Mullenweg / Automattic LLC"
 	},{
 	type:"media",
 	src:"lrk4oY7UxpQ",
