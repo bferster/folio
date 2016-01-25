@@ -368,9 +368,7 @@ folio.prototype.AddItems=function(div)										// ADD ITEMS
 		else{																	// Use generic images
 			pic="img/";															// Add folder
 			switch (o.type) {													// Route on type
-				case 	"kaltura": 		pic+="kalturaitem"; 		break;		// Set
-				case 	"youtube": 		pic+="youtubeitem"; 		break;			
-				case 	"vimeo": 		pic+="vimeoitem"; 			break;			
+				case 	"media": 		pic+="mediaitem"; 			break;		// Set
 				case 	"qmedia": 		pic+="qmediaitem"; 			break;			
 				case 	"image": 		pic+="imageitem"; 			break;			
 				case 	"pdf": 			pic+="pdfitem"; 			break;			
@@ -422,9 +420,7 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 		else{																	// Use generic images
 			pic="img/";															// Add folder
 			switch (items[i].type) {											// Route on type
-				case 	"kaltura": 		pic+="kalturaitem"; 		break;		// Set
-				case 	"youtube": 		pic+="youtubeitem"; 		break;			
-				case 	"vimeo": 		pic+="vimeoitem"; 			break;			
+				case 	"media": 		pic+="mediaitem"; 			break;		// Set
 				case 	"qmedia": 		pic+="qmediaitem"; 			break;			
 				case 	"image": 		pic+="imageitem"; 			break;			
 				case 	"pdf": 			pic+="pdfitem"; 			break;			
@@ -611,7 +607,7 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 var items=[ {
-	type:"kaltura",
+	type:"media",
 	src:"kaltura_player_1_c7z7zuiv",
 	thumb:"https://cfvod.kaltura.com/p/343772/sp/34377200/thumbnail/entry_id/1_c7z7zuiv/version/100011/acv/121",
 	title:"HipVoter.com intro video",
@@ -637,7 +633,7 @@ var items=[ {
 	citation:"© 2015 Imani Nichols, Ashlyn Royer and Liz Carter",
 	},{
 	type:"pdf",
-	src:"http://anthropos-lab.net/wp/wp-content/uploads/2011/12/Weber-Politics-as-a-Vocation.pdf",
+	src:"//anthropos-lab.net/wp/wp-content/uploads/2011/12/Weber-Politics-as-a-Vocation.pdf",
 	title:"Politics as a Vocation by Max Weber",
 	citation:"Weber, M. (1965). Politics as a Vocation. Philadelphia, PA: Fortress Press.",
 	desc:"\"Politics as a Vocation\" is an essay by German economist and sociologist Max Weber. It originated in the second lecture of a series he gave in Munich to the \"Free Students Union\" of Bavaria on 28 January 1919.",
@@ -652,8 +648,8 @@ var items=[ {
 	title:"Map of the US",
 	citation:"© 2016 Google INEGI",
 	},{
-	type:"vimeo",
-	src:"https://vimeo.com/80413179",
+	type:"media",
+	src:"80413179",
 	title:"NBC Politics Nation promo",
 	citation:"© 2013 Arturo Echeverria / NBC",
 	},{
@@ -673,8 +669,8 @@ var items=[ {
 	title:"An introduction to Lhasa",
 	citation:"© 2009 David Germano",
 	},{
-	type:"youtube",
-	src:"//www.youtube.com/embed/lrk4oY7UxpQ?list=PL8dPuuaLjXtOfse2ncvffeelTrqvhrz8H",
+	type:"media",
+	src:"lrk4oY7UxpQ",
 	title:"Crash course in US politics video",
 	citation:"© 2015 Craig Benzin/PBS http://youtube.com/pbsdigitalstudios"
 	}];
