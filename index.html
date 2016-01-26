@@ -23,9 +23,7 @@
 		.sf-body {		width:100%;min-height:300px;color:#666;border:2px solid #ddd;
 						background-color:#fff;opacity:inherit;
 						}
-		.sf-menuItem {	margin-left:50px;cursor:pointer;
-						}
-		.sf-menuItem:hover { color:#00aa00;
+		.sf-menuItem {	margin-left:50px;cursor:pointer;color:#000;
 						}
 		.sf-breadItem {	text-align:left;float:right;margin-right:12px;margin-top:8px;
 						}
@@ -35,7 +33,7 @@
 		.sf-lightBoxTitle { color:#000;font-weight:bold;font-size:18px;
 						}
 		.sf-is {		border-radius:12px;padding-left:8px;padding-right:8px;padding-top:3px;padding-bottom:2px;
-						border:1px solid #ccc;font-size:12px;width:95%;color:#999;
+						border:1px solid #ccc;font-size:12px;width:95%;color:#666;
 						}
 		.sf-bs {		border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;color:#009900;
 						border:1px solid #ccc;font-size:12px;height;24px;background-color:#fff;cursor:pointer;
@@ -55,7 +53,7 @@
 		.sf-galleryBut  { cursor:pointer;margin-right:25px;
 						}
 		.sf-projectPage { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:186px;
-						width:430px;margin:12px;color:#aaa;border-right:1px solid #ccc;
+						width:430px;margin:12px;color:#999;border-right:1px solid #ccc;
 						padding-right:16px;margin-right:0px;
 						}
 		.sf-projectItems { width:440px;text-align:center;color:#aaa;margin-top:-8px;
@@ -66,6 +64,9 @@
 						}
 		.sf-item	    { display:inline-block;width:130px;height:64px;padding-bottom:36px;
 						text-align:center;margin-right:16px;color:#888;overflow:hidden;
+						}
+		.sf-pitem	    { display:inline-block;width:130px;height:64px;padding-bottom:36px;
+						text-align:center;margin-right:16px;color:#000099;overflow:hidden;
 						}
 		.sf-itemPic    { width:128px;height:64px;border:1px solid #999;cursor:pointer;
 						}
@@ -177,11 +178,12 @@ folio.prototype.Draw=function()											// DRAW PAGE
 		
 folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 {
-	$("#projectMenu").css("color","#000000");								// Reset
-	$("#viewMenu").css("color","#000000");									// Reset
-	$("#pageMenu").css("color","#000000");									// Reset
+	$("#editMenu").css("color","#000");										// Reset menu color
+	$("#projectMenu").css("color","#000");									// Reset
+	$("#viewMenu").css("color","#000");										// Reset
+	$("#pageMenu").css("color","#000");										// Reset
+	$("#helpMenu").css("color","#000");										// Reset
 	var str="<b>"+this.firstName+" "+this.lastName+"</b>";					// Add name
-	
 	if (this.page == "project")	{											// If project
 		$("#projectMenu").css("color","#00aa00");							// Highlight it
 		str+=" &nbsp;|&nbsp; ";												// Add to breadcrumb
@@ -202,18 +204,32 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 			str+=ShortenString(projects[this.curProject].title,20);			// Add title
 		str+=" &nbsp;|&nbsp; My view &nbsp;|&nbsp; 1";						// Add to breadcrumb
 		}
+	else if (this.page == "help") 											// If help
+		$("#helpMenu").css("color","#00aa00");								// Highlight it
 	$("#breadMenu").html(str);												// Set breadcrumb
 }
 
 folio.prototype.DrawBody=function()										// DRAW BODY AREA
 {
-	var str="<br>"
-	str=MakeGallery();														// Add Gallery
+	var str="";
 	if (this.page == "project") {											// If a project
+		str+=MakeGallery();													// Add Gallery
 		str+=this.MakeProjectPage();										// Add project page
 		str+=this.MakeItemsPicker();										// Add project items picker
 		}
-	$("#bodyDiv").html(str);
+	else if (this.page == "view") {											// If view
+		str+=MakeGallery();													// Add Gallery
+		}
+	else if (this.page == "page") {											// If page
+		str+=MakeGallery();													// Add Gallery
+		}
+	else if (this.page == "help") {											// If help
+		str+="<div id='projectDiv' class='sf-projectPage' style='left:0px;width:100%'>";	// Project container
+		str+="<iframe frameborder='0' height='"+window.innerHeight+"' width='100%' src='";
+		str+="//docs.google.com/document/d/1IEtDo0jMhtaVyFeewcB_UXHWirO2Al_jO6Ri7u1QYoI/pub?embedded=true'/></div>";
+		}
+	$("#bodyDiv").html(str);												// Fill body
+	
 	if (this.page == "project")	{											// If a project
  		if (this.curProject < 0)											// If not a valid project										
  				return;														// Quit
@@ -360,7 +376,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	if (projects[this.curProject].cite)   pCite=projects[this.curProject].cite;
 	if (projects[this.curProject].tags)   pTags=projects[this.curProject].tags;
 	if (projects[this.curProject].collab) pCollab=projects[this.curProject].collab.split(",");
-	str+="<table style='width:100%'>";
+	str+="<table style='width:100%;font-weight:bold'>";
 	str+="<tr height='32'><td width='1%'>Title</td>";
 	str+="<td><input class='sf-is' id='pTitle' ";
 	str+="type='text' value='"+pTitle+"'></td></tr>";
@@ -393,7 +409,7 @@ folio.prototype.AddItems=function(div)										// ADD ITEMS
 	for (i=0;i<n;++i) {															// For each item
 		if (div == "projectItemsDiv")											// If project items
 			o=items[projects[this.curProject].items[i]];						// Point at item
-		str+="<div id='pitem-"+i+"' class='sf-item'>";							// Add item container
+		str+="<div id='pitem-"+i+"' class='sf-pitem'>";							// Add item container
 		if (o.title)															// If a title
 			lab=ShortenString(o.title,35);										// Add it
 		if (o.thumb)															// If a thumb
@@ -432,6 +448,23 @@ folio.prototype.AddItems=function(div)										// ADD ITEMS
 					}
 				});
 				
+			$("#pitem-"+i).droppable({ 											// Make item droppable
+				 accept: ".sf-pitem",											// Accept only project items
+				 drop: function(event, ui) {									// On drop
+					var to=$(event.target).prop('id').substr(6);				// Get id of receiver item
+					var from=ui.draggable.prop('id').substr(6);					// Get id of dragged item
+					var o=projects[sf.curProject].items;						// Point at items
+					var t=o[to];												// Save to item
+					o[to]=o[from];												// Copy from -> to
+					o[from]=t;													// Reset to
+					Sound("click");												// Click
+					sf.Do()														// Something changed
+					sf.AddItems("projectItemsDiv");								// Add project items
+					}
+				 });
+
+			
+			
 			$("#pitem-"+i).on("dblclick",function() {							// ON DOUBLE CLICK
 				var id=$(this).prop("id").substr(6);							// Get id of project item
 					sf.PreviewItem(projects[sf.curProject].items[id]);			// Preview		
@@ -506,12 +539,9 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 	var title=sf.page.substr(0,1).toUpperCase()+sf.page.substr(1)+"s";
 	var str="<div id='gallery' class='sf-gallery'><p><b>"+title+"</b></p>";
 	str+="<div class='sf-galleryContent' style='height:"+(h-20)+"px'>";		// Scrollable container
-	
-	
 	if (sf.page == "project") {												// Project gallery
 		if (!projects.length)												// No projects yet
 			str+="<br>Add a new project by clicking on the + icon below"
-		
 		for (i=0;i<projects.length;++i) {
 			labs[i]=projects[i].title;
 			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span"
