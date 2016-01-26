@@ -35,8 +35,8 @@
 		.sf-is {		border-radius:12px;padding-left:8px;padding-right:8px;padding-top:3px;padding-bottom:2px;
 						border:1px solid #ccc;font-size:12px;width:95%;color:#666;
 						}
-		.sf-bs {		border-radius:10px;padding-left:8px;padding-right:8px;padding-top:1px;color:#009900;
-						border:1px solid #ccc;font-size:12px;height;24px;background-color:#fff;cursor:pointer;
+		.sf-bs {		border-radius:16px;padding-left:8px;padding-right:8px;padding-top:1px;color:#666;
+						font-size:12px;height:23px;background-color:#e8e8e8;cursor:pointer;border:1px solid #ccc;
 						}
 		.sf-gallery {  	display:inline-block;text-align:center;width:150px;
 						padding-top:0px;padding-bottom:8px;padding-left:12px;padding-right:14px;
@@ -58,6 +58,11 @@
 						}
 		.sf-projectItems { width:440px;text-align:center;color:#aaa;margin-top:-8px;
 						}
+		.sf-pagePage { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:186px;
+						width:800px;margin:12px;color:#999;border-right:1px solid #ccc;
+						padding-right:16px;margin-right:0px;
+						}
+
 		.sf-itemsPicker { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:644px;
 						margin:18px;color:#aaa;text-align:left;min-width:160px;margin-top:20px;
 						margin-right:0px;
@@ -88,8 +93,7 @@
 			<span style="vertical-align:10px">
 				S H A N T l
 				<span id="editMenu" class="sf-menuItem" style="margin-left:100px"> Edit</span>
-				<span id="projectMenu" class="sf-menuItem"> Projects</span>
-				<span id="viewMenu" class="sf-menuItem">Views</span>
+				<span id="projectMenu" class="sf-menuItem"> Portfolios</span>
 				<span id="pageMenu" class="sf-menuItem">Pages</span>
 				<span id="helpMenu" class="sf-menuItem">Help</span>
 				<div id="breadMenu" class="sf-breadItem"><b>Project:</b></div>
@@ -102,6 +106,7 @@
 //////////////////////////////////////////////////////////////////////////////////////////////////
 // MAIN 
 /////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 var sf=null;															// Holds main folio object									
 		
@@ -118,11 +123,6 @@ $(document).ready(function() {											// ON PAGE LOADED
 		});				 
 	$("#projectMenu").on("click",function() { 
 		sf.page="project";
-		Sound("click");												
-		sf.Draw();
-		});
-	$("#viewMenu").on("click",function() { 
-		sf.page="view";
 		Sound("click");												
 		sf.Draw();
 		});
@@ -149,7 +149,7 @@ function folio()														// CONSTRUCTOR
 	this.changed=false;														// No changes yet
 	this.itemFilter="";														// No filter
 	this.itemType="All types";												// All types
-	this.curProject=this.curView=this.curPage=-1;							// Assume not chosen
+	this.curProject=this.curPage=-1;										// Assume not chosen
 	this.queryString=window.location.search.substring(1);					// Get query string
 	this.InitFolio("");														// Init project
 	this.page="project";													// Init as project page
@@ -180,7 +180,6 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 {
 	$("#editMenu").css("color","#000");										// Reset menu color
 	$("#projectMenu").css("color","#000");									// Reset
-	$("#viewMenu").css("color","#000");										// Reset
 	$("#pageMenu").css("color","#000");										// Reset
 	$("#helpMenu").css("color","#000");										// Reset
 	var str="<b>"+this.firstName+" "+this.lastName+"</b>";					// Add name
@@ -190,19 +189,12 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 		if ((this.curProject != -1) && projects[this.curProject].title)		// A valid project
 			str+=ShortenString(projects[this.curProject].title,20);			// Add title
 		}
-	else if (this.page == "view") {											// If view
-		$("#viewMenu").css("color","#00aa00");								// Highlight it
-		str+="&nbsp;|&nbsp; ";												// Add to breadcrumb
-		if ((this.curProject != -1) && projects[this.curProject].title)		// A valid project
-			str+=ShortenString(projects[this.curProject].title,20);			// Add title
-		str+=" &nbsp;|&nbsp; My view";										// Add to breadcrumb
-		}
 	else if (this.page == "page") {											// If page
 		$("#pageMenu").css("color","#00aa00");								// Highlight it
 		str+="&nbsp;|&nbsp; ";												// Add to breadcrumb
 		if ((this.curProject != -1) && projects[this.curProject].title)		// A valid project
 			str+=ShortenString(projects[this.curProject].title,20);			// Add title
-		str+=" &nbsp;|&nbsp; My view &nbsp;|&nbsp; 1";						// Add to breadcrumb
+		str+=" &nbsp;|&nbsp; 1";											// Add to breadcrumb
 		}
 	else if (this.page == "help") 											// If help
 		$("#helpMenu").css("color","#00aa00");								// Highlight it
@@ -217,15 +209,14 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 		str+=this.MakeProjectPage();										// Add project page
 		str+=this.MakeItemsPicker();										// Add project items picker
 		}
-	else if (this.page == "view") {											// If view
-		str+=MakeGallery();													// Add Gallery
-		}
 	else if (this.page == "page") {											// If page
 		str+=MakeGallery();													// Add Gallery
+		str+=this.MakePagePage();											// Add page page
+		str+="<div id='itemPickerDiv' class='sf-itemsPicker'></div>";		// Item picker container
 		}
 	else if (this.page == "help") {											// If help
-		str+="<div id='projectDiv' class='sf-projectPage' style='left:0px;width:100%'>";	// Project container
-		str+="<iframe frameborder='0' height='"+window.innerHeight+"' width='100%' src='";
+		str+="<div id='projectDiv' class='sf-projectPage' style='left:0px;width:50%;min-width:500px'>";	// Project container
+		str+="<iframe frameborder='0' height='"+(window.innerHeight-90)+"' width='100%' src='";
 		str+="//docs.google.com/document/d/1IEtDo0jMhtaVyFeewcB_UXHWirO2Al_jO6Ri7u1QYoI/pub?embedded=true'/></div>";
 		}
 	$("#bodyDiv").html(str);												// Fill body
@@ -254,6 +245,13 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 			sf.Do()															// Something changed
 			});
 		
+		$("#pFormat").on("change",function() { 								// If changed
+			projects[sf.curProject].format=$("#pFormat").val();				// Set it	
+			Sound("click");													// Click
+			sf.Do()															// Something changed
+			sf.Draw();														// Redraw
+			});
+
 		for (i=0;i<projects.length;++i)										// For each project
 			$("#galleryLab"+i).on("click", function(e) {					// ON PROJECT CLICK
 				sf.curProject=e.currentTarget.id.substr(10)-0;				// Extract id
@@ -352,6 +350,12 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 				helper:'clone',appendTo:'body'			 					// Beyond parent frame
 				});
 			}
+		$("#editPages").on("click",function() { 							// CREATE PAGES
+ 			sf.page="page";													// Set for page
+ 			Sound("click");													// Click
+			sf.Draw();														// Redraw
+			});
+
 	}
 }	
 
@@ -366,16 +370,16 @@ folio.prototype.PreviewItem=function(id)								// PREVIEW ITEM
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
 	var i;
-	var pTitle="",pDesc="",pCite="",pTags="",pCollab=[];
-	var str="<br>"
-	str+="<div id='projectDiv' class='sf-projectPage'>";					// Project container
+	var pTitle="",pDesc="",pCite="",pTags="",pCollab=[],pFormat="Booklet";
+	var str="<div id='projectDiv' class='sf-projectPage'>";					// Project container
 	if (this.curProject < 0) 												// No project selected
 		return "</div>"+str;												// Return empty page
-	if (projects[this.curProject].title)  pTitle=projects[this.curProject].title;
-	if (projects[this.curProject].desc)   pDesc=projects[this.curProject].desc;
-	if (projects[this.curProject].cite)   pCite=projects[this.curProject].cite;
-	if (projects[this.curProject].tags)   pTags=projects[this.curProject].tags;
-	if (projects[this.curProject].collab) pCollab=projects[this.curProject].collab.split(",");
+	if (projects[this.curProject].title)  	pTitle=projects[this.curProject].title;
+	if (projects[this.curProject].desc)   	pDesc=projects[this.curProject].desc;
+	if (projects[this.curProject].cite)   	pCite=projects[this.curProject].cite;
+	if (projects[this.curProject].tags)   	pTags=projects[this.curProject].tags;
+	if (projects[this.curProject].format)   pFormat=projects[this.curProject].format;
+	if (projects[this.curProject].collab) 	pCollab=projects[this.curProject].collab.split(",");
 	str+="<table style='width:100%;font-weight:bold'>";
 	str+="<tr height='32'><td width='1%'>Title</td>";
 	str+="<td><input class='sf-is' id='pTitle' ";
@@ -388,13 +392,26 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<tr height='28'><td>Tags</td>";
 	str+="<td><input class='sf-is' id='pTags' ";
 	str+="type='text' value='"+pTags+"'></td></tr>";
-	str+="<tr height='28'><td>Collaborators&nbsp;&nbsp;</td>";
+	str+="<tr height='28'><td>Collaborators&nbsp;&nbsp;&nbsp;</td>";
 	str+="<td>"+MakeSelect("pCollab",false,pCollab);
 	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:20px;margin-right:10px' title='Add new collaborator'>";
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
+	str+="<tr height='28'><td>Format style</td><td>";
+	str+=MakeSelect("pView",false,["Booklet","SinglePage","Canvas","Slideshow"],pFormat)+"</td></tr>";
+	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
+	str+="<button class='sf-bs' style='width:75%' id='editPages'>Edit pages</button></td></tr>";	// View pages button
 	str+="</table>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'></div>";		// Items div
 	return "</div>"+str;													// Return project page
+}
+
+
+folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
+{
+	var str="<div id='pageDiv' class='sf-pagePage'>";						// Project container
+	if (this.curProject < 0) 												// No project selected
+		return "</div>"+str;												// Return empty page
+	return "</div>"+str;													// Return [age page
 }
 	
 folio.prototype.AddItems=function(div)										// ADD ITEMS
@@ -532,22 +549,38 @@ folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
 
 function MakeGallery()													// MAKE GALLERY WIDGET
 {
-	var i,o,labs=[];
-	var h=$("#bodyDiv").height()-60;											
-	var trsty=" onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";
+	var i,o,n=0;labs=[];
+	var h=$("#bodyDiv").height()-60;										// Get height											
+	var trsty=" onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";		// Hover style
 	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
-	var title=sf.page.substr(0,1).toUpperCase()+sf.page.substr(1)+"s";
-	var str="<div id='gallery' class='sf-gallery'><p><b>"+title+"</b></p>";
+	var title=(sf.page == "project") ? "Portfolios" : "Pages";				// Set title
+	var str="<div id='gallery' class='sf-gallery'><p><b>"+title+"</b></p>";	// Make gallery div
 	str+="<div class='sf-galleryContent' style='height:"+(h-20)+"px'>";		// Scrollable container
 	if (sf.page == "project") {												// Project gallery
 		if (!projects.length)												// No projects yet
-			str+="<br>Add a new project by clicking on the + icon below"
-		for (i=0;i<projects.length;++i) {
-			labs[i]=projects[i].title;
-			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span"
+			str+="<br>Add a new project by clicking on the + icon below";	// Say so
+		for (i=0;i<projects.length;++i) {									// For each project
+			labs[i]=projects[i].title;										// Set label
+			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
 			if (i == sf.curProject)											// If the current project
 				str+=" style='color:#009900'"								// Color it
 			str+=">"+labs[i]+"</span></div>";								// Close
+			}
+		}
+	else if (sf.page == "page") {											// Page gallery
+		if (sf.curProject == -1) {											// No project selected yet
+			str+="<br><br>Sorry, there is no portfolio selected yet.";		// Warn
+			str+="<br><br>Go back to portfolios<br>and add one.";						
+			return str+"</div>";											// Quit
+			}
+		o=projects[sf.curProject].pages;									// Point at pages
+		if (o)
+			n=o.length;
+		for (i=0;i<n;++i) {													// For each page
+			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
+			if (i == sf.curPage)											// If the current project
+				str+=" style='color:#009900'"								// Color it
+			str+=">Page"+(i+1)+"</span></div>";								// Close
 			}
 		}
 	str+="</div>";
@@ -582,7 +615,6 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 		return str+"</select>";													// End select				
 	}
 
-
 	function Sound(sound, mode)												// PLAY SOUND
 	{	
 		var snd=new Audio();
@@ -614,7 +646,6 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 		return "";
 	}
 
-
 	function ShowLightBox(width, title, content)
 	{
 		var str="<div id='lightBoxDiv' style='position:fixed;width:100%;height:100%;";	
@@ -629,7 +660,7 @@ function MakeGallery()													// MAKE GALLERY WIDGET
 		str+="onclick='$(\"#lightBoxDiv\").remove(),Sound(\"click\")'>";
 		str+="<div id='lightContentDiv'>"+content+"</div>";					
 		$("#lightBoxDiv").append(str);	
-}
+	}
 
 	function AlertBox(title, content, callback)								// ALERT BOX
 	{
@@ -793,7 +824,8 @@ var projects=[
 	cite:"(c) 2016 University of Virginia www.hipvoter.com",
 	tags:"Politics, MDST 3703",
 	collab:"Mike, James, Hanna, Michelle",
-	items:[0,1]
+	items:[0,1],
+	pages:[0,1,2]
 	},
 	{
 	title:"A tale of two tours",
@@ -801,8 +833,8 @@ var projects=[
 	cite:"(c) 2016 University of Virginia",
 	tags:"Entertainment, MDST 3703",
 	collab:"Imani, Ashlyn, Liz",
-	items:[2]
-	
+	items:[2],
+	pages:[0,1]
 	}
 ];
 			
