@@ -212,8 +212,10 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 	else if (this.page == "page") {											// If page
 		str+=MakeGallery();													// Add Gallery
 		str+=this.MakePagePage();											// Add page page
-		str+="<div id='itemPickerDiv' class='sf-itemsPicker'></div>";		// Item picker container
-		}
+		str+="<div id='itemPickerDiv' class='sf-itemsPicker'>";				// Item picker container
+		str+="<div style='text-align:center'>Items in the portfolio</div><br>"; // Header
+		str+="</div>";
+	}
 	else if (this.page == "help") {											// If help
 		str+="<div id='projectDiv' class='sf-projectPage' style='left:0px;width:50%;min-width:500px'>";	// Project container
 		str+="<iframe frameborder='0' height='"+(window.innerHeight-90)+"' width='100%' src='";
