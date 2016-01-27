@@ -9,6 +9,7 @@
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
 	<script src="jquery.ui.touch-punch.min.js"></script>
 	<script src="ckeditor/ckeditor.js"></script>
+	<script src="helpers.js"></script>
 
 	<style type="text/css">
 		body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
@@ -106,7 +107,6 @@
 // MAIN 
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
-
 var sf=null;															// Holds main folio object									
 		
 $(window).resize(function() {											// ON WINDOW RESIZE
@@ -161,6 +161,12 @@ folio.prototype.InitFolio=function(data)								// INIT
 	this.firstName="Teresa";
 	this.lastName="Sullivan";
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// DRAW
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 folio.prototype.Draw=function()											// DRAW PAGE
 {
@@ -218,6 +224,9 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 		str+="<div id='projectDiv' class='sf-projectPage' style='left:0px;width:50%;min-width:500px'>";	// Project container
 		str+="<iframe frameborder='0' height='"+(window.innerHeight-90)+"' width='100%' src='";
 		str+="//docs.google.com/document/d/1IEtDo0jMhtaVyFeewcB_UXHWirO2Al_jO6Ri7u1QYoI/pub?embedded=true'/></div>";
+		}
+	else if (this.page == "edit") {											// If edit
+		str+="<div id='projectDiv' class='sf-projectPage' style='left:0px;width:50%;min-width:500px'>";	// Project container
 		}
 	$("#bodyDiv").html(str);												// Fill body
 	
@@ -342,34 +351,68 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 				}
 			 });
 		
-		for (i=0;i<items.length;++i) {										// For each item
-			$("#item-"+i).on("dblclick",function() {						// ON DOUBLE CLICK
-				sf.PreviewItem($(this).prop("id").substr(5));				// Preview		
-				});
-			$("#item-"+i).on("doubletap",function() {						// ON DOUBLE CLICK MOBILE
-				sf.PreviewItem($(this).prop("id").substr(5));				// Preview		
-				});
-			
-			$("#item-"+i).draggable({ 										// Make item draggable
-				helper:'clone',appendTo:'body'			 					// Beyond parent frame
-				});
-			}
 		$("#editPages").on("click",function() { 							// CREATE PAGES
  			sf.page="page";													// Set for page
  			Sound("click");													// Click
 			sf.Draw();														// Redraw
 			});
-
-	}
+		}
 }	
 
-folio.prototype.PreviewItem=function(id)								// PREVIEW ITEM
+
+folio.prototype.MakeGallery=function()									// MAKE GALLERY 
 {
-	var str="<div class='sf-previewTitle'>"+items[id].title+"</div><br>";
-	var h=window.innerHeight-350;
-	str+="<iframe frameborder='0' height='"+h+"' width='100%' style='opacity:0,border:1px solid #666' src='"+items[id].src+"'/>";
-	ShowLightBox(500,"Preview",str);
+	var i,o,n=0;labs=[];
+	var h=$("#bodyDiv").height()-60;										// Get height											
+	var trsty=" onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";		// Hover style
+	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
+	var title=(this.page == "project") ? "Portfolios" : "Pages";			// Set title
+	var str="<div id='galleryDiv' class='sf-gallery'><p><b>"+title+"</b></p>";	// Make gallery div
+	str+="<div class='sf-galleryContent' style='height:"+(h-20)+"px'>";		// Scrollable container
+
+	if (this.page == "project") {											// Project gallery
+		if (!projects.length)												// No projects yet
+			str+="<br>Add a new project by clicking on the + icon below";	// Say so
+		for (i=0;i<projects.length;++i) {									// For each project
+			labs[i]=projects[i].title;										// Set label
+			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
+			if (i == this.curProject)										// If the current project
+				str+=" style='color:#009900'"								// Color it
+			str+=">"+labs[i]+"</span></div>";								// Close
+			}
+		}
+	else if (this.page == "page") {											// Page gallery
+		if (this.curProject == -1) {										// No project selected yet
+			str+="<br><br>Sorry, there is no portfolio selected yet.";		// Warn
+			str+="<br><br>Go back to portfolios<br>and add one.";						
+			return str+"</div>";											// Quit
+			}
+		o=projects[this.curProject].pages;									// Point at pages
+		if (o)
+			n=o.length;
+		for (i=0;i<n;++i) {													// For each page
+			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
+			if (i == this.curPage)											// If the current project
+				str+=" style='color:#009900'"								// Color it
+			str+=">Page"+(i+1)+"</span></div>";								// Close
+			}
+		}
+	str+="</div>";
+	str+="<div style='position:relative;text-align:center;margin-top:8px'></div>";
+	str+="<div class='sf-galleryTool'>";
+	str+="<img id='galleryAddBut' class='sf-galleryBut' src='img/addbut.gif' title='Add new project'>";
+	str+="<img id='galleryCopyBut' class='sf-galleryBut'src='img/copybut.gif'  title='Copy a project'>";
+	str+="<img id='gallerySettingsBut' class='sf-galleryBut' src='img/settingsbut.gif' title='Project settings'>";
+	str+="<img id='galleryTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='margin-right:0px' title='Remove a project'>";
+	str+="</div>";
+	return str;																// Return gallery
 }
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// PROJECTS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
@@ -408,12 +451,32 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	return str+"</div>";													// Return project page
 }
 
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// PAGES
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
 folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 {
 	var str="<div id='projectDiv' class='sf-pagePage'>";					// Project container
 	if (this.curProject < 0) 												// No project selected
 		return str+"</div>";												// Return empty page
 	return str+"</div>";													// Return oage page
+}
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// ITEMS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+folio.prototype.PreviewItem=function(id)								// PREVIEW ITEM
+{
+	var str="<div class='sf-previewTitle'>"+items[id].title+"</div><br>";
+	var h=window.innerHeight-350;
+	str+="<iframe frameborder='0' height='"+h+"' width='100%' style='opacity:0,border:1px solid #666' src='"+items[id].src+"'/>";
+	ShowLightBox(500,"Preview",str);
 }
 	
 folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
@@ -524,320 +587,35 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 				var id=$(this).prop("id").substr(6);						// Get id of project item
 					sf.PreviewItem(projects[sf.curProject].items[id]);		// Preview		
 				});
-		}
+			}
+
+		if (showAll) {														// Showing all items
+			for (i=0;i<n;++i) {												// For each item
+				
+				$("#item-"+i).on("dblclick",function() {					// ON DOUBLE CLICK
+					sf.PreviewItem($(this).prop("id").substr(5));			// Preview		
+					});
+				$("#item-"+i).on("doubletap",function() {					// ON DOUBLE CLICK MOBILE
+					sf.PreviewItem($(this).prop("id").substr(5));			// Preview		
+					});
+				
+				$("#item-"+i).draggable({ 									// Make item draggable
+					helper:'clone',appendTo:'body'			 				// Beyond parent frame
+					});
+				}
+			}
 }	
 
-
-folio.prototype.MakeGallery=function()									// MAKE GALLERY 
-{
-	var i,o,n=0;labs=[];
-	var h=$("#bodyDiv").height()-60;										// Get height											
-	var trsty=" onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";		// Hover style
-	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
-	var title=(this.page == "project") ? "Portfolios" : "Pages";			// Set title
-	var str="<div id='galleryDiv' class='sf-gallery'><p><b>"+title+"</b></p>";	// Make gallery div
-	str+="<div class='sf-galleryContent' style='height:"+(h-20)+"px'>";		// Scrollable container
-
-	if (this.page == "project") {											// Project gallery
-		if (!projects.length)												// No projects yet
-			str+="<br>Add a new project by clicking on the + icon below";	// Say so
-		for (i=0;i<projects.length;++i) {									// For each project
-			labs[i]=projects[i].title;										// Set label
-			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
-			if (i == this.curProject)										// If the current project
-				str+=" style='color:#009900'"								// Color it
-			str+=">"+labs[i]+"</span></div>";								// Close
-			}
-		}
-	else if (this.page == "page") {											// Page gallery
-		if (this.curProject == -1) {										// No project selected yet
-			str+="<br><br>Sorry, there is no portfolio selected yet.";		// Warn
-			str+="<br><br>Go back to portfolios<br>and add one.";						
-			return str+"</div>";											// Quit
-			}
-		o=projects[this.curProject].pages;									// Point at pages
-		if (o)
-			n=o.length;
-		for (i=0;i<n;++i) {													// For each page
-			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
-			if (i == this.curPage)											// If the current project
-				str+=" style='color:#009900'"								// Color it
-			str+=">Page"+(i+1)+"</span></div>";								// Close
-			}
-		}
-	str+="</div>";
-	str+="<div style='position:relative;text-align:center;margin-top:8px'></div>";
-	str+="<div class='sf-galleryTool'>";
-	str+="<img id='galleryAddBut' class='sf-galleryBut' src='img/addbut.gif' title='Add new project'>";
-	str+="<img id='galleryCopyBut' class='sf-galleryBut'src='img/copybut.gif'  title='Copy a project'>";
-	str+="<img id='gallerySettingsBut' class='sf-galleryBut' src='img/settingsbut.gif' title='Project settings'>";
-	str+="<img id='galleryTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='margin-right:0px' title='Remove a project'>";
-	str+="</div>";
-	return str;																// Return gallery
-	}
-
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// UNDO
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 folio.prototype.Do=function()											// DO
 {
 	this.changed=true;														// Set change flag
 }
 	
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// HELPERS
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-	function MakeSelect(id, multi, items, sel, extra, values)				// CREATE HTML SELECT
-	{
-		var	str="<select class='sf-is' id='"+id+"'";							// Header
-		str+="style='width:auto'";
-		if (multi)																// Multi select
-			str+="multiple='multiple' size='"+multi+"'";						// Add flag
-		if (extra)																// If extra param
-			str+=extra;															// Add them
-		str+=">";																// End header
-		for (i=0;i<items.length;++i) {											// For each option
-			str+="<option";														// Add tag
-			if (sel == items[i])												// If selected
-				str+=" selected='selected'"										// Add tag
-			if (values && values[i])											// If has a value
-				str+=" value='"+values[i]+"'";									// Add it
-			str+=">"+items[i]+"</option>";										// End option
-			}	
-		return str+"</select>";													// End select				
-	}
-
-	function Sound(sound, mode)												// PLAY SOUND
-	{	
-		var snd=new Audio();
-		if (!snd.canPlayType("audio/mpeg"))
-			snd=new Audio(sound+".ogg");
-		else	
-			snd=new Audio(sound+".mp3");
-		if (mode != "init")
-			snd.play();
-		}
-
-	function SetCookie(cname, cvalue, exdays)								// SET COOKIE
-	{
-		var d=new Date();
-		d.setTime(d.getTime()+(exdays*24*60*60*1000));
-		var expires = "expires="+d.toGMTString();
-		document.cookie = cname + "=" + cvalue + "; " + expires;
-	}
-	
-	function GetCookie(cname) 												// GET COOKIE
-	{
-		var name=cname+"=",c;
-		var ca=document.cookie.split(';');
-		for (var i=0;i<ca.length;i++)  {
-		  c=ca[i].trim();
-		  if (c.indexOf(name) == 0) 
-		  	return c.substring(name.length,c.length);
-		  }
-		return "";
-	}
-
-	function ShowLightBox(width, title, content)
-	{
-		var str="<div id='lightBoxDiv' style='position:fixed;width:100%;height:100%;";	
-		str+="background:url(img/overlay.png) repeat;top:0px;left:0px';</div>";
-		$("body").append(str);														
-		var x=$("#lightBoxDiv").width()/2-width/2;
-		str="<div id='lightBoxIntDiv' class='unselectable sf-lightBox' ";
-		str+="style='width:"+width+"px;left:"+x+"px;top:100px;'>";
-		str+="<img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
-		str+="<span id='lightBoxTitle' class='sf-lightBoxTitle'>"+title+"</span>";
-		str+="<img src='img/x.gif' style='cursor:pointer;position:absolute;top:22px;left:"+width+"px' "; 
-		str+="onclick='$(\"#lightBoxDiv\").remove(),Sound(\"click\")'>";
-		str+="<div id='lightContentDiv'>"+content+"</div>";					
-		$("#lightBoxDiv").append(str);	
-	}
-
-	function AlertBox(title, content, callback)								// ALERT BOX
-	{
-		$("#alertBoxDiv").remove();												
-		Sound("delete");														
-		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
-		var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
-		str+="<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#990000'><b>"+title+"</b></span></p>";
-		str+="<div style='font-size:14px;margin:16px'>"+content+"</div>";
-		$("#alertBoxDiv").append(str);	
-		$("#alertBoxDiv").dialog({ width:400, buttons:{"OK": function() { $(this).remove(); if (callback) callback(); }}});	
-		$(".ui-dialog-titlebar").hide();
-		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
-		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
-  		$(".ui-button").css({"border-radius":"30px","outline":"none"});
-	}
-
-	function ConfirmBox(content, callback)									// COMFIRM BOX
-	{
-		Sound("click");														
-		$("#alertBoxDiv").remove();												
-		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
-		var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
-		str+="<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#990000'><b>Are you sure?</b></span><p>";
-		str+="<div style='font-size:14px;margin:14px'>"+content+"</div>";
-		$("#alertBoxDiv").append(str);	
-		$("#alertBoxDiv").dialog({ width:400, buttons: {
-					            	"Yes": function() { $(this).remove(); callback() },
-					            	"No":  function() { $(this).remove(); }
-									}});	
-		$(".ui-dialog-titlebar").hide();
-		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
-		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
- 		$(".ui-button").css({"border-radius":"30px","outline":"none"});
- 	}
-
-	function GetTextBox(title, content, def, callback)					// GET TEXT LINE BOX
-	{
-		Sound("click");														
-		$("#alertBoxDiv").remove();											
-		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
-		var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
-		str+="<span id='gtBoxTi'style='font-size:18px;text-shadow:1px 1px #ccc;color:#990000'><b>"+title+"</b></span><p>";
-		str+="<div style='font-size:14px;margin:14px'>"+content;
-		str+="<p><input class='sf-is' type='text' id='gtBoxTt' value='"+def+"'></p></div>";
-		$("#alertBoxDiv").append(str);	
-		$("#alertBoxDiv").dialog({ width:400, buttons: {
-					            	"OK": 		function() { callback($("#gtBoxTt").val()); $(this).remove(); },
-					            	"Cancel":  	function() { $(this).remove(); }
-									}});	
-		$(".ui-dialog-titlebar").hide();
-		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
-		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
- 		$(".ui-button").css({"border-radius":"30px","outline":"none"});
- 	}
-
-	function ShortenString(str, len)									// SHORTEN A STRING TO LENGTH
-	{
-		if (str.length > len)												// Too long
-			str=str.substr(0,(len-3)/2)+"..."+str.slice((len-3)/-2);			// Shorten	
-		return str;															// Return string
-	}
-
-	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
-	{
-		if (p4 != undefined)
-			console.log(msg,p1,p2,p3,p4);
-		else if (p3 != undefined)
-			console.log(msg,p1,p2,p3);
-		else if (p2 != undefined)
-			console.log(msg,p1,p2);
-		else if (p1 != undefined)
-			console.log(msg,p1);
-		else
-			console.log(msg);
-		}
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// DATA
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-var items=[ {
-	type:"media",
-	src:"//www.kaltura.com/p/2003471/sp/0/playManifest/entryId/1_c7z7zuiv/format/url/flavorParamId/2003471/video.mp4",
-	thumb:"https://cfvod.kaltura.com/p/343772/sp/34377200/thumbnail/entry_id/1_c7z7zuiv/version/100011/acv/121",
-	title:"HipVoter.com intro video",
-	desc:"A video to encourage millenial voting",
-	citation:"© 2015 University of Virginia. http://www.hipvoter.com",
-	startDate:"12/12/2015",
-	placeName:"Charlottesville, VA",
-	permissions:"r",
-	autoStart:"false",
-	start:"0",
-	end:"1:45",
-	volume:"50"
-	},{
-	type:"web",
-	src:"//www.barackobama.com",
-	title:"Barack Obama website",
-	citation:"© 2016 Organizing for Action. All Rights Reserved.",
-	thumb:"//www.logodesignlove.com/images/monograms/obama-08-logo-15.jpg"
-	},{
-	type:"visualeyes",
-	src:"//viseyes.org/visualeyes?712",
-	title:"A tale of two tours",
-	citation:"© 2015 Imani Nichols, Ashlyn Royer and Liz Carter",
-	},{
-	type:"pdf",
-	src:"//anthropos-lab.net/wp/wp-content/uploads/2011/12/Weber-Politics-as-a-Vocation.pdf",
-	title:"Politics as a Vocation by Max Weber",
-	citation:"Weber, M. (1965). Politics as a Vocation. Philadelphia, PA: Fortress Press.",
-	desc:"\"Politics as a Vocation\" is an essay by German economist and sociologist Max Weber. It originated in the second lecture of a series he gave in Munich to the \"Free Students Union\" of Bavaria on 28 January 1919.",
-	},{
-	type:"qmedia",
-	src:"//qmediaplayer.com?1",
-	title:"Clinton's TED talk",
-	citation:"© 2013 Bill Ferster",
-	},{
-	type:"map",
-	src:"https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d11746813.386643479!2d-94.15516106249316!3d44.04465067207314!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1453647957378",
-	title:"Map of the US",
-	citation:"© 2016 Google INEGI",
-	},{
-	type:"media",
-	src:"//player.vimeo.com/video/80413179",
-	title:"NBC Politics Nation promo",
-	citation:"© 2013 Arturo Echeverria / NBC",
-	},{
-	type:"image",
-	src:"//www.viseyes.org/shiva/qmedia/clinton01.jpg",
-	title:"Bill Clinton at TED",
-	citation:"© 2007 TED conference",
-	thumb:"//www.viseyes.org/shiva/qmedia/clinton01.jpg"
-	},{
-	type:"shiva",
-	src:"//www.viseyes.org/shiva/go.htm?e=1121",
-	title:"Clinton network visualization",
-	citation:"© 2013 Bill Ferster",
-	},{
-	type:"mandala",
-	src:"//http://texts.drupal-dev.shanti.virginia.edu/book_pubreader/9623",
-	title:"An introduction to Lhasa",
-	citation:"© 2009 David Germano",
-	},{
-	type:"wordpress",
-	src:"//wordpress.com/themes/",
-	title:"Available themes",
-	citation:"© 2016 Matt Mullenweg / Automattic LLC"
-	},{
-	type:"media",
-	src:"//www.youtube.com/embed/lrk4oY7UxpQ",
-	title:"Crash course in US politics video",
-	citation:"© 2015 Craig Benzin/PBS http://youtube.com/pbsdigitalstudios"
-	}];
-
-
-var projects=[ 
-	{
-	title:"Hip voting ",
-	desc:"To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election. The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
-	cite:"(c) 2016 University of Virginia www.hipvoter.com",
-	tags:"Politics, MDST 3703",
-	collab:"Mike, James, Hanna, Michelle",
-	items:[0,1],
-	pages:[0,1,2]
-	},
-	{
-	title:"A tale of two tours",
-	desc:"Welcome to our Tale of Two Tours where we will lead you through a digital experience of Paul McCartney's 1989 World Tour and his 2009 Summer Tour. Here you will find setlist information, tour member biographies, and individual concert facts.",
-	cite:"(c) 2016 University of Virginia",
-	tags:"Entertainment, MDST 3703",
-	collab:"Imani, Ashlyn, Liz",
-	items:[2],
-	pages:[0,1]
-	}
-];
-			
-	
-
-
-
-
-
-
+		
 </script>
 </body>
 </html>
