@@ -58,11 +58,10 @@
 						}
 		.sf-projectItems { width:440px;text-align:center;color:#aaa;margin-top:-8px;
 						}
-		.sf-pagePage { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:186px;
+		.sf-pagePage { 	position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:186px;
 						width:800px;margin:12px;color:#999;border-right:1px solid #ccc;
 						padding-right:16px;margin-right:0px;
 						}
-
 		.sf-itemsPicker { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:644px;
 						margin:18px;color:#aaa;text-align:left;min-width:160px;margin-top:20px;
 						margin-right:0px;
@@ -71,7 +70,7 @@
 						text-align:center;margin-right:16px;color:#888;overflow:hidden;
 						}
 		.sf-pitem	    { display:inline-block;width:130px;height:64px;padding-bottom:36px;
-						text-align:center;margin-right:16px;color:#000099;overflow:hidden;
+						text-align:center;margin-right:16px;color:#999;overflow:hidden;
 						}
 		.sf-itemPic    { width:128px;height:64px;border:1px solid #999;cursor:pointer;
 						}
@@ -170,10 +169,11 @@ folio.prototype.Draw=function()											// DRAW PAGE
 	$("#bodyDiv").height(h-54);												// Set body height
 	this.DrawMenu();														// Set menu
 	this.DrawBody();														// Draw body
-	this.AddItems("projectItemsDiv");										// Add project items
+	this.AddProjectItems();													// Add project items
 	$("#projectDiv").height(h-78);											// Set project height
-	$("#itemPickerDiv").height(h-90);										// Set picker width height
-	$("#itemPickerDiv").width(w-666);										// Set picker width 
+	$("#itemPickerDiv").height(h-90);										// Set picker height
+	$("#itemPickerDiv").width(w-$("#projectDiv").width()-$("#galleryDiv").width()-88);				// Set picker width 
+	$("#itemPickerDiv").css("left",$("#projectDiv").width()+$("#projectDiv").offset().left+16+"px");	// Set picker left 
 }
 		
 folio.prototype.DrawMenu=function()										// DRAW MENU AREA
@@ -205,17 +205,15 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 {
 	var str="";
 	if (this.page == "project") {											// If a project
-		str+=MakeGallery();													// Add Gallery
+		str+=this.MakeGallery();											// Add Gallery
 		str+=this.MakeProjectPage();										// Add project page
-		str+=this.MakeItemsPicker();										// Add project items picker
+		str+="<div id='itemPickerDiv' class='sf-itemsPicker'></div>";		// Item picker container
 		}
 	else if (this.page == "page") {											// If page
-		str+=MakeGallery();													// Add Gallery
+		str+=this.MakeGallery();											// Add Gallery
 		str+=this.MakePagePage();											// Add page page
-		str+="<div id='itemPickerDiv' class='sf-itemsPicker'>";				// Item picker container
-		str+="<div style='text-align:center'>Items in the portfolio</div><br>"; // Header
-		str+="</div>";
-	}
+		str+="<div id='itemPickerDiv' class='sf-itemsPicker'></div>";		// Item picker container
+		}
 	else if (this.page == "help") {											// If help
 		str+="<div id='projectDiv' class='sf-projectPage' style='left:0px;width:50%;min-width:500px'>";	// Project container
 		str+="<iframe frameborder='0' height='"+(window.innerHeight-90)+"' width='100%' src='";
@@ -226,6 +224,7 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 	if (this.page == "project")	{											// If a project
  		if (this.curProject < 0)											// If not a valid project										
  				return;														// Quit
+		this.AddProjectItems(true);											// Add project items
 		
 		$("#pTitle").on("change",function() { 								// If changed
 			projects[sf.curProject].title=$("#pTitle").val();				// Set it	
@@ -338,13 +337,16 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 			 		projects[sf.curProject].items.push(ui.draggable.prop("id").substr(5));	// Add to items
 					Sound("add");											// Add
 					sf.Do()													// Something changed
-					sf.AddItems("projectItemsDiv");							// Add project items
+					sf.AddProjectItems();									// Add project items
 					}
 				}
 			 });
 		
 		for (i=0;i<items.length;++i) {										// For each item
 			$("#item-"+i).on("dblclick",function() {						// ON DOUBLE CLICK
+				sf.PreviewItem($(this).prop("id").substr(5));				// Preview		
+				});
+			$("#item-"+i).on("doubletap",function() {						// ON DOUBLE CLICK MOBILE
 				sf.PreviewItem($(this).prop("id").substr(5));				// Preview		
 				});
 			
@@ -375,14 +377,14 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	var pTitle="",pDesc="",pCite="",pTags="",pCollab=[],pFormat="Booklet";
 	var str="<div id='projectDiv' class='sf-projectPage'>";					// Project container
 	if (this.curProject < 0) 												// No project selected
-		return "</div>"+str;												// Return empty page
+		return str+"</div>";												// Return empty page
 	if (projects[this.curProject].title)  	pTitle=projects[this.curProject].title;
 	if (projects[this.curProject].desc)   	pDesc=projects[this.curProject].desc;
 	if (projects[this.curProject].cite)   	pCite=projects[this.curProject].cite;
 	if (projects[this.curProject].tags)   	pTags=projects[this.curProject].tags;
 	if (projects[this.curProject].format)   pFormat=projects[this.curProject].format;
 	if (projects[this.curProject].collab) 	pCollab=projects[this.curProject].collab.split(",");
-	str+="<table style='width:100%;font-weight:bold'>";
+	str+="<table style='width:100%;font-weight:bold;text-align:left'>";
 	str+="<tr height='32'><td width='1%'>Title</td>";
 	str+="<td><input class='sf-is' id='pTitle' ";
 	str+="type='text' value='"+pTitle+"'></td></tr>";
@@ -392,51 +394,80 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<td><input class='sf-is' id='pCite' ";
 	str+="type='text' value='"+pCite+"'></td></tr>";
 	str+="<tr height='28'><td>Tags</td>";
-	str+="<td><input class='sf-is' id='pTags' ";
-	str+="type='text' value='"+pTags+"'></td></tr>";
+	str+="<td><input class='sf-is' id='pTags' type='text' value='"+pTags+"'></td></tr>";
 	str+="<tr height='28'><td>Collaborators&nbsp;&nbsp;&nbsp;</td>";
 	str+="<td>"+MakeSelect("pCollab",false,pCollab);
 	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:20px;margin-right:10px' title='Add new collaborator'>";
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
 	str+="<tr height='28'><td>Format style</td><td>";
-	str+=MakeSelect("pView",false,["Booklet","SinglePage","Canvas","Slideshow"],pFormat)+"</td></tr>";
+	str+=MakeSelect("pFormat",false,["Booklet","SinglePage","Canvas","Slideshow"],pFormat)+"</td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
 	str+="<button class='sf-bs' style='width:75%' id='editPages'>Edit pages</button></td></tr>";	// View pages button
 	str+="</table>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'></div>";		// Items div
-	return "</div>"+str;													// Return project page
+	return str+"</div>";													// Return project page
 }
-
 
 folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 {
-	var str="<div id='pageDiv' class='sf-pagePage'>";						// Project container
+	var str="<div id='projectDiv' class='sf-pagePage'>";					// Project container
 	if (this.curProject < 0) 												// No project selected
-		return "</div>"+str;												// Return empty page
-	return "</div>"+str;													// Return [age page
+		return str+"</div>";												// Return empty page
+	return str+"</div>";													// Return oage page
 }
 	
-folio.prototype.AddItems=function(div)										// ADD ITEMS
+folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 {
-	var o,i,n,lab,pic;
-	var str="<p style='text-align:center'>Drag items to include in project here</p>";
-	if (div == "projectItemsDiv") {												// If filling project items
-		if (this.curProject < 0)												// No project												
-			return;																// Quit
-		n=projects[this.curProject].items.length;								// Number of items
+	var o,i,n,lab,pic,str,div;
+	var fil="",typ="all types";
+	if ((this.page == "project") || (this.page == "page")) {				// If filling project items
+		if (this.curProject < 0)											// No project												
+			return;															// Quit
+		n=projects[this.curProject].items.length;							// Number of items
 		}
-	for (i=0;i<n;++i) {															// For each item
-		if (div == "projectItemsDiv")											// If project items
-			o=items[projects[this.curProject].items[i]];						// Point at item
-		str+="<div id='pitem-"+i+"' class='sf-pitem'>";							// Add item container
-		if (o.title)															// If a title
-			lab=ShortenString(o.title,35);										// Add it
-		if (o.thumb)															// If a thumb
-			pic=o.thumb;														// Add it
-		else{																	// Use generic images
-			pic="img/";															// Add folder
-			switch (o.type) {													// Route on type
-				case 	"media": 		pic+="mediaitem"; 			break;		// Set
+	if (showAll) {
+		typ=this.itemType.toLowerCase();									// Type as lc
+		fil=this.itemFilter.toLowerCase();									// Filter as lc
+		div="itemPickerDiv";												// Point at item picker
+		str="<div style='text-align:center'>Show only&nbsp;";			
+		str+=MakeSelect("pType",false,["All types","Web","Image","Map","Media","WordPress","Mandala","SHIVA","Qmedia","VisualEyes"],this.itemType);
+		str+="&nbsp; filtered&nbsp;by&nbsp;&nbsp;<input type='text' class='sf-is' id='pFilter' value='"+this.itemFilter+"' style='width:80px'> &nbsp;";
+		str+="</div><br>"; 
+		n=items.length;														// Number of items
+		}
+	else if (this.page == "project") {										// Project page
+		div="projectItemsDiv";												// Point at project items
+		str="<p style='text-align:center'>Drag items to include in project here</p>";
+		}
+	else if (this.page == "page") {											// Page page
+		div="itemPickerDiv";												// Point at item picker
+		str="<p style='text-align:center'>Project items to use in pages</p>";
+		}
+	for (i=0;i<n;++i) {														// For each item
+		if (typ != "all types")												// If filtering by type
+			if (items[i].type != typ)										// Not the right one
+				continue;													// Skip it
+		if (fil) {															// If filtering by text
+			lab=items[i].title+items[i].desc+items[i].citation+items[i].tags;	// Get certain fields
+			if (lab.toLowerCase().indexOf(fil) == -1) 						// If not in there
+				continue;													// Skip it
+			}
+		if (showAll) {														// Showing all items
+			o=items[i];														// Point at items directly
+			str+="<div id='item-"+i+"' class='sf-item'>";					// Add item container for items
+			}
+		else{																// Show only project items
+			o=items[projects[this.curProject].items[i]];					// Point at item via project
+			str+="<div id='pitem-"+i+"' class='sf-pitem'>";					// Add item container for pitems
+			}
+		if (o.title)														// If a title
+			lab=ShortenString(o.title,35);									// Add it
+		if (o.thumb)														// If a thumb
+			pic=o.thumb;													// Add it
+		else{																// Use generic images
+			pic="img/";														// Add folder
+			switch (o.type) {												// Route on type
+				case 	"media": 		pic+="mediaitem"; 			break;	// Set
 				case 	"qmedia": 		pic+="qmediaitem"; 			break;			
 				case 	"image": 		pic+="imageitem"; 			break;			
 				case 	"pdf": 			pic+="pdfitem"; 			break;			
@@ -445,157 +476,117 @@ folio.prototype.AddItems=function(div)										// ADD ITEMS
 				case 	"visualeyes": 	pic+="veitem"; 				break;			
 				case 	"mandala": 		pic+="mandalaitem"; 		break;			
 				case 	"wordpress": 	pic+="wordpressitem"; 		break;			
-				default: 				pic+="webitem"; 			break;		// All others use web pic
+				default: 				pic+="webitem"; 			break;	// All others use web pic
 				}
-			pic+=".png";														// Add ext
+			pic+=".png";													// Add ext
 			}	
-		str+="<img src='"+pic+"' class='sf-itemPic'>"+lab+"</div>";				// Add pic	
+		str+="<img src='"+pic+"' class='sf-itemPic'>"+lab+"</div>";			// Add pic	
 		}
-	$("#"+div).html(str);
+	$("#"+div).html(str);													// Add items to div
 	
-	if (div == "projectItemsDiv") 												// If filling project items
-		for (i=0;i<n;++i) {														// For each item in project
-			$("#pitem-"+i).draggable({ 											// Make item draggable
-				helper:'clone',appendTo:'body',			 						// Beyond parent frame
-				stop: function(e, ui) {											// On stop dragging
-					if ((ui.position.left > 600) || (ui.position.left < 100)){	// Out of project items box
+	if ((this.page == "project") || (this.page == "page")) 					// If filling project items
+		for (i=0;i<n;++i) {													// For each item in project
+			$("#pitem-"+i).draggable({ 										// Make item draggable
+				helper:'clone',appendTo:'body',			 					// Beyond parent frame
+				stop: function(e, ui) {										// On stop dragging
+					if ((sf.page == "project") && ((ui.position.left > 600) || (ui.position.left < 100))) {	// Out of project items box
 				 		projects[sf.curProject].items.splice(e.target.id.substr(6),1);	// Remove it
-						Sound("delete");										// Delete
-						sf.Do()													// Something changed
-						sf.AddItems("projectItemsDiv");							// Add project items
+						Sound("delete");									// Delete
+						sf.Do()												// Something changed
+						sf.AddProjectItems();								// Add project items
 						}
 					}
 				});
 				
-			$("#pitem-"+i).droppable({ 											// Make item droppable
-				 accept: ".sf-pitem",											// Accept only project items
-				 drop: function(event, ui) {									// On drop
-					var to=$(event.target).prop('id').substr(6);				// Get id of receiver item
-					var from=ui.draggable.prop('id').substr(6);					// Get id of dragged item
-					var o=projects[sf.curProject].items;						// Point at items
-					var t=o[to];												// Save to item
-					o[to]=o[from];												// Copy from -> to
-					o[from]=t;													// Reset to
-					Sound("click");												// Click
-					sf.Do()														// Something changed
-					sf.AddItems("projectItemsDiv");								// Add project items
+			$("#pitem-"+i).droppable({ 										// Make item droppable
+				 accept: ".sf-pitem",										// Accept only project items
+				 drop: function(event, ui) {								// On drop
+					var from=ui.draggable.prop('id').substr(6);				// Get id of dragged item
+					var to=$(event.target).prop('id').substr(6);			// Get id of receiver item
+					if (sf.page == "project") {								// Project
+						var o=projects[sf.curProject].items;				// Point at items
+						var t=o[to];										// Save to item
+						o[to]=o[from];										// Copy from -> to
+						o[from]=t;											// Reset to
+						Sound("click");										// Click
+						sf.Do()												// Something changed
+						sf.AddProjectItems();								// Add project items
+						}
 					}
 				 });
 
-			
-			
-			$("#pitem-"+i).on("dblclick",function() {							// ON DOUBLE CLICK
-				var id=$(this).prop("id").substr(6);							// Get id of project item
-					sf.PreviewItem(projects[sf.curProject].items[id]);			// Preview		
+			$("#pitem-"+i).on("dblclick",function() {						// ON DOUBLE CLICK
+				var id=$(this).prop("id").substr(6);						// Get id of project item
+					sf.PreviewItem(projects[sf.curProject].items[id]);		// Preview		
+				});
+
+			$("#pitem-"+i).on("doubletap",function() {						// ON DOUBLE CLICK MOBILE
+				var id=$(this).prop("id").substr(6);						// Get id of project item
+					sf.PreviewItem(projects[sf.curProject].items[id]);		// Preview		
 				});
 		}
 }	
 
-folio.prototype.Do=function()											// DO
-{
-	this.changed=true;														// Set change flag
-}
-	
-folio.prototype.MakeItemsPicker=function()								// MAKE ITEMS PICKER
-{
-	var str="<div id='itemPickerDiv' class='sf-itemsPicker'>";				// Item picker container
-	if (this.curProject < 0) 												// No project selected
-		return "</div>"+str;												// Return empty page
-	str+="<div style='text-align:center'>Show only&nbsp;";			
-	str+=MakeSelect("pType",false,["All types","Web","Image","Map","Media","WordPress","Mandala","SHIVA","Qmedia","VisualEyes"],this.itemType);
-	str+="&nbsp; filtered&nbsp;by&nbsp;&nbsp;<input type='text' class='sf-is' id='pFilter' value='"+this.itemFilter+"' style='width:80px'> &nbsp;";
-	str+="</div><br>"; 
 
-	var pic,lab;
-	var typ=this.itemType.toLowerCase();										// Type as lc
-	var fil=this.itemFilter.toLowerCase();										// Filter as lc
-	for (i=0;i<items.length;++i) {												// For each item
-		if (typ != "all types")													// If filtering by type
-			if (items[i].type != typ)											// Not the right one
-				continue;														// Skip it
-		if (fil) {																// If filtering by text
-			lab=items[i].title+items[i].desc+items[i].citation+items[i].tags;	// Get certain fields
-			if (lab.toLowerCase().indexOf(fil) == -1) 							// If not in there
-				continue;														// Skip it
-			}
-		str+="<div id='item-"+i+"' class='sf-item'>";							// Add item container
-		if (items[i].title)														// If a title
-			lab=ShortenString(items[i].title,35);								// Add it
-		if (items[i].thumb)														// If a thumb
-			pic=items[i].thumb;													// Add it
-		else{																	// Use generic images
-			pic="img/";															// Add folder
-			switch (items[i].type) {											// Route on type
-				case 	"media": 		pic+="mediaitem"; 			break;		// Set
-				case 	"qmedia": 		pic+="qmediaitem"; 			break;			
-				case 	"image": 		pic+="imageitem"; 			break;			
-				case 	"pdf": 			pic+="pdfitem"; 			break;			
-				case 	"map": 			pic+="mapitem"; 			break;			
-				case 	"shiva": 		pic+="shivaitem"; 			break;			
-				case 	"visualeyes": 	pic+="veitem"; 				break;			
-				case 	"mandala": 		pic+="mandalaitem"; 		break;			
-				case 	"wordpress": 	pic+="wordpressitem"; 		break;			
-				default: 				pic+="webitem"; 			break;		// All others use web pic
-				}
-			pic+=".png";														// Add ext
-			}	
-		str+="<img src='"+pic+"' class='sf-itemPic'>"+lab+"</div>";				// Add pic	
-		}
-	return "</div>"+str;														// Return project page
-}	
-
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// HELPERS
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-function MakeGallery()													// MAKE GALLERY WIDGET
+folio.prototype.MakeGallery=function()									// MAKE GALLERY 
 {
 	var i,o,n=0;labs=[];
 	var h=$("#bodyDiv").height()-60;										// Get height											
 	var trsty=" onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";		// Hover style
 	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
-	var title=(sf.page == "project") ? "Portfolios" : "Pages";				// Set title
-	var str="<div id='gallery' class='sf-gallery'><p><b>"+title+"</b></p>";	// Make gallery div
+	var title=(this.page == "project") ? "Portfolios" : "Pages";			// Set title
+	var str="<div id='galleryDiv' class='sf-gallery'><p><b>"+title+"</b></p>";	// Make gallery div
 	str+="<div class='sf-galleryContent' style='height:"+(h-20)+"px'>";		// Scrollable container
-	if (sf.page == "project") {												// Project gallery
+
+	if (this.page == "project") {											// Project gallery
 		if (!projects.length)												// No projects yet
 			str+="<br>Add a new project by clicking on the + icon below";	// Say so
 		for (i=0;i<projects.length;++i) {									// For each project
 			labs[i]=projects[i].title;										// Set label
 			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
-			if (i == sf.curProject)											// If the current project
+			if (i == this.curProject)										// If the current project
 				str+=" style='color:#009900'"								// Color it
 			str+=">"+labs[i]+"</span></div>";								// Close
 			}
 		}
-	else if (sf.page == "page") {											// Page gallery
-		if (sf.curProject == -1) {											// No project selected yet
+	else if (this.page == "page") {											// Page gallery
+		if (this.curProject == -1) {										// No project selected yet
 			str+="<br><br>Sorry, there is no portfolio selected yet.";		// Warn
 			str+="<br><br>Go back to portfolios<br>and add one.";						
 			return str+"</div>";											// Quit
 			}
-		o=projects[sf.curProject].pages;									// Point at pages
+		o=projects[this.curProject].pages;									// Point at pages
 		if (o)
 			n=o.length;
 		for (i=0;i<n;++i) {													// For each page
 			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
-			if (i == sf.curPage)											// If the current project
+			if (i == this.curPage)											// If the current project
 				str+=" style='color:#009900'"								// Color it
 			str+=">Page"+(i+1)+"</span></div>";								// Close
 			}
 		}
 	str+="</div>";
-	str+="<div style='position:relative;text-align:center;margin-top:8px'>";
-	str+"</div>";
+	str+="<div style='position:relative;text-align:center;margin-top:8px'></div>";
 	str+="<div class='sf-galleryTool'>";
 	str+="<img id='galleryAddBut' class='sf-galleryBut' src='img/addbut.gif' title='Add new project'>";
 	str+="<img id='galleryCopyBut' class='sf-galleryBut'src='img/copybut.gif'  title='Copy a project'>";
 	str+="<img id='gallerySettingsBut' class='sf-galleryBut' src='img/settingsbut.gif' title='Project settings'>";
 	str+="<img id='galleryTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='margin-right:0px' title='Remove a project'>";
 	str+="</div>";
-	return str+"</div>";
+	return str;																// Return gallery
 	}
+
+
+folio.prototype.Do=function()											// DO
+{
+	this.changed=true;														// Set change flag
+}
+	
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// HELPERS
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 	function MakeSelect(id, multi, items, sel, extra, values)				// CREATE HTML SELECT
 	{
