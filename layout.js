@@ -5,6 +5,11 @@
 
 function layout()														// CONSTRUCTOR
 {
+	this.headerPct=10;
+	this.footerPct=10;
+	this.leftPct=33;
+	this.bodyPct-33;
+	this.rightPct=33;
 }	
 
 layout.prototype.Set=function()											// SET LAYOUT 
@@ -36,6 +41,8 @@ layout.prototype.Set=function()											// SET LAYOUT
 			$("#sizerLeftDiv").css({ height:((1-r)*100)+"%" })
 			$("#sizerBodyDiv").css({ height:((1-r)*100)+"%" })
 			$("#sizerRightDiv").css({ height:((1-r)*100)+"%" })
+			
+			$("#headPtc").text(Math.floor(r*100)+"%");					// Show %
 			}
 		});
 
@@ -55,8 +62,11 @@ layout.prototype.MakeSizer=function()									// PAGE SIZER
 	str+="<div id='sizerRightDiv'  class='sf-sizerRight'></div>";			// Right div
 	str+="<div id='footerSizBar' style='width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize footer'></div>";
 	str+="<div id='sizerFooterDiv' class='sf-sizerFooter'></div>";			// Footer div
-	str+="<p>Click on a pane to change its current settings. ";				// Help
-	str+="Drag between the panes to set the pane's height or width.</p>";	
+	str+="<p>Click on a pane to change its current settings.";				// Help
+	str+="Drag between the panes to set the ptane's height or width.<br><br>";	
+	str+="Top <span id='headPtc'>10%</span> Left <span id='leftPtc'>33%</span> "; 
+	str+="Mid <span id='bodyPtc'>10%</span> Right <span id='rightPtc'>33%</span> "; 
+	str+="Bot <span id='footerPtc'>10%</span></p>"; 
 	return str+"</div>";													// Return sizer
 }
 
