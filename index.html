@@ -10,6 +10,8 @@
 	<script src="jquery.ui.touch-punch.min.js"></script>
 	<script src="ckeditor/ckeditor.js"></script>
 	<script src="helpers.js"></script>
+	<script src="layout.js"></script>
+	<script src="player.js"></script>
 
 	<style type="text/css">
 		body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
@@ -150,12 +152,14 @@ function folio()														// CONSTRUCTOR
 	this.itemType="All types";												// All types
 	this.curProject=this.curPage=-1;										// Assume not chosen
 	this.queryString=window.location.search.substring(1);					// Get query string
-	this.InitFolio("");														// Init project
+	this.layout=new layout();												// Init layout object
+	this.player=new player();												// Init player object
+	this.Init("");															// Init folio
 	this.page="project";													// Init as project page
 	this.Draw();															// Draw 
 	}	
 
-folio.prototype.InitFolio=function(data)								// INIT 
+folio.prototype.Init=function(data)										// INIT 
 {
 	this.curProject=0;
 	this.firstName="Teresa";
@@ -351,11 +355,26 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 				}
 			 });
 		
+		$("#addPages").on("click",function() { 								// ADD PAGES
+ 			ConfirmBox("This will delete add a page for each item in the project", function() {
+				sf.AddPages();												// Add pages
+				Sound("ding");												// Ding
+				sf.page="page";												// Set for page
+				sf.Do()														// Something changed
+				sf.Draw();													// Redraw
+				});
+			});
+
 		$("#editPages").on("click",function() { 							// CREATE PAGES
  			sf.page="page";													// Set for page
  			Sound("click");													// Click
 			sf.Draw();														// Redraw
 			});
+
+		$("#setLayout").on("click",function() { 							// SET LAYOUT
+			sf.Do()															// Something changed
+ 			sf.layout.Set();												// Set layout
+ 			});
 		}
 }	
 
@@ -445,7 +464,9 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<tr height='28'><td>Format style</td><td>";
 	str+=MakeSelect("pFormat",false,["Booklet","SinglePage","Canvas","Slideshow"],pFormat)+"</td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
-	str+="<button class='sf-bs' style='width:75%' id='editPages'>Edit pages</button></td></tr>";	// View pages button
+	str+="<button class='sf-bs' style='width:100px' id='addPages'>Add pages</button>&nbsp; &nbsp;";		// Add pages button
+	str+="<button class='sf-bs' style='width:100px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
+	str+="<button class='sf-bs' style='width:100px' id='editPages'>Edit pages</button></td></tr>";		// View pages button
 	str+="</table>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'></div>";		// Items div
 	return str+"</div>";													// Return project page
@@ -460,11 +481,15 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 {
 	var str="<div id='projectDiv' class='sf-pagePage'>";					// Project container
+	str+="<p style='text-align:center'>This is where pages are edited</p>";
 	if (this.curProject < 0) 												// No project selected
 		return str+"</div>";												// Return empty page
 	return str+"</div>";													// Return oage page
 }
 
+folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
+{
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ITEMS
