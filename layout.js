@@ -10,11 +10,14 @@ function layout()														// CONSTRUCTOR
 	this.leftPct=33;
 	this.bodyPct-33;
 	this.rightPct=33;
+	this.curPane="header";
 }	
 
 layout.prototype.Set=function()											// SET LAYOUT 
 {
-	var str="<br>"+this.MakeSizer();									// Make page sizer UI
+	var _this=this;														// Get context
+	var str="<br>"+this.MakeParams();									// Make page params UI
+	str+=this.MakeSizer();												// Make page sizer UI
 	ShowLightBox(800,"Set page layout",str);
 
 	$('[id^="sizer"]').on("click", function() {							// CLICK ON ANY DIV STARRING WITH 'SIZER'
@@ -34,15 +37,15 @@ layout.prototype.Set=function()											// SET LAYOUT
 			},
 		drag: function(event, ui) {										// On drag
 			var y=event.clientY-$("#sizerHeaderDiv").offset().top;		// Position within layout block
-			var r=y/$("#pageSizerDiv").height();						// Ratio
+			var r=y/$("#layoutSizerDiv").height();						// Ratio
 			r=Math.min(1,Math.max(0,r));								// Cap 0-1
+			var r1=1-r;													// Inverse
 			$(this).css("background-color","transparent");				// Hide bar
-			$("#sizerHeaderDiv").css({ height:(r*100)+"%" })			// Rescale 
-			$("#sizerLeftDiv").css({ height:((1-r)*100)+"%" })
-			$("#sizerBodyDiv").css({ height:((1-r)*100)+"%" })
-			$("#sizerRightDiv").css({ height:((1-r)*100)+"%" })
-			
-			$("#headPtc").text(Math.floor(r*100)+"%");					// Show %
+			_this.headerPct=r*100;										// Set header
+			_this.leftPct=r1*100;										// Set middle vals
+			_this.bodyPct=r1*100;									
+			_this.rightPct=r1*100;									
+			_this.UpdateResizer();										// Update resizer
 			}
 		});
 
@@ -50,23 +53,45 @@ layout.prototype.Set=function()											// SET LAYOUT
 
 }
 
+layout.prototype.UpdateResizer=function()							// UPDATE PAGE SIZER 
+{
+	$("#sizerHeaderDiv").css({ height:this.headerPct+"%" })				// Set val		
+	$("#sizerLeftDiv").css({   height:this.leftPct+"%" })
+	$("#sizerBodyDiv").css({   height:this.bodyPct+"%" })
+	$("#sizerRightDiv").css({  height:this.rightPct+"%" })
+	$("#sizerFooterDiv").css({ height:this.footerPct+"%" })			
+	$("#headPtc").text(Math.floor(this.headerPct)+"%");					// Show %
+	$("#leftPtc").text(Math.floor(this.leftPct)+"%");					
+	$("#rightPtc").text(Math.floor(this.rightPct)+"%");					
+	$("#bodyPtc").text(Math.floor(this.sbodyPct)+"%");					
+	$("#footerPtc").text(Math.floor(this.footerPct)+"%");				
+}
+
+layout.prototype.MakeParams=function()									// PAGE SIZER 
+{
+	var str="<div id='layoutParamsDiv' class='sf-layoutParams'>";				// Overall div
+	str+="<br><br><br>Parameters"
+	
+	return str+"</div>";													// Return sizer
+}
 layout.prototype.MakeSizer=function()									// PAGE SIZER 
 {
-	var str="<div  id='pageSizerDiv' class='sf-pageSizer'>";				// Overall div
+	var str="<div  id='layoutSizerDiv' class='sf-layoutSizer'>";			// Overall div
 	str+="<div id='sizerHeaderDiv' class='sf-sizerHeader'></div>";			// Header div
 	str+="<div id='headerSizBar' style='width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize header'></div>";
 	str+="<div id='sizerLeftDiv' class='sf-sizerLeft'>";					// Left div
 	str+="<div id='leftSizBar' style='position:relative;top:0px;left:100%;height:100%;width:8px;cursor:col-resize' class='sf-unselectable' title='Resize left'></div></div>";
-	str+="<div id='sizerBodyDiv'   class='sf-sizerBody'>";			// Body div
+	str+="<div id='sizerBodyDiv'   class='sf-sizerBody'>";					// Body div
 	str+="<div id='rightSizBar' style='position:relative;top:0px;left:100%;height:100%;width:8px;cursor:col-resize' class='sf-unselectable' title='Resize right'></div></div>";
 	str+="<div id='sizerRightDiv'  class='sf-sizerRight'></div>";			// Right div
 	str+="<div id='footerSizBar' style='width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize footer'></div>";
 	str+="<div id='sizerFooterDiv' class='sf-sizerFooter'></div>";			// Footer div
-	str+="<p>Click on a pane to change its current settings.";				// Help
-	str+="Drag between the panes to set the ptane's height or width.<br><br>";	
-	str+="Top <span id='headPtc'>10%</span> Left <span id='leftPtc'>33%</span> "; 
+	str+="<p><div class='sf-layoutPcts'>";	
+	str+=" Top <span id='headPtc'>10%</span> Left <span id='leftPtc'>33%</span> "; 
 	str+="Mid <span id='bodyPtc'>10%</span> Right <span id='rightPtc'>33%</span> "; 
-	str+="Bot <span id='footerPtc'>10%</span></p>"; 
+	str+="Bot <span id='footerPtc'>10% </span></div>"; 
+	str+="Click on a pane to change its current settings. ";				// Help
+	str+="Drag between the panes to set the pane's height or width.</p>";
 	return str+"</div>";													// Return sizer
 }
 
