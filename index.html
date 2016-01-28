@@ -77,7 +77,22 @@
 						}
 		.sf-itemPic    { width:128px;height:64px;border:1px solid #999;cursor:pointer;
 						}
-		
+		.sf-pageSizer   { width:40%;height:400px;cursor:pointer;
+						text-align:center;color:#666;padding-bottom:80px;
+						}
+		.sf-sizerHeader { background-color:#eee;height:10%;width:100%;border:1px solid #eee;
+						}
+		.sf-sizerLeft 	{ display:inline-block;background-color:#eee;height:80%;width:calc(33% - 6px);
+						;border:1px solid #eee;
+						}
+		.sf-sizerBody 	{ display:inline-block;background-color:#eee;height:80%;width:calc(33% - 7px);
+						border:1px solid #eee;margin-left:8px;margin-right:8px;
+						}
+		.sf-sizerRight 	{ display:inline-block;background-color:#eee;height:80%;width:calc(33% - 6px);
+						border:1px solid #eee;
+						}
+		.sf-sizerFooter { background-color:#eee;height:10%;width:100%;border:1px solid #eee;
+						}
 		.sf-previewTitle { margin-top:8px;margin-bottom:-4px;color:#999;font-weight:bold;
 						}
 		.unselectable { -moz-user-select: none;     -khtml-user-select: none;
@@ -356,7 +371,10 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 			 });
 		
 		$("#addPages").on("click",function() { 								// ADD PAGES
- 			ConfirmBox("This will delete add a page for each item in the project", function() {
+ 			var str="This will add a page for each item in the project, in the order they are in now."
+ 			str+="You can reorder and edit them in the Page editor.<br><br>";
+ 			str+="<b>NOTE: </b>This will remove any pages you already have made by hand."
+ 			ConfirmBox(str, function() {									// Confirm it
 				sf.AddPages();												// Add pages
 				Sound("ding");												// Ding
 				sf.page="page";												// Set for page
