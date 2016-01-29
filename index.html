@@ -77,26 +77,23 @@
 						}
 		.sf-itemPic    { width:128px;height:64px;border:1px solid #999;cursor:pointer;
 						}
-		.sf-layoutParams { float:left:width:55%;text-align:left;color:#666;margin:12px;display:inline-block;
+		.sf-layoutParams { float:left:width:55%;text-align:left;color:#888;margin:12px;
+						display:inline-block;
 						}
-		.sf-layoutSizer   { float:right;width:40%;height:400px;cursor:pointer;display:inline-block;
-						text-align:left;color:#999;padding-bottom:110px;
+		.sf-layoutSizer   { float:right;width:45%;height:400px;cursor:pointer;display:inline-block;
+						text-align:left;color:#999;margin-bottom:8px;
 						}
-		.sf-layoutPcts 	{ width:100%;border:1px solid #999;border-radius:16px;text-align:center;
-						padding-top:1px;padding-bottom:1px;margin-bottom:8px;
+		.sf-layoutPcts 	{ border:1px solid #999;border-radius:16px;padding:2px;color:#666;
 						}
-		.sf-sizerHeader { background-color:#ddd;height:10%;width:100%;border:1px solid #009900;
+		.sf-sizerHeader { width:100%;box-sizing:border-box;background-color:#ddd;margin:1px;
 						}
-		.sf-sizerLeft 	{ display:inline-block;background-color:#ddd;height:80%;width:calc(33% - 6px);
-						;border:1px solid #ddd;
+		.sf-sizerLeft 	{ display:inline-block;box-sizing:border-box;background-color:#ddd;margin:1px;
 						}
-		.sf-sizerBody 	{ display:inline-block;background-color:#ddd;height:80%;width:calc(33% - 7px);
-						border:1px solid #ddd;margin-left:8px;margin-right:8px;
+		.sf-sizerBody 	{ display:inline-block;box-sizing:border-box;background-color:#ddd;margin:1px;
 						}
-		.sf-sizerRight 	{ display:inline-block;background-color:#ddd;height:80%;width:calc(33% - 6px);
-						border:1px solid #ddd;
+		.sf-sizerRight 	{ display:inline-block;box-sizing:border-box;background-color:#ddd;margin:1px;
 						}
-		.sf-sizerFooter { background-color:#ddd;height:10%;width:100%;border:1px solid #eee;
+		.sf-sizerFooter { width:100%;box-sizing:border-box;background-color:#ddd;margin:1px;
 						}
 		.sf-previewTitle { margin-top:8px;margin-bottom:-4px;color:#999;font-weight:bold;
 						}
@@ -396,7 +393,7 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 
 		$("#setLayout").on("click",function() { 							// SET LAYOUT
 			sf.Do()															// Something changed
- 			sf.layout.Set();												// Set layout
+ 			sf.layout.Set(projects[sf.curProject]);							// Set layout
  			});
 		}
 }	

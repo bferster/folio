@@ -3,27 +3,80 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-function layout()														// CONSTRUCTOR
+function layout()													// CONSTRUCTOR
 {
-	this.headerPct=10;
-	this.footerPct=10;
-	this.leftPct=33;
-	this.bodyPct-33;
-	this.rightPct=33;
-	this.curPane="header";
+	this.project=null;													// No project yet
+	this.plo=null;														// Ptr to 				
+	this.paneNames=["Header","Left","Body","Right","Footer"];			// Name of all the panes
+	this.curPane=0;														// Start with header
 }	
 
-layout.prototype.Set=function()											// SET LAYOUT 
+layout.prototype.Set=function(project)								// SET LAYOUT 
 {
+	var i,o;
 	var _this=this;														// Get context
+	if (!project.layout) {												// If no layout object yet
+		project.layout={};												// Make one
+		project.layout.headerPct=10;									// Set default sizes
+		project.layout.leftPct=20;
+		project.layout.bodyPct=60;
+		project.layout.rightPct=20;
+		project.layout.footerPct=10;
+		project.layout.topGut=1;										// Set default gutters
+		project.layout.leftGut=1;
+		project.layout.rightGut=1;
+		project.layout.botGut=1;
+		project.layout.panes=[];										// Holds pane info
+		for (i=0;i<this.paneNames.length;++i) {							// For each pane
+			o={};														// Pane obj
+			o.borderCol="#000000";										// Set default pane params
+			o.borderSty="None";							
+			o.borderWid="None";							
+			o.backCol="#ffffff";
+			o.backImg="";
+			project.layout.panes.push(o);								// Add to array
+			}
+		}
+	this.plo=project.layout;											// Point at layout object							
 	var str="<br>"+this.MakeParams();									// Make page params UI
 	str+=this.MakeSizer();												// Make page sizer UI
-	ShowLightBox(800,"Set page layout",str);
+	ShowLightBox(700,"Set page layout",str);
+	this.Update();														// Update resizer/params
 
-	$('[id^="sizer"]').on("click", function() {							// CLICK ON ANY DIV STARRING WITH 'SIZER'
-		$('[class^="sf-sizer"]').css("border", "initial");				// Clear all
+	$('[id^="sizer"]').on("click", function(e) {						// CLICK ON ANY DIV STARRING WITH 'SIZER'
+		$('[class^="sf-sizer"]').css("border", "1px none");				// Clear all
 		$(this).css("border", "1px solid #009900")						// Add border 
+		var s=e.target.id.substr(5).replace(/Div/,"");					// Extract pane name
+		for (var i=0;i<_this.paneNames.length;++i)						// Search through pane names
+			if (s == _this.paneNames[i]) {								// A match
+				_this.curPane=i;										// Set curPane
+				break;													// Quit looking
+				}
+		_this.Update();													// Show new name
 		});
+	$("#sizerHeaderDiv").trigger("click");								// Turn on header at start
+	
+	$("#lbcol").on("click", function(e) {								// BORDER COLOR CLICK HANDLER
+			ColorPicker("lbcol",-1);									// Get border color
+			}); 
+	$("#lbcol").on("blur", function(e) {								// BORDER GET COLOR HANDLER
+			_this.plo.panes[_this.curPane].borderCol=$(this).val();		// Set border color
+			}); 
+	$("#lbgcol").on("click", function(e) {								// BACKGROUND COLOR CLICK HANDLER
+			ColorPicker("lbgcol",-1);									// Get back color
+			}); 
+	$("#lbgcol").on("blur", function(e) {								// BORDER GET COLOR HANDLER
+			_this.plo.panes[_this.curPane].backCol=$(this).val();		// Set back color
+			}); 
+	$("#lbw").on("change", function(e) {								// BORDER WIDTH HANDLER
+			_this.plo.panes[_this.curPane].borderWid=$(this).val();		// Set border width
+			}); 
+	$("#lbs").on("change", function(e) {								// BORDER STYLE HANDLER
+			_this.plo.panes[_this.curPane].borderSty=$(this).val();		// Set border style
+			}); 
+	$("#lbgimg").on("blur", function(e) {								// BACK IMG HANDLER
+			_this.plo.panes[_this.curPane].backImg=$(this).val();		// Set back img
+			}); 
 	
 	$('[id*="SizBar"]').hover(											// HOVER ON HEADER
 		function(){ $(this).css("background-color","#acc3db")},			// Highlight
@@ -33,96 +86,94 @@ layout.prototype.Set=function()											// SET LAYOUT
 	$("#headerSizBar").draggable({										// DRAG HEADER HEIGHT HANDLER
 		cursor: "row-resize", axis:"y",									// X-only
 		stop: function(event, ui) {										// When done
-			$(this).css({ top:"0px" });									// Reset resizer bar
+			$(this).css({ top:"100%" });								// Reset resizer bar
 			},
 		drag: function(event, ui) {										// On drag
 			var y=event.clientY-$("#sizerHeaderDiv").offset().top;		// Position within layout block
-			var r=y/$("#layoutSizerDiv").height();						// Ratio
-			r=Math.min(1,Math.max(0,r));								// Cap 0-1
-			var r1=1-r;													// Inverse
-			$(this).css("background-color","transparent");				// Hide bar
-			_this.headerPct=r*100;										// Set header
-			_this.leftPct=r1*100;										// Set middle vals
-			_this.bodyPct=r1*100;									
-			_this.rightPct=r1*100;									
-			_this.UpdateResizer();										// Update resizer
+			var h=$("#sizerHeaderDiv").height()+$("#sizerBodyDiv").height()+$("#sizerFooterDiv").height();	// Height of travel
+			var r=y/h;													// Ratio
+			r=Math.min(100-_this.plo.footerPct,Math.max(0,r*100));		// Cap 0-100% - footer
+			_this.plo.headerPct=r;										// Set val
+			_this.Update();												// Update resizer
+			$(this).css({ top:"100%" });								// Reset resizer bar
 			}
 		});
 
-
-
+	$("#footerSizBar").draggable({										// DRAG HEADER HEIGHT HANDLER
+		cursor: "row-resize", axis:"y",									// X-only
+		stop: function(event, ui) {										// When done
+			$(this).css({ top:"0%" });									// Reset resizer bar
+			},
+		drag: function(event, ui) {										// On drag
+			var y=event.clientY-$("#sizerHeaderDiv").offset().top;		// Position within layout block
+			var h=$("#sizerHeaderDiv").height()+$("#sizerBodyDiv").height()+$("#sizerFooterDiv").height();	// Height of travel
+			var r=y/h;													// Ratio
+			r=Math.max(_this.plo.headerPct,Math.min(100,r*100));		// Cap 0-100% - header
+			_this.plo.footerPct=100-r;									// Set val
+			_this.Update();												// Update resizer
+			}
+		});
 }
 
-layout.prototype.UpdateResizer=function()							// UPDATE PAGE SIZER 
+layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS 
 {
-	$("#sizerHeaderDiv").css({ height:this.headerPct+"%" })				// Set val		
-	$("#sizerLeftDiv").css({   height:this.leftPct+"%" })
-	$("#sizerBodyDiv").css({   height:this.bodyPct+"%" })
-	$("#sizerRightDiv").css({  height:this.rightPct+"%" })
-	$("#sizerFooterDiv").css({ height:this.footerPct+"%" })			
-	$("#headPtc").text(Math.floor(this.headerPct)+"%");					// Show %
-	$("#leftPtc").text(Math.floor(this.leftPct)+"%");					
-	$("#rightPtc").text(Math.floor(this.rightPct)+"%");					
-	$("#bodyPtc").text(Math.floor(this.sbodyPct)+"%");					
-	$("#footerPtc").text(Math.floor(this.footerPct)+"%");				
+	var o=this.plo;														// Point at layout object
+	var midHgt=Math.max(Math.min(100-o.headerPct-o.footerPct,100),0);	// Get body% 0-100
+	$("#sizerHeaderDiv").css({ height:o.headerPct+"%" });				// Set val		
+	$("#sizerLeftDiv").css({   height:midHgt+"%", width:o.leftPct+"%" });
+	$("#sizerBodyDiv").css({   height:midHgt+"%", width:o.bodyPct+"%" });
+	$("#sizerRightDiv").css({  height:midHgt+"%", width:o.rightPct+"%" });
+	$("#sizerBodyDiv").width($("#sizerBodyDiv").width()-6);
+	$("#sizerFooterDiv").css({ height:o.footerPct+"%" })			
+	$("#headPtc").text(Math.floor(o.headerPct)+"%");					// Show %
+	$("#leftPtc").text(Math.floor(o.leftPct)+"%");					
+	$("#bodyPtc").text(Math.floor(o.bodyPct)+"%");					
+	$("#rightPtc").text(Math.floor(o.rightPct)+"%");					
+	$("#footerPtc").text(Math.floor(o.footerPct)+"%");				
+	$("#paneTitle").text(this.paneNames[this.curPane]);						// Pane name			
+	$("#lbcol").val(o.panes[this.curPane].borderCol);	ColorPicker("lbcol",-1,true);	// Set border color
+	$("#lbgcol").val(o.panes[this.curPane].backCol);	ColorPicker("lbgcol",-1,true);	// Set back color
+	$("#lbgimg").val(o.panes[this.curPane].backImg);					// Set back image
+	$("#lbs").val(o.panes[this.curPane].borderSty);						// Set border style
+	$("#lbw").val(o.panes[this.curPane].borderWid);						// Set border width
 }
 
 layout.prototype.MakeParams=function()									// PAGE SIZER 
 {
-	var str="<div id='layoutParamsDiv' class='sf-layoutParams'>";				// Overall div
-	str+="<br><br><br>Parameters"
-	
+	var str="<div id='layoutParamsDiv' class='sf-layoutParams'>";			// Overall div
+	str+="<table style='width:100%;text-align:left'>";						// Table
+	str+="<tr><td>Pane<td style='color:#009900;font-weight:bold' id='paneTitle'></td></tr>";	// Pane name
+	str+="<tr height='28'><td>Background image &nbsp;</td>";				// Back Pic
+	str+="<td><input class='sf-is' id='lbgimg' type='text'></td></tr>";
+	str+="<tr height='28'><td>Background color &nbsp;</td>";				// Back col
+	str+="<td><input class='sf-is' style='width:50px' id='lbgcol' type='text'></td></tr>";
+	str+="<tr height='28'><td>Border style</td><td>";						// Border style
+	str+=MakeSelect("lbs",false,["None","Solid","Dashed","Double","Groove","Ridge","Inset","Outset"])+"</td></tr>";
+	str+="<tr height='28'><td>Border width</td><td>";						// Border width
+	str+=MakeSelect("lbw",false,["None",1,2,3,4,5])+"</td></tr>";
+	str+="<tr height='28'><td>Border color &nbsp;</td>";					// Back col
+	str+="<td><input class='sf-is' id='lbcol' style='width:50px' type='text'></td></tr>";
+	str+="</table>";	
+	str+="<p><div class='sf-layoutPcts'>";	
+	str+="&nbsp; Top <span id='headPtc'></span>&nbsp Left <span id='leftPtc'></span> "; 
+	str+="&nbspMid <span id='bodyPtc'></span>&nbsp Right <span id='rightPtc'></span> "; 
+	str+="&nbspBot <span id='footerPtc'></span>&nbsp;</div></p>"; 
+	str+="Click on a pane to show its current settings.<br>";				// Help
+	str+="Drag in the space between panes to set a pane's height<br>or width.";
 	return str+"</div>";													// Return sizer
 }
+
 layout.prototype.MakeSizer=function()									// PAGE SIZER 
 {
 	var str="<div  id='layoutSizerDiv' class='sf-layoutSizer'>";			// Overall div
-	str+="<div id='sizerHeaderDiv' class='sf-sizerHeader'></div>";			// Header div
-	str+="<div id='headerSizBar' style='width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize header'></div>";
+	str+="<div id='sizerHeaderDiv' class='sf-sizerHeader'>";				// Header div
+	str+="<div id='headerSizBar' style='position:relative;top:100%;width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize header'></div></div>";
 	str+="<div id='sizerLeftDiv' class='sf-sizerLeft'>";					// Left div
 	str+="<div id='leftSizBar' style='position:relative;top:0px;left:100%;height:100%;width:8px;cursor:col-resize' class='sf-unselectable' title='Resize left'></div></div>";
 	str+="<div id='sizerBodyDiv'   class='sf-sizerBody'>";					// Body div
 	str+="<div id='rightSizBar' style='position:relative;top:0px;left:100%;height:100%;width:8px;cursor:col-resize' class='sf-unselectable' title='Resize right'></div></div>";
 	str+="<div id='sizerRightDiv'  class='sf-sizerRight'></div>";			// Right div
-	str+="<div id='footerSizBar' style='width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize footer'></div>";
-	str+="<div id='sizerFooterDiv' class='sf-sizerFooter'></div>";			// Footer div
-	str+="<p><div class='sf-layoutPcts'>";	
-	str+=" Top <span id='headPtc'>10%</span> Left <span id='leftPtc'>33%</span> "; 
-	str+="Mid <span id='bodyPtc'>10%</span> Right <span id='rightPtc'>33%</span> "; 
-	str+="Bot <span id='footerPtc'>10% </span></div>"; 
-	str+="Click on a pane to change its current settings. ";				// Help
-	str+="Drag between the panes to set the pane's height or width.</p>";
-	return str+"</div>";													// Return sizer
+	str+="<div id='sizerFooterDiv' class='sf-sizerFooter'>";				// Footer div
+	str+="<div id='footerSizBar' style='position:relative;width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize footer'></div></div>";
+	return str+"</div>";												// Return sizer
 }
-
-
-
-
-
-
-
-/*
- 	str+="<table style='width:100%;text-align:left'>";
-	str+="<tr height='32'><td width='1%'>Title</td>";
-	str+="<td><input class='sf-is' id='pTitle' ";
-	str+="type='text' value='"+pTitle+"'></td></tr>";
-	str+="<tr height='28'><td>Description</td><td><textarea class='sf-is' id='pDesc' ";
-	str+="style='font-family:sans-serif'>"+pDesc+"</textarea></td></tr>";
-	str+="<tr height='28'><td>Citation</td>";
-	str+="<td><input class='sf-is' id='pCite' ";
-	str+="type='text' value='"+pCite+"'></td></tr>";
-	str+="<tr height='28'><td>Tags</td>";
-	str+="<td><input class='sf-is' id='pTags' type='text' value='"+pTags+"'></td></tr>";
-	str+="<tr height='28'><td>Collaborators&nbsp;&nbsp;&nbsp;</td>";
-	str+="<td>"+MakeSelect("pCollab",false,pCollab);
-	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:20px;margin-right:10px' title='Add new collaborator'>";
-	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
-	str+="<tr height='28'><td>Format style</td><td>";
-	str+=MakeSelect("pFormat",false,["Booklet","SinglePage","Canvas","Slideshow"],pFormat)+"</td></tr>";
-	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
-	str+="<button class='sf-bs' style='width:100px' id='addPages'>Add pages</button>&nbsp; &nbsp;";		// Add pages button
-	str+="<button class='sf-bs' style='width:100px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
-	str+="<button class='sf-bs' style='width:100px' id='editPages'>Edit pages</button></td></tr>";		// View pages button
-	str+="</table>";	
-
- */	

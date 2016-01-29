@@ -54,6 +54,76 @@
 		return "";
 	}
 
+	
+	function ColorPicker(name, transCol, init) 								//	DRAW COLORPICKER
+	{
+			transCol="";														// Use null
+		$("#colorPickerDiv").remove();											// Remove old one
+		if (init) {																// If initting
+			col=$("#"+name).val();												// Get current color
+			if (col == transCol)												// No color 
+				$("#"+name).css({ "border":"1px dashed #999","background-color":"#fff" }); 	// Set dot
+			else				
+				$("#"+name).css({ "border":"1px solid #999","background-color":col }); 		// Set dot
+			return;																// Quit
+		}
+		
+		var x=$("#"+name).offset().left+10;										// Get left
+		var y=$("#"+name).offset().top+10;										// Top
+		var	str="<div id='colorPickerDiv' style='position:absolute;left:"+x+"px;top:"+y+"px;width:160px;height:225px;z-index:100;border-radius:12px;background-color:#eee'>";
+		$("body").append("</div>"+str);											// Add palette to dialog
+		$("#colorPickerDiv").draggable();										// Make it draggable
+		str="<p style='text-shadow:1px 1px white' align='center'><b>Choose a new color</b></p>";
+		str+="<img src='img/colorpicker.gif' style='position:absolute;left:5px;top:28px' />";
+		str+="<input id='shivaDrawColorInput' type='text' style='position:absolute;left:22px;top:29px;width:96px;background:transparent;border:none;'>";
+		$("#colorPickerDiv").html(str);											// Fill div
+		$("#colorPickerDiv").on("click",onColorPicker);							// Mouseup listener
+	
+		function onColorPicker(e) {
+			
+			var col;
+			var cols=["000000","444444","666666","999999","cccccc","eeeeee","e7e7e7","ffffff",
+					  "ff0000","ff9900","ffff00","00ff00","00ffff","0000ff","9900ff","ff00ff",	
+					  "f4cccc","fce5cd","fff2cc","d9ead3","d0e0e3","cfe2f3","d9d2e9","edd1dc",
+					  "ea9999","f9cb9c","ffe599","bed7a8","a2c4c9","9fc5e8","b4a7d6","d5a6bd",
+					  "e06666","f6b26b","ffd966","9c347d","76a5af","6fa8dc","8e7cc3","c27ba0",
+					  "cc0000","e69138","f1c232","6aa84f","45818e","3d85c6","674ea7","a64d79",
+					  "990000","b45f06","bf9000","38761d","134f5c","0b5394","351c75","741b47",
+					  "660000","783f04","7f6000","274e13","0c343d","073763","20124d","4c1130"
+					 ];
+	
+			var x=e.pageX-this.offsetLeft;										// Offset X from page
+			var y=e.pageY-this.offsetTop;										// Y
+			if ((x < 102) && (y < 45))											// In text area
+				return;															// Quit
+			$("#colorPickerDiv").off("click",this.onColorPicker);				// Remove mouseup listener
+			if ((x > 102) && (x < 133) && (y < 48))	{							// In OK area
+				if ($("#shivaDrawColorInput").val())							// If something there
+					col="#"+$("#shivaDrawColorInput").val();					// Get value
+				else															// Blank
+					x=135;														// Force a quit
+				}
+			$("#colorPickerDiv").remove();										// Remove
+			if ((x > 133) && (y < 48)) 											// In quit area
+				return;															// Return
+			if (y > 193) 														// In trans area
+				col=transCol;													// Set trans
+			else if (y > 48) {													// In color grid
+				x=Math.floor((x-14)/17);										// Column
+				y=Math.floor((y-51)/17);										// Row
+				col="#"+cols[x+(y*8)];											// Get color
+				}
+			if (col == transCol)												// No color 
+				$("#"+name).css({ "border":"1px dashed #999","background-color":"#fff" }); 	// Set dot
+			else				
+				$("#"+name).css({ "border":"1px solid #999","background-color":col }); 		// Set dot
+			$("#"+name).val(col);												// Set color value
+		}
+	
+	}
+	
+	
+	
 	function ShowLightBox(width, title, content)
 	{
 		var str="<div id='lightBoxDiv' style='position:fixed;width:100%;height:100%;";	
