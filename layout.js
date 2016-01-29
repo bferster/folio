@@ -22,10 +22,10 @@ layout.prototype.Set=function(project)								// SET LAYOUT
 		project.layout.bodyPct=60;
 		project.layout.rightPct=20;
 		project.layout.footerPct=10;
-		project.layout.topGut=1;										// Set default gutters
-		project.layout.leftGut=1;
-		project.layout.rightGut=1;
-		project.layout.botGut=1;
+		project.layout.topGut=0;										// Set default gutters
+		project.layout.leftGut=0;
+		project.layout.rightGut=0;
+		project.layout.botGut=0;
 		project.layout.panes=[];										// Holds pane info
 		for (i=0;i<this.paneNames.length;++i) {							// For each pane
 			o={};														// Pane obj
@@ -77,6 +77,19 @@ layout.prototype.Set=function(project)								// SET LAYOUT
 	$("#lbgimg").on("blur", function(e) {								// BACK IMG HANDLER
 			_this.plo.panes[_this.curPane].backImg=$(this).val();		// Set back img
 			}); 
+	$("#tgut").on("blur", function(e) {									// TOP GUTTER HANDLER
+			_this.plo.topGut=$(this).val();								// Set back img
+			}); 
+	$("#bgut").on("blur", function(e) {									// BOT GUTTER HANDLER
+			_this.plo.botGut=$(this).val();								// Set back img
+			}); 
+	$("#lgut").on("blur", function(e) {									// LEFT GUTTER HANDLER
+			_this.plo.leftGut=$(this).val();							// Set back img
+			}); 
+	$("#rgut").on("blur", function(e) {									// RIGHT GUTTER HANDLER
+			_this.plo.rightGut=$(this).val();							// Set back img
+			}); 
+
 	
 	$('[id*="SizBar"]').hover(											// HOVER ON HEADER
 		function(){ $(this).css("background-color","#acc3db")},			// Highlight
@@ -153,6 +166,14 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 	str+=MakeSelect("lbw",false,["None",1,2,3,4,5])+"</td></tr>";
 	str+="<tr height='28'><td>Border color &nbsp;</td>";					// Back col
 	str+="<td><input class='sf-is' id='lbcol' style='width:50px' type='text'></td></tr>";
+	
+	str+="<tr height='28'><td>Header/footer space</td>";					// Gutter
+	str+="<td><input class='sf-is' style='width:50px' id='tgut' type='text'> &nbsp;/&nbsp; ";
+	str+="<input class='sf-is' style='width:50px' id='bgut' type='text'></td></tr>";
+	str+="<tr height='28'><td>Left/right space</td>";						// Gutter
+	str+="<td><input class='sf-is' style='width:50px' id='lgut' type='text'> &nbsp;/&nbsp; ";
+	str+="<input class='sf-is' style='width:50px' id='rgut' type='text'></td></tr>";
+
 	str+="</table>";	
 	str+="<p><div class='sf-layoutPcts'>";	
 	str+="&nbsp; Top <span id='headPtc'></span>&nbsp Left <span id='leftPtc'></span> "; 
