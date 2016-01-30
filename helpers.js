@@ -302,7 +302,7 @@ var projects=[
 	tags:"Politics, MDST 3703",
 	collab:"Mike, James, Hanna, Michelle",
 	items:[0,1],
-	pages:[{},{},{}]
+	pages:[{title:"Page one"}, {title:"Page two"}]
 	},
 	{
 	title:"A tale of two tours",
@@ -310,8 +310,8 @@ var projects=[
 	cite:"(c) 2016 University of Virginia",
 	tags:"Entertainment, MDST 3703",
 	collab:"Imani, Ashlyn, Liz",
-	items:[2],
-	pages:[{},{}]
+	items:[0],
+	pages:[{title:"Page one"}]
 	}
 ];
 	

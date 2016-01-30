@@ -515,8 +515,10 @@ folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 {
 	var str="<div id='projectDiv' class='sf-pagePage'>";					// Project container
 	str+="<p style='text-align:center'>This is where pages are edited</p>";
-	if ((curProject < 0) || (curPage < 0))							// No project, page selected
+	if ((curProject < 0) || (curPage < 0))									// No project, page selected
 		return str+"</div>";												// Return empty page
+	var o=this.projects[curProject].pages[curPage];							// Point at page
+	str+="<p'>Editing:<b>"+o.title+"</b></p>";
 	str+="<button class='sf-bs' id='setLayout'>Set page layout</button>&nbsp; &nbsp;";	// Set layout button
 	return str+"</div>";													// Return oage page
 }
@@ -540,6 +542,13 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 
 folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 {
+	var i,title,o,p;
+	this.Do();																// Something changed
+	p=this.projects[curProject].pages=[];									// Clear them out and point p at them
+	for (i=0;i<sf.projects[curProject].items.length;++i) {					// For each item in project
+		o=this.items[this.projects[curProject].items[i]];					// Point at item			
+		p.push({ title:o.title});											// Add page
+		}
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
