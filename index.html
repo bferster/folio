@@ -518,7 +518,7 @@ folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 	if ((curProject < 0) || (curPage < 0))									// No project, page selected
 		return str+"</div>";												// Return empty page
 	var o=this.projects[curProject].pages[curPage];							// Point at page
-	str+="<p'>Editing:<b>"+o.title+"</b></p>";
+	str+="<p'>Editing: <b>"+o.title+"</b></p>";
 	str+="<button class='sf-bs' id='setLayout'>Set page layout</button>&nbsp; &nbsp;";	// Set layout button
 	return str+"</div>";													// Return oage page
 }
