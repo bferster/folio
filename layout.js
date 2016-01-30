@@ -5,27 +5,27 @@
 
 function layout()													// CONSTRUCTOR
 {
-	this.project=null;													// No project yet
 	this.plo=null;														// Ptr to 				
 	this.paneNames=["Header","Left","Body","Right","Footer"];			// Name of all the panes
-	this.curPane=0;														// Start with header
 }	
 
-layout.prototype.Set=function(project)								// SET LAYOUT 
+layout.prototype.Init=function(container)							// INIT LAYOUT 
 {
-	var i,o;
-	var _this=this;														// Get context
-	if (!project.layout) {												// If no layout object yet
-		project.layout={};												// Make one
-		project.layout.headerPct=10;									// Set default sizes
-		project.layout.leftPct=20;
-		project.layout.rightPct=20;
-		project.layout.footerPct=10;
-		project.layout.topGut=0;										// Set default gutters
-		project.layout.leftGut=0;
-		project.layout.rightGut=0;
-		project.layout.botGut=0;
-		project.layout.panes=[];										// Holds pane info
+	container.layout={};												// Make one
+	container.layout.headerPct=10;										// Set default sizes
+	container.layout.leftPct=20;
+	container.layout.rightPct=20;
+	container.layout.footerPct=10;
+	container.layout.panes=[];											// Holds pane info
+	if (container.cite == undefined) {
+		for (i=0;i<this.paneNames.length;++i) 							// For each pane
+			container.layout.panes.push({});							// Alloc pane obj
+		}
+	else{
+		container.layout.topGut=0;										// Set default gutters
+		container.layout.leftGut=0;
+		container.layout.rightGut=0;
+		container.layout.botGut=0;
 		for (i=0;i<this.paneNames.length;++i) {							// For each pane
 			o={};														// Pane obj
 			o.borderCol="#999999";										// Set default pane params
@@ -33,11 +33,20 @@ layout.prototype.Set=function(project)								// SET LAYOUT
 			o.borderWid="None";							
 			o.backCol="#eeeeee";
 			o.backImg="";
-			o.markUp-"";
-			project.layout.panes.push(o);								// Add to array
+			o.markUp="";
+			container.layout.panes.push(o);								// Add to array
 			}
 		}
-	this.plo=project.layout;											// Point at layout object							
+}
+
+layout.prototype.Set=function(container)							// SET LAYOUT 
+{
+	var i,o;
+	var _this=this;														// Get context
+	this.curPane=0;														// Start with header
+	if (!container.layout) 												// If no layout object yet
+		this.Init(container);											// Init object
+	this.plo=container.layout;											// Point at layout object							
 	var str="<br>"+this.MakeParams();									// Make page params UI
 	str+=this.MakeSizer();												// Make page sizer UI
 	ShowLightBox(700,"Set page layout",str);

@@ -294,7 +294,6 @@ var items=[ {
 	citation:"© 2015 Craig Benzin/PBS http://youtube.com/pbsdigitalstudios"
 	}];
 
-
 var projects=[ 
 	{
 	title:"Hip voting ",
@@ -303,7 +302,7 @@ var projects=[
 	tags:"Politics, MDST 3703",
 	collab:"Mike, James, Hanna, Michelle",
 	items:[0,1],
-	pages:[0,1,2]
+	pages:[{},{},{}]
 	},
 	{
 	title:"A tale of two tours",
@@ -312,7 +311,7 @@ var projects=[
 	tags:"Entertainment, MDST 3703",
 	collab:"Imani, Ashlyn, Liz",
 	items:[2],
-	pages:[0,1]
+	pages:[{},{}]
 	}
 ];
 	
