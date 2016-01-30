@@ -19,7 +19,6 @@ layout.prototype.Set=function(project)								// SET LAYOUT
 		project.layout={};												// Make one
 		project.layout.headerPct=10;									// Set default sizes
 		project.layout.leftPct=20;
-		project.layout.bodyPct=60;
 		project.layout.rightPct=20;
 		project.layout.footerPct=10;
 		project.layout.topGut=0;										// Set default gutters
@@ -29,11 +28,12 @@ layout.prototype.Set=function(project)								// SET LAYOUT
 		project.layout.panes=[];										// Holds pane info
 		for (i=0;i<this.paneNames.length;++i) {							// For each pane
 			o={};														// Pane obj
-			o.borderCol="#000000";										// Set default pane params
+			o.borderCol="#999999";										// Set default pane params
 			o.borderSty="None";							
 			o.borderWid="None";							
-			o.backCol="#ffffff";
+			o.backCol="#eeeeee";
 			o.backImg="";
+			o.markUp-"";
 			project.layout.panes.push(o);								// Add to array
 			}
 		}
@@ -54,6 +54,7 @@ layout.prototype.Set=function(project)								// SET LAYOUT
 				}
 		_this.Update();													// Show new name
 		});
+
 	$("#sizerHeaderDiv").trigger("click");								// Turn on header at start
 	
 	$("#lbcol").on("click", function(e) {								// BORDER COLOR CLICK HANDLER
@@ -89,7 +90,9 @@ layout.prototype.Set=function(project)								// SET LAYOUT
 	$("#rgut").on("blur", function(e) {									// RIGHT GUTTER HANDLER
 			_this.plo.rightGut=$(this).val();							// Set back img
 			}); 
-
+	$("#lmark").on("blur", function(e) {								// BACK IMG HANDLER
+			_this.plo.panes[_this.curPane].markUp=$(this).val();		// Set back img
+			}); 
 	
 	$('[id*="SizBar"]').hover(											// HOVER ON HEADER
 		function(){ $(this).css("background-color","#acc3db")},			// Highlight
@@ -97,7 +100,7 @@ layout.prototype.Set=function(project)								// SET LAYOUT
 		});
 	
 	$("#headerSizBar").draggable({										// DRAG HEADER HEIGHT HANDLER
-		cursor: "row-resize", axis:"y",									// X-only
+		cursor: "row-resize", axis:"y",									// Y-only
 		stop: function(event, ui) {										// When done
 			$(this).css({ top:"100%" });								// Reset resizer bar
 			},
@@ -113,7 +116,7 @@ layout.prototype.Set=function(project)								// SET LAYOUT
 		});
 
 	$("#footerSizBar").draggable({										// DRAG HEADER HEIGHT HANDLER
-		cursor: "row-resize", axis:"y",									// X-only
+		cursor: "row-resize", axis:"y",									// Y-only
 		stop: function(event, ui) {										// When done
 			$(this).css({ top:"0%" });									// Reset resizer bar
 			},
@@ -126,21 +129,61 @@ layout.prototype.Set=function(project)								// SET LAYOUT
 			_this.Update();												// Update resizer
 			}
 		});
+
+	$("#leftSizBar").draggable({										// DRAG LEFT WIDTH HANDLER
+		cursor: "col-resize", axis:"x",									// X-only
+		stop: function(event, ui) {										// When done
+			$(this).css({ left:"100%" });								// Reset resizer bar
+			},
+		drag: function(event, ui) {										// On drag
+			var x=event.clientX-$("#layoutSizerDiv").offset().left;		// Position within width
+			var r=x/$("#layoutSizerDiv").width()						// Ratio
+			r=Math.min(100-_this.plo.rightPct,Math.max(0,r*100));		// Cap 0-100% - right
+			_this.plo.leftPct=r;										// Set val
+			_this.Update();												// Update resizer
+			}
+		});
+
+	$("#rightSizBar").draggable({										// DRAG RIGHT WIDTH HANDLER
+		cursor: "col-resize", axis:"x",									// X-only
+		stop: function(event, ui) {										// When done
+			$(this).css({ left:"100%" });								// Reset resizer bar
+			},
+		drag: function(event, ui) {										// On drag
+			var x=event.clientX-$("#layoutSizerDiv").offset().left;		// Position within width
+			var r=x/$("#layoutSizerDiv").width()						// Ratio
+			r=100-Math.max(_this.plo.leftPct,Math.min(100,r*100));		// Cap 0-100% - left
+			_this.plo.rightPct=r;										// Set val
+			_this.Update();												// Update resizer
+			}
+		});
 }
 
 layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS 
 {
 	var o=this.plo;														// Point at layout object
-	var midHgt=Math.max(Math.min(100-o.headerPct-o.footerPct,100),0);	// Get body% 0-100
-	$("#sizerHeaderDiv").css({ height:o.headerPct+"%" });				// Set val		
-	$("#sizerLeftDiv").css({   height:midHgt+"%", width:o.leftPct+"%" });
-	$("#sizerBodyDiv").css({   height:midHgt+"%", width:o.bodyPct+"%" });
-	$("#sizerRightDiv").css({  height:midHgt+"%", width:o.rightPct+"%" });
-	$("#sizerBodyDiv").width($("#sizerBodyDiv").width()-6);
-	$("#sizerFooterDiv").css({ height:o.footerPct+"%" })			
+	var midHgt=Math.max(Math.min(100-o.headerPct-o.footerPct,100),0);	// Get body% height 0-100
+	var midWid=Math.max(Math.min(100-o.rightPct-o.leftPct,100),0);		// Get body% width 0-100
+$('[id^="sizer"]').show();
+
+	$("#sizerHeaderDiv").css({ height:o.headerPct+"%" });				// Set header		
+	$("#sizerLeftDiv").css({   height:midHgt+"%",width:o.leftPct+"%" });// Set left
+	$("#sizerBodyDiv").css({   height:midHgt+"%",width:midWid+"%" });	// Set body
+	$("#sizerRightDiv").css({  height:midHgt+"%",width:o.rightPct+"%" });// Set right
+	$("#sizerFooterDiv").css({ height:o.footerPct+"%" })				// Set footer		
+	$("#sizerBodyDiv").width($("#sizerBodyDiv").width()-6);				// Remove extra margins
+	if (!midWid && $("#sizerleftDiv").width())							// No body, but left visible
+		$("#sizerLeftDiv").width($("#sizerLeftDiv").width()-6);			// Remove extra margins
+	else if (!midWid && $("#sizerRightDiv").width())					// No body, but right visible
+		$("#sizerRightDiv").width($("#sizerRightDiv").width()-6);		// Remove extra margins
+	if (!midHgt) { 														// No body
+		$("#sizerLeftDiv").hide();
+		$("#sizerBodyDiv").hide()
+		$("#sizerRightDiv").hide()
+		}
 	$("#headPtc").text(Math.floor(o.headerPct)+"%");					// Show %
 	$("#leftPtc").text(Math.floor(o.leftPct)+"%");					
-	$("#bodyPtc").text(Math.floor(o.bodyPct)+"%");					
+	$("#bodyPtc").text(Math.floor(100-o.leftPct-o.rightPct)+"%");		// Mid is 100-left-right			
 	$("#rightPtc").text(Math.floor(o.rightPct)+"%");					
 	$("#footerPtc").text(Math.floor(o.footerPct)+"%");				
 	$("#paneTitle").text(this.paneNames[this.curPane]);						// Pane name			
@@ -149,6 +192,7 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	$("#lbgimg").val(o.panes[this.curPane].backImg);					// Set back image
 	$("#lbs").val(o.panes[this.curPane].borderSty);						// Set border style
 	$("#lbw").val(o.panes[this.curPane].borderWid);						// Set border width
+	$("#lmark").val(o.panes[this.curPane].markUp);						// Set markup
 }
 
 layout.prototype.MakeParams=function()									// PAGE SIZER 
@@ -173,7 +217,8 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 	str+="<tr height='28'><td>Left/right space</td>";						// Gutter
 	str+="<td><input class='sf-is' style='width:50px' id='lgut' type='text'> &nbsp;/&nbsp; ";
 	str+="<input class='sf-is' style='width:50px' id='rgut' type='text'></td></tr>";
-
+	str+="<tr><td>Default text</td><td><textarea class='sf-is' id='lmark' ";// Markup
+	str+="style='font-family:sans-serif'></textarea></td></tr>";
 	str+="</table>";	
 	str+="<p><div class='sf-layoutPcts'>";	
 	str+="&nbsp; Top <span id='headPtc'></span>&nbsp Left <span id='leftPtc'></span> "; 
