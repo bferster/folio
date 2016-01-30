@@ -164,8 +164,7 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	var o=this.plo;														// Point at layout object
 	var midHgt=Math.max(Math.min(100-o.headerPct-o.footerPct,100),0);	// Get body% height 0-100
 	var midWid=Math.max(Math.min(100-o.rightPct-o.leftPct,100),0);		// Get body% width 0-100
-$('[id^="sizer"]').show();
-
+	$('[id^="sizer"]').show();											// Make sure they are all showing
 	$("#sizerHeaderDiv").css({ height:o.headerPct+"%" });				// Set header		
 	$("#sizerLeftDiv").css({   height:midHgt+"%",width:o.leftPct+"%" });// Set left
 	$("#sizerBodyDiv").css({   height:midHgt+"%",width:midWid+"%" });	// Set body
@@ -177,7 +176,7 @@ $('[id^="sizer"]').show();
 	else if (!midWid && $("#sizerRightDiv").width())					// No body, but right visible
 		$("#sizerRightDiv").width($("#sizerRightDiv").width()-6);		// Remove extra margins
 	if (!midHgt) { 														// No body
-		$("#sizerLeftDiv").hide();
+		$("#sizerLeftDiv").hide();										// Hide middle ones
 		$("#sizerBodyDiv").hide()
 		$("#sizerRightDiv").hide()
 		}
@@ -186,9 +185,11 @@ $('[id^="sizer"]').show();
 	$("#bodyPtc").text(Math.floor(100-o.leftPct-o.rightPct)+"%");		// Mid is 100-left-right			
 	$("#rightPtc").text(Math.floor(o.rightPct)+"%");					
 	$("#footerPtc").text(Math.floor(o.footerPct)+"%");				
-	$("#paneTitle").text(this.paneNames[this.curPane]);						// Pane name			
-	$("#lbcol").val(o.panes[this.curPane].borderCol);	ColorPicker("lbcol",-1,true);	// Set border color
-	$("#lbgcol").val(o.panes[this.curPane].backCol);	ColorPicker("lbgcol",-1,true);	// Set back color
+	$("#paneTitle").text(this.paneNames[this.curPane]);					// Pane name			
+	$("#lbcol").val(o.panes[this.curPane].borderCol);					// Set border color
+	ColorPicker("lbcol",-1,true);
+	$("#lbgcol").val(o.panes[this.curPane].backCol);					// Set back color
+	ColorPicker("lbgcol",-1,true);
 	$("#lbgimg").val(o.panes[this.curPane].backImg);					// Set back image
 	$("#lbs").val(o.panes[this.curPane].borderSty);						// Set border style
 	$("#lbw").val(o.panes[this.curPane].borderWid);						// Set border width
@@ -210,7 +211,6 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 	str+=MakeSelect("lbw",false,["None",1,2,3,4,5])+"</td></tr>";
 	str+="<tr height='28'><td>Border color &nbsp;</td>";					// Back col
 	str+="<td><input class='sf-is' id='lbcol' style='width:50px' type='text'></td></tr>";
-	
 	str+="<tr height='28'><td>Header/footer space</td>";					// Gutter
 	str+="<td><input class='sf-is' style='width:50px' id='tgut' type='text'> &nbsp;/&nbsp; ";
 	str+="<input class='sf-is' style='width:50px' id='bgut' type='text'></td></tr>";
@@ -241,5 +241,5 @@ layout.prototype.MakeSizer=function()									// PAGE SIZER
 	str+="<div id='sizerRightDiv'  class='sf-sizerRight'></div>";			// Right div
 	str+="<div id='sizerFooterDiv' class='sf-sizerFooter'>";				// Footer div
 	str+="<div id='footerSizBar' style='position:relative;width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize footer'></div></div>";
-	return str+"</div>";												// Return sizer
+	return str+"</div>";													// Return sizer
 }
