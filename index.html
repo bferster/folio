@@ -248,9 +248,7 @@ folio.prototype.Draw=function()											// DRAW PAGE
 		
 folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 {
-	$("#projectMenu").css("color","#000");									// Reset
-	$("#pageMenu").css("color","#000");										// Reset
-	$("#helpMenu").css("color","#000");										// Reset
+	$('[id$="Menu"]').css("color","#000");									// Reset
 	var str="<b>"+this.firstName+" "+this.lastName+"</b>";					// Add name
 	if (curMenu == "project")	{											// If project
 		$("#projectMenu").css("color","#00aa00");							// Highlight it

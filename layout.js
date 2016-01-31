@@ -105,7 +105,7 @@ layout.prototype.Set=function(container)							// SET LAYOUT
 			_this.plo.panes[_this.curPane].markUp=$(this).val();		// Set back img
 			}); 
 	
-	$('[id*="SizBar"]').hover(											// HOVER ON HEADER
+	$('[id$="SizBar"]').hover(											// HOVER ON HEADER
 		function(){ $(this).css("background-color","#acc3db")},			// Highlight
 		function(){ $(this).css("background-color","transparent")		// Hide
 		});
