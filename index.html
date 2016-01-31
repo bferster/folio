@@ -25,11 +25,11 @@
 						background-color:#ddd;opacity:inherit;
 						border-top-left-radius:6px;border-top-right-radius:6px;
 						}
-		.sf-pullDown {	position:absolute;background-color:#ddd;
-						padding:12px;padding-bottom:4px;
+		.sf-pullDown {	position:absolute;background-color:#ddd;width:100px; }
+		.sf-pullDownItem {	padding-bottom:6px;cursor:pointer;width:92px;padding:6px;
+						padding-left:8px;padding-right:0px;
 						}
-		.sf-pullDownItem {	padding-bottom:6px;cursor:pointer }
-		.sf-pullDownItem:hover{color:#009900}
+		.sf-pullDownItem:hover{background-color:#bbb;color:#eee}
 		
 		.sf-body {		width:100%;min-height:300px;color:#666;border:2px solid #ddd;	
 						background-color:#fff;opacity:inherit;
@@ -181,20 +181,26 @@ $(document).ready(function() {											// ON PAGE LOADED
 		sf.Draw();
 		});
 	$("#editMenu").on("click",function(e) { 
-		var l=$(this).position().left+88;
-		var t=$(this).position().top+20;
+		var l=$(this).position().left+92;
+		var t=$(this).position().top+23;
 		$("#editMenu").css("color","#009900");										
 		var str="<div class='sf-pullDown' style='left:"+l+"px;top:"+t+"px' id='editDiv'>";
 		str+="<div class='sf-pullDownItem' onclick=''>Copy</div>";
-		str+="<div class='sf-pullDownItem' onclick=''>Paste</div>";
-		str+="<div class='sf-pullDownItem' onclick=''>Undo</div>";
-		str+="<div class='sf-pullDownItem' onclick=''>Redo</div>";
+		str+="<div class='sf-pullDownItem' onclick=''> Paste</div>";
+		str+="<div class='sf-pullDownItem' onclick=''> Undo</div>";
+		str+="<div class='sf-pullDownItem' onclick=''> Redo</div>";
 		str+="</div>";
 		$("body").append(str);
 	
 		$("#editDiv").on("mouseleave",function() { 
 			$("#editDiv").remove();
 			$("#editMenu").css("color","#000");										
+			});
+		
+		$("#editDiv").on("click",function(e) { 
+			var i=Math.floor(Math.max(0,Math.min((e.clientY-42)/24,4)));
+			$("#editDiv").remove();
+			$("#editMenu").css("color","#000");	
 			});
 	
 		});
