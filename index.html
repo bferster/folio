@@ -11,6 +11,8 @@
 	<script src="ckeditor/ckeditor.js"></script>
 	<script src="helpers.js"></script>
 	<script src="layout.js"></script>
+	<script src="share.js"></script>
+	<script src="collect.js"></script>
 	<script src="player.js"></script>
 
 	<style type="text/css">
@@ -128,7 +130,7 @@
 
 var sf=null;																// Holds main folio object	
 var curProject=-1,curPage=-1;												// Keeps tabes on current places	
-var playerObj=null,layoutObj=null;											// Objects							
+var playerObj=null,layoutObj=null,collectObj=null,shareObj=nll;				// Objects							
 var isMobile=false;															// Is it mobile?
 var changed=false;															// Anything changed?
 var itemType="All types",itemFilter="";										// Filtering
@@ -141,7 +143,9 @@ $(window).resize(function() {											// ON WINDOW RESIZE
 			
 $(document).ready(function() {											// ON PAGE LOADED
 	isMobile=navigator.userAgent.match(/(ipad|iphone|ipod|android)/i) ? true : false; // Set mobile flag
-	layoutObj=new layout();													// Load layout object
+	collectObj=new collect();												// Load collect object
+	shareObj=new share();													// Load layout object
+	layoutObj=new layout();													// Load share object
 	playerObj=new player();													// Load player object
  	sf=new folio();															// Load main object
 
@@ -350,10 +354,13 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
 	str+="<tr height='28'><td>Format style</td><td>";
 	str+=MakeSelect("pFormat",false,["Booklet","SinglePage","Canvas","Slideshow"],pFormat)+"</td></tr>";
+	str+="<tr height='28'><td></td><td>";
+	str+=MakeSelect("pFormat",false,["Booklet","SinglePage","Canvas","Slideshow"],pFormat)+"</td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
-	str+="<button class='sf-bs' style='width:100px' id='addPages'>Add pages</button>&nbsp; &nbsp;";		// Add pages button
-	str+="<button class='sf-bs' style='width:100px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
-	str+="<button class='sf-bs' style='width:100px' id='editPages'>Edit pages</button></td></tr>";		// View pages button
+	str+="<button class='sf-bs' style='width:90px' id='addPages'>Add pages</button>&nbsp; &nbsp;";		// Add pages button
+	str+="<button class='sf-bs' style='width:90px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
+	str+="<button class='sf-bs' style='width:90px' id='editPages'>Edit pages</button>&nbsp; &nbsp;";	// View pages button
+	str+="<button class='sf-bs' style='width:90px' id='shareProject'>Share</button></td></tr>";			// Share button
 	str+="</table>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'></div>";		// Items div
 	return str+"</div>";													// Return project page
