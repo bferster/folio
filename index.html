@@ -184,6 +184,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 		var l=$(this).position().left+92;
 		var t=$(this).position().top+23;
 		$("#editMenu").css("color","#009900");										
+		$("#editDiv").remove();
 		var str="<div class='sf-pullDown' style='left:"+l+"px;top:"+t+"px' id='editDiv'>";
 		str+="<div class='sf-pullDownItem' onclick=''>Copy</div>";
 		str+="<div class='sf-pullDownItem' onclick=''> Paste</div>";
@@ -249,6 +250,7 @@ folio.prototype.Draw=function()											// DRAW PAGE
 folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 {
 	$('[id$="Menu"]').css("color","#000");									// Reset
+	$("#editDiv").remove();													// Kill edit menu if left open
 	var str="<b>"+this.firstName+" "+this.lastName+"</b>";					// Add name
 	if (curMenu == "project")	{											// If project
 		$("#projectMenu").css("color","#00aa00");							// Highlight it
