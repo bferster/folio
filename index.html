@@ -25,7 +25,13 @@
 						background-color:#ddd;opacity:inherit;
 						border-top-left-radius:6px;border-top-right-radius:6px;
 						}
-		.sf-body {		width:100%;min-height:300px;color:#666;border:2px solid #ddd;
+		.sf-pullDown {	position:absolute;background-color:#ddd;
+						padding:12px;padding-bottom:4px;
+						}
+		.sf-pullDownItem {	padding-bottom:6px;cursor:pointer }
+		.sf-pullDownItem:hover{color:#009900}
+		
+		.sf-body {		width:100%;min-height:300px;color:#666;border:2px solid #ddd;	
 						background-color:#fff;opacity:inherit;
 						}
 		.sf-menuItem {	margin-left:50px;cursor:pointer;color:#000;
@@ -35,7 +41,7 @@
 		.sf-lightBox	{ position:absolute;padding:16px;border-radius:6px;z-index:2500;
 						background-color:#f8f8f8;font-size:12px;
 						}
-		.sf-lightBoxTitle { color:#000;font-weight:bold;font-size:18px;
+		.sf-lightBoxTitle { color:#666;font-weight:bold;font-size:18px;
 						}
 		.sf-is {		border-radius:12px;padding-left:8px;padding-right:8px;padding-top:3px;padding-bottom:2px;
 						border:1px solid #ccc;font-size:12px;width:95%;color:#666;
@@ -113,7 +119,9 @@
 			<img src="img/menuheader.png">
 			<span style="vertical-align:10px">
 				S H A N T l
-				<span id="editMenu" class="sf-menuItem" style="margin-left:100px"> Edit</span>
+				<span style="margin-left:100px"></span>
+				<span id="editMenu" class="sf-menuItem" style="margin-left:100px">Edit</span>
+				<span id="itemMenu" class="sf-menuItem"> Items</span>
 				<span id="projectMenu" class="sf-menuItem"> Portfolios</span>
 				<span id="pageMenu" class="sf-menuItem">Pages</span>
 				<span id="helpMenu" class="sf-menuItem">Help</span>
@@ -130,10 +138,10 @@
 
 var sf=null;																// Holds main folio object	
 var curProject=-1,curPage=-1;												// Keeps tabes on current places	
-var playerObj=null,layoutObj=null,collectObj=null,shareObj=nll;				// Objects							
+var playerObj=null,layoutObj=null,collectObj=null,shareObj=null;			// Objects							
 var isMobile=false;															// Is it mobile?
 var changed=false;															// Anything changed?
-var itemType="All types",itemFilter="";										// Filtering
+var itemType="All types",itemFilter="";								// Filtering
 var curMenu="project";														// Current menu ite,
 		
 $(window).resize(function() {											// ON WINDOW RESIZE
@@ -152,6 +160,11 @@ $(document).ready(function() {											// ON PAGE LOADED
 	$("#mainDiv").animate({ opacity:1},1000, function() {				
 		$("#mainDiv").css("opacity",1);
 		});				 
+	$("#itemMenu").on("click",function() { 
+		curMenu="item";
+		Sound("click");												
+		sf.Draw();
+		});
 	$("#projectMenu").on("click",function() { 
 		curMenu="project";
 		Sound("click");												
@@ -167,11 +180,27 @@ $(document).ready(function() {											// ON PAGE LOADED
 		Sound("click");												
 		sf.Draw();
 		});
-	$("#editMenu").on("click",function() { 
-		curMenu="edit";
-		Sound("click");												
-		sf.Draw();
+	$("#editMenu").on("click",function(e) { 
+		var l=$(this).position().left+88;
+		var t=$(this).position().top+20;
+		$("#editMenu").css("color","#009900");										
+		var str="<div class='sf-pullDown' style='left:"+l+"px;top:"+t+"px' id='editDiv'>";
+		str+="<div class='sf-pullDownItem' onclick=''>Copy</div>";
+		str+="<div class='sf-pullDownItem' onclick=''>Paste</div>";
+		str+="<div class='sf-pullDownItem' onclick=''>Undo</div>";
+		str+="<div class='sf-pullDownItem' onclick=''>Redo</div>";
+		str+="</div>";
+		$("body").append(str);
+	
+		$("#editDiv").on("mouseleave",function() { 
+			$("#editDiv").remove();
+			$("#editMenu").css("color","#000");										
+			});
+	
 		});
+
+
+	
 	});									
 		
 function folio()														// CONSTRUCTOR
@@ -191,7 +220,7 @@ folio.prototype.Init=function(data)										// INIT
 	for (i=0;i<this.projects.length;++i) {
 		layoutObj.Init(this.projects[i]);
 		}
-	}
+}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -215,7 +244,6 @@ folio.prototype.Draw=function()											// DRAW PAGE
 		
 folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 {
-	$("#editMenu").css("color","#000");										// Reset menu color
 	$("#projectMenu").css("color","#000");									// Reset
 	$("#pageMenu").css("color","#000");										// Reset
 	$("#helpMenu").css("color","#000");										// Reset
@@ -233,6 +261,8 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 			str+=ShortenString(this.projects[curProject].title,20);			// Add title
 		str+=" &nbsp;|&nbsp; "+(curPage-0+1);								// Add to breadcrumb
 		}
+	else if (curMenu == "item") 											// If item
+		$("#itemMenu").css("color","#00aa00");								// Highlight it
 	else if (curMenu == "help") 											// If help
 		$("#helpMenu").css("color","#00aa00");								// Highlight it
 	$("#breadMenu").html(str);												// Set breadcrumb
@@ -241,34 +271,40 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 folio.prototype.DrawBody=function()										// DRAW BODY AREA
 {
 	var str="";
-	if (curMenu == "project") {										// If a project
+	if (curMenu == "project") {												// If a project
 		if ((curProject < 0) && this.projects.length)						// Nothing selected and something there
 			curProject=0;													// Pick first one
 		str+=this.MakeGallery();											// Add Gallery
 		str+=this.MakeProjectPage();										// Add project page
 		str+="<div id='itemPickerDiv' class='sf-itemsPicker'></div>";		// Item picker container
 		}
-	else if (curMenu == "page") {										// If page
+	else if (curMenu == "page") {											// If page
 		if ((curProject >= 0) &&(curPage < 0) && this.projects[curProject].pages.length)		// Nothing selected and something there
-			curPage=0;													// Pick first one
+			curPage=0;														// Pick first one
 		str+=this.MakeGallery();											// Add Gallery
 		str+=this.MakePagePage();											// Add page page
 		str+="<div id='itemPickerDiv' class='sf-itemsPicker'></div>";		// Item picker container
 		}
-	else if (curMenu == "help") {										// If help
+	else if (curMenu == "help") {											// If help
 		str+="<div id='projectDiv' class='sf-projectPage' style='left:0px;width:50%;min-width:500px'>";	// Project container
 		str+="<iframe frameborder='0' height='"+(window.innerHeight-90)+"' width='100%' src='";
 		str+="//docs.google.com/document/d/1IEtDo0jMhtaVyFeewcB_UXHWirO2Al_jO6Ri7u1QYoI/pub?embedded=true'/></div>";
 		}
-	else if (curMenu == "edit") {										// If edit
+	else if (curMenu == "edit") {											// If edit
 		str+="<div id='projectDiv' class='sf-projectPage' style='left:0px;width:50%;min-width:500px'>";	// Project container
+		}
+	else if (curMenu == "item") {											// If item
+		str+=this.MakeItemPage();											// Add item page
+		str+="<div id='itemPickerDiv' class='sf-itemsPicker'></div>";		// Item picker container
 		}
 	$("#bodyDiv").html(str);												// Fill body
 	if (curMenu == "project")												// If a project
  		this.AddProjectHandlers();											// Add project handlers
-	else if (curMenu == "page")											// If a page
+	else if (curMenu == "page")												// If a page
  		this.AddPageHandlers();												// Add page handlers
-	}
+	else if (curMenu == "item")												// If item
+ 		this.AddItemHandlers();												// Add item handlers
+}
 	
 folio.prototype.MakeGallery=function()									// MAKE GALLERY 
 {
@@ -276,11 +312,11 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 	var h=$("#bodyDiv").height()-60;										// Get height											
 	var trsty=" onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";		// Hover style
 	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
-	var title=(curMenu == "project") ? "Portfolios" : "Pages";			// Set title
+	var title=(curMenu == "project") ? "Portfolios" : "Pages";				// Set title
 	var str="<div id='galleryDiv' class='sf-gallery'><p><b>"+title+"</b></p>";	// Make gallery div
 	str+="<div class='sf-galleryContent' style='height:"+(h-20)+"px'>";		// Scrollable container
 
-	if (curMenu == "project") {											// Project gallery
+	if (curMenu == "project") {												// Project gallery
 		if (!this.projects.length)											// No projects yet
 			str+="<br>Add a new project by clicking on the + icon below";	// Say so
 		for (i=0;i<this.projects.length;++i) {								// For each project
@@ -327,7 +363,7 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
 	var i;
-	var pTitle="",pDesc="",pCite="",pTags="",pCollab=[],pFormat="Booklet";
+	var pTitle="",pDesc="",pCite="",pTags="",pCollab=[],pFormat="Booklet",pTemp="Full";
 	var str="<div id='projectDiv' class='sf-projectPage'>";					// Project container
 	if (curProject < 0) 												// No project selected
 		return str+"</div>";												// Return empty page
@@ -336,6 +372,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	if (this.projects[curProject].cite)   	pCite=this.projects[curProject].cite;
 	if (this.projects[curProject].tags)   	pTags=this.projects[curProject].tags;
 	if (this.projects[curProject].format)   pFormat=this.projects[curProject].format;
+	if (this.projects[curProject].temp)  	pTemp=this.projects[curProject].temp;
 	if (this.projects[curProject].collab) 	pCollab=this.projects[curProject].collab.split(",");
 	str+="<table style='width:100%;font-weight:bold;text-align:left'>";
 	str+="<tr height='32'><td width='1%'>Title</td>";
@@ -354,8 +391,8 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
 	str+="<tr height='28'><td>Format style</td><td>";
 	str+=MakeSelect("pFormat",false,["Booklet","SinglePage","Canvas","Slideshow"],pFormat)+"</td></tr>";
-	str+="<tr height='28'><td></td><td>";
-	str+=MakeSelect("pFormat",false,["Booklet","SinglePage","Canvas","Slideshow"],pFormat)+"</td></tr>";
+	str+="<tr height='28'><td>Template</td><td>";
+	str+=MakeSelect("pTemp",false,["Full","Top & body","Custom"],pTemp)+"</td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
 	str+="<button class='sf-bs' style='width:90px' id='addPages'>Add pages</button>&nbsp; &nbsp;";		// Add pages button
 	str+="<button class='sf-bs' style='width:90px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
@@ -368,7 +405,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 
 folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 {
-	if (curProject < 0)												// If not a valid project										
+	if (curProject < 0)														// If not a valid project										
 			return;															// Quit
 	this.AddProjectItems(true);												// Add project items
 	
@@ -398,6 +435,13 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		sf.Do()																// Something changed
 		sf.Draw();															// Redraw
 		});
+	
+	$("#pTemp").on("change",function() { 									// If changed
+		sf.projects[curProject].temp=$("#pTemp").val();						// Set it	
+		Sound("click");														// Click
+		sf.Do()																// Something changed
+		sf.Draw();															// Redraw
+		});
 
 	for (i=0;i<sf.projects.length;++i)										// For each project
 		$("#galleryLab"+i).on("click", function(e) {						// ON PROJECT CLICK
@@ -417,7 +461,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		});
 
 	$("#galleryAddBut").on("click",function() { 							// ADD NEW PROJECT
-		sf.sf.projects.push({ title:"New project", items:[] });				// Add shell					
+		sf.projects.push({ title:"New project", items:[] });				// Add shell					
 		curProject=sf.projects.length-1;									// Point at it
 		Sound("add");														// Add
 		sf.Do()																// Something changed
@@ -425,13 +469,13 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		});
 	
 	$("#galleryCopyBut").on("click",function() { 							// COPY A PROJECT
-		if (curProject < 0)												// If not a valid project										
+		if (curProject < 0)													// If not a valid project										
 			return;															// Quit
 		GetTextBox("Type project name", "This is the name of the new project made from the current one", "", function(s) {	// Ask for name
 			var o=JSON.stringify(sf.projects[curProject]);					// Deep copy current project as JSON
-			sf.projects.push($.parseJSON(o));									// Add copy as object					
+			sf.projects.push($.parseJSON(o));								// Add copy as object					
 			curProject=sf.projects.length-1;								// Point at it
-			sf.projects[sf.projects.length-1].title=s;							// Change title
+			sf.projects[sf.projects.length-1].title=s;						// Change title
 			Sound("add");													// Add
 			sf.Do()															// Something changed
 			sf.Draw();														// Redraw
@@ -511,6 +555,11 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		sf.Do()																// Something changed
 		layoutObj.Set(sf.projects[curProject]);								// Set layout
 		});
+
+	$("#shareProject").on("click",function() { 								// SET LAYOUT
+		sf.Do()																// Something changed
+		shareObj.Set(sf.projects[curProject]);								// Set layout
+		});
 }	
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -561,6 +610,19 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // ITEMS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+folio.prototype.MakeItemPage=function()									// MAKE ITEMS PAGE
+{
+	var str="<div id='projectDiv' class='sf-pagePage'>";					// Project container
+	str+="<p style='text-align:center'>This is where items are collected</p>";
+	return str+"</div>";													// Return oage page
+}
+
+folio.prototype.AddItemHandlers=function()								// ADD ITEM HANDLERS
+{
+	this.AddProjectItems(true);												// Add items
+}	
 
 
 folio.prototype.PreviewItem=function(id)								// PREVIEW ITEM

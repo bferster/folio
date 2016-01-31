@@ -49,6 +49,7 @@ layout.prototype.Set=function(container)							// SET LAYOUT
 	this.plo=container.layout;											// Point at layout object							
 	var str="<br>"+this.MakeParams();									// Make page params UI
 	str+=this.MakeSizer();												// Make page sizer UI
+	Sound("click");														// Click
 	ShowLightBox(700,"Set page layout",str);
 	this.Update();														// Update resizer/params
 
@@ -61,6 +62,7 @@ layout.prototype.Set=function(container)							// SET LAYOUT
 				_this.curPane=i;										// Set curPane
 				break;													// Quit looking
 				}
+		Sound("click");													// Click
 		_this.Update();													// Show new name
 		});
 
