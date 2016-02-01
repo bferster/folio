@@ -21,33 +21,16 @@
 						}
 		.sf-main {		min-width:1024px;
 						}
-		.sf-menu {		width:calc(100% - 4px);height:30px;color:#666;border:2px solid #ddd;
+		.sf-menu {		width:100%;height:32px;color:#666;
 						background-color:#ddd;opacity:inherit;
 						border-top-left-radius:6px;border-top-right-radius:6px;
 						}
-		.sf-pullDown {	position:absolute;background-color:#ddd;width:100px; }
-		.sf-pullDownItem {	padding-bottom:6px;cursor:pointer;width:92px;padding:6px;
-						padding-left:8px;padding-right:0px;
-						}
-		.sf-pullDownItem:hover{background-color:#bbb;color:#eee}
-		
-		.sf-body {		width:calc(100% - 4px)min-height:300px;color:#666;border:2px solid #ddd;	
+		.sf-body {		width:100%;min-height:300px;color:#666;border:2px solid #ddd;	
 						background-color:#fff;opacity:inherit;
 						}
 		.sf-menuItem {	margin-left:50px;cursor:pointer;color:#000;
 						}
 		.sf-breadItem {	text-align:left;float:right;margin-right:12px;margin-top:8px;
-						}
-		.sf-lightBox	{ position:absolute;padding:16px;border-radius:6px;z-index:2500;
-						background-color:#f8f8f8;font-size:12px;
-						}
-		.sf-lightBoxTitle { color:#666;font-weight:bold;font-size:18px;
-						}
-		.sf-is {		border-radius:12px;padding-left:8px;padding-right:8px;padding-top:3px;padding-bottom:2px;
-						border:1px solid #ccc;font-size:12px;width:95%;color:#666;
-						}
-		.sf-bs {		border-radius:16px;padding-left:8px;padding-right:8px;padding-top:1px;color:#666;
-						font-size:12px;height:23px;background-color:#e8e8e8;cursor:pointer;border:1px solid #ccc;
 						}
 		.sf-gallery {  	display:inline-block;text-align:center;width:150px;
 						padding-top:0px;padding-bottom:8px;padding-left:12px;padding-right:14px;
@@ -63,17 +46,13 @@
 						}
 		.sf-galleryBut  { cursor:pointer;margin-right:25px;
 						}
-		.sf-projectPage { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:186px;
+		.sf-projectPage { position:absolute;overflow-x:hidden;overflow-y:auto;top:42px;left:186px;
 						width:430px;margin:12px;color:#999;border-right:1px solid #ccc;
 						padding-right:16px;margin-right:0px;
 						}
 		.sf-projectItems { width:440px;text-align:center;color:#aaa;margin-top:-16px;
 						}
-		.sf-pagePage { 	position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:186px;
-						width:800px;margin:12px;color:#999;border-right:1px solid #ccc;
-						padding-right:16px;margin-right:0px;
-						}
-		.sf-itemsPicker { position:absolute;overflow-x:hidden;overflow-y:auto;top:44px;left:644px;
+		.sf-itemsPicker { position:absolute;overflow-x:hidden;overflow-y:auto;top:42px;left:644px;
 						margin:18px;color:#aaa;text-align:left;min-width:160px;margin-top:20px;
 						margin-right:0px;
 						}
@@ -104,6 +83,17 @@
 		.sf-sizerFooter { width:100%;box-sizing:border-box;background-color:#ddd;margin:1px;
 						}
 		.sf-previewTitle { margin-top:8px;margin-bottom:-4px;color:#999;font-weight:bold;
+						}
+		.sf-lightBox	{ position:absolute;padding:16px;border-radius:6px;z-index:2500;
+						background-color:#f8f8f8;font-size:12px;
+						}
+		.sf-lightBoxTitle { color:#666;font-weight:bold;font-size:18px;
+						}
+		.sf-is {		border-radius:12px;padding-left:8px;padding-right:8px;padding-top:3px;padding-bottom:2px;
+						border:1px solid #ccc;font-size:12px;width:95%;color:#666;
+						}
+		.sf-bs {		border-radius:16px;padding-left:8px;padding-right:8px;padding-top:1px;color:#666;
+						font-size:12px;height:23px;background-color:#e8e8e8;cursor:pointer;border:1px solid #ccc;
 						}
 		.unselectable { -moz-user-select: none;     -khtml-user-select: none;
 		   			 	-webkit-user-select: none;  -ms-user-select: none;   user-select: none;
@@ -241,8 +231,6 @@ folio.prototype.Draw=function()											// DRAW PAGE
 	this.DrawMenu();														// Set menu
 	this.DrawBody();														// Draw body
 	this.AddProjectItems();													// Add project items
-	var w1=$("#galleryDiv").width() ? $("#galleryDiv").width()+34 : 0;		// Shift over if a gallery present
-	$("#projectDiv").css("left",w1+"px");									// Set project left
 	$("#projectDiv").height(h-78);											// Set project height
 	$("#itemPickerDiv").height(h-90);										// Set picker height
 	$("#itemPickerDiv").width(w-$("#projectDiv").width()-$("#galleryDiv").width()-92);					// Set picker width 
@@ -576,12 +564,12 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 
 folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 {
-	var str="<div id='projectDiv' class='sf-pagePage'>";					// Project container
+	var str="<div id='projectDiv' class='sf-projectPage' style='width:800px'>";	// Project container
 	if ((curProject < 0) || (curPage < 0))									// No project, page selected
 		return str+"</div>";												// Return empty page
 	var o=this.projects[curProject].pages[curPage];							// Point at page
 	str+="<p style='text-align:center'>Editing: <b>"+o.title+"</b></p>";	// Page being edited
-	str+="<div style='position:absolute;top:calc(100% - 34px);width:100%;text-align:center'>";
+	str+="<div style='position:absolute;top:calc(100% - 24px);width:100%;text-align:center'>";
 	str+="<button class='sf-bs' id='setLayout'>Change this page's layout</button>&nbsp; &nbsp;";	// Set layout button
 	str+="</div>";
 	return str+"</div>";													// Return page page
