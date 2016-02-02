@@ -6,16 +6,16 @@
 function layout()													// CONSTRUCTOR
 {
 	this.plo=null;														// Ptr to 				
-	this.paneNames=["Header","Left","Body","Right","Footer"];			// Name of all the panes
+	this.paneNames=["Top","Left","Mid","Right","Bot"];					// Name of all the panes
 }	
 
 layout.prototype.Init=function(container)							// INIT LAYOUT 
 {
 	container.layout={};												// Make one
-	container.layout.headerPct=20;										// Set default sizes
+	container.layout.topPct=20;											// Set default sizes
 	container.layout.leftPct=20;
 	container.layout.rightPct=20;
-	container.layout.footerPct=10;
+	container.layout.botPct=10;
 	container.layout.aspect="Portrait";									
 
 	container.layout.panes=[];											// Holds pane info
@@ -24,10 +24,10 @@ layout.prototype.Init=function(container)							// INIT LAYOUT
 			container.layout.panes.push({});							// Alloc pane obj
 		}
 	else{
-		container.layout.topGut=0;										// Set default gutters
-		container.layout.leftGut=0;
-		container.layout.rightGut=0;
-		container.layout.botGut=0;
+		container.layout.topGut="None";									// Set default gutters
+		container.layout.leftGut="None";
+		container.layout.rightGut="None";
+		container.layout.botGut="None";
 		for (i=0;i<this.paneNames.length;++i) {							// For each pane
 			o={};														// Pane obj
 			o.borderCol="#999999";										// Set default pane params
@@ -41,17 +41,18 @@ layout.prototype.Init=function(container)							// INIT LAYOUT
 		}
 }
 
-layout.prototype.Set=function(container)							// SET LAYOUT 
+layout.prototype.Set=function(container, callback)					// SET LAYOUT 
 {
 	var i,o;
 	var _this=this;														// Get context
-	this.curPane=0;														// Start with header
+	this.curPane=0;														// Start with top
 	if (!container.layout) 												// If no layout object yet
 		this.Init(container);											// Init object
 	this.plo=container.layout;											// Point at layout object							
 	var str="<br>"+this.MakeParams();									// Make page params UI
 	str+=this.MakeSizer();												// Make page sizer UI
-	ShowLightBox(700,"Set page layout",str);
+	ShowLightBox(700,"Set page layout",str,callback);					// Put up dialog
+	CKEDITOR.inline($("#lmark")[0]);									// Enable rich text editor
 	this.Update();														// Update resizer/params
 
 	$('[id^="sizer"]').on("click", function(e) {						// CLICK ON ANY DIV STARRING WITH 'SIZER'
@@ -67,7 +68,7 @@ layout.prototype.Set=function(container)							// SET LAYOUT
 		_this.Update();													// Show new name
 		});
 
-	$("#sizerHeaderDiv").trigger("click");								// Turn on header at start
+	$("#sizerTopDiv").trigger("click");									// Turn on top at start
 	
 	$("#lbcol").on("click", function(e) {								// BORDER COLOR CLICK HANDLER
 			ColorPicker("lbcol",-1);									// Get border color
@@ -94,54 +95,54 @@ layout.prototype.Set=function(container)							// SET LAYOUT
 			_this.plo.topGut=$(this).val();								// Set back img
 			}); 
 	$("#bgut").on("change", function(e) {								// BOT GUTTER HANDLER
-			_this.plo.botGut=$(this).val();								// Set back img
+			_this.plo.botGut=$(this).val();								// Set val
 			}); 
 	$("#lgut").on("change", function(e) {								// LEFT GUTTER HANDLER
-			_this.plo.leftGut=$(this).val();							// Set back img
+			_this.plo.leftGut=$(this).val();							// Set val
 			}); 
 	$("#rgut").on("change", function(e) {								// RIGHT GUTTER HANDLER
-			_this.plo.rightGut=$(this).val();							// Set back img
+			_this.plo.rightGut=$(this).val();							// Set val
 			}); 
-	$("#lmark").on("blur", function(e) {								// BACK IMG HANDLER
-			_this.plo.panes[_this.curPane].markUp=$(this).val();		// Set back img
+	$("#lmark").on("blur", function(e) {								// MARKUP HANDLER
+			_this.plo.panes[_this.curPane].markUp=$(this).html();		// Set val
 			}); 
 	$("#lasp").on("change", function(e) {								// ASPECT RATIO HANDLER
 			_this.plo.aspect=$(this).val();								// Set aspect
 			_this.Update();												// Update resizer
 			}); 
 	
-	$('[id$="SizBar"]').hover(											// HOVER ON HEADER
+	$('[id$="SizBar"]').hover(											// HOVER ON PANE SIZER
 		function(){ $(this).css("background-color","#acc3db")},			// Highlight
 		function(){ $(this).css("background-color","transparent")		// Hide
 		});
 	
-	$("#headerSizBar").draggable({										// DRAG HEADER HEIGHT HANDLER
+	$("#topSizBar").draggable({											// DRAG TOP HEIGHT HANDLER
 		cursor: "row-resize", axis:"y",									// Y-only
 		stop: function(event, ui) {										// When done
 			$(this).css({ top:"100%" });								// Reset resizer bar
 			},
 		drag: function(event, ui) {										// On drag
-			var y=event.clientY-$("#sizerHeaderDiv").offset().top;		// Position within layout block
-			var h=$("#sizerHeaderDiv").height()+$("#sizerBodyDiv").height()+$("#sizerFooterDiv").height();	// Height of travel
+			var y=event.clientY-$("#sizerTopDiv").offset().top;			// Position within layout block
+			var h=$("#sizerTopDiv").height()+$("#sizerMidDiv").height()+$("#sizerBotDiv").height();	// Height of travel
 			var r=y/h;													// Ratio
-			r=Math.min(100-_this.plo.footerPct,Math.max(0,r*100));		// Cap 0-100% - footer
-			_this.plo.headerPct=r;										// Set val
+			r=Math.min(100-_this.plo.botPct,Math.max(0,r*100));			// Cap 0-100% - bot
+			_this.plo.topPct=r;											// Set val
 			_this.Update();												// Update resizer
 			$(this).css({ top:"100%" });								// Reset resizer bar
 			}
 		});
 
-	$("#footerSizBar").draggable({										// DRAG HEADER HEIGHT HANDLER
+	$("#botSizBar").draggable({											// DRAG TOP HEIGHT HANDLER
 		cursor: "row-resize", axis:"y",									// Y-only
 		stop: function(event, ui) {										// When done
 			$(this).css({ top:"0%" });									// Reset resizer bar
 			},
 		drag: function(event, ui) {										// On drag
-			var y=event.clientY-$("#sizerHeaderDiv").offset().top;		// Position within layout block
-			var h=$("#sizerHeaderDiv").height()+$("#sizerBodyDiv").height()+$("#sizerFooterDiv").height();	// Height of travel
+			var y=event.clientY-$("#sizerTopDiv").offset().top;		// Position within layout block
+			var h=$("#sizerTopDiv").height()+$("#sizerMidDiv").height()+$("#sizerBotDiv").height();	// Height of travel
 			var r=y/h;													// Ratio
-			r=Math.max(_this.plo.headerPct,Math.min(100,r*100));		// Cap 0-100% - header
-			_this.plo.footerPct=100-r;									// Set val
+			r=Math.max(_this.plo.topPct,Math.min(100,r*100));			// Cap 0-100% - top
+			_this.plo.botPct=100-r;										// Set val
 			_this.Update();												// Update resizer
 			}
 		});
@@ -182,29 +183,29 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	else if (o.aspect == "Square")	$("#layoutSizerDiv").height(300);
 	else 							$("#layoutSizerDiv").height(400);
 	
-	var midHgt=Math.max(Math.min(100-o.headerPct-o.footerPct,100),0);	// Get body% height 0-100
-	var midWid=Math.max(Math.min(100-o.rightPct-o.leftPct,100),0);		// Get body% width 0-100
+	var midHgt=Math.max(Math.min(100-o.topPct-o.botPct,100),0);			// Get mid% height 0-100
+	var midWid=Math.max(Math.min(100-o.rightPct-o.leftPct,100),0);		// Get mid% width 0-100
 	$('[id^="sizer"]').show();											// Make sure they are all showing
-	$("#sizerHeaderDiv").css({ height:o.headerPct+"%" });				// Set header		
+	$("#sizerTopDiv").css({ height:o.topPct+"%" });						// Set top		
 	$("#sizerLeftDiv").css({   height:midHgt+"%",width:o.leftPct+"%" });// Set left
-	$("#sizerBodyDiv").css({   height:midHgt+"%",width:midWid+"%" });	// Set body
+	$("#sizerMidDiv").css({   height:midHgt+"%",width:midWid+"%" });	// Set mid
 	$("#sizerRightDiv").css({  height:midHgt+"%",width:o.rightPct+"%" });// Set right
-	$("#sizerFooterDiv").css({ height:o.footerPct+"%" })				// Set footer		
-	$("#sizerBodyDiv").width($("#sizerBodyDiv").width()-6);				// Remove extra margins
-	if (!midWid && $("#sizerleftDiv").width())							// No body, but left visible
+	$("#sizerBotDiv").css({ height:o.botPct+"%" })						// Set bot		
+	$("#sizerMidDiv").width($("#sizerMidDiv").width()-6);				// Remove extra margins
+	if (!midWid && $("#sizerleftDiv").width())							// No mid, but left visible
 		$("#sizerLeftDiv").width($("#sizerLeftDiv").width()-6);			// Remove extra margins
-	else if (!midWid && $("#sizerRightDiv").width())					// No body, but right visible
+	else if (!midWid && $("#sizerRightDiv").width())					// No mid, but right visible
 		$("#sizerRightDiv").width($("#sizerRightDiv").width()-6);		// Remove extra margins
-	if (!midHgt) { 														// No body
+	if (!midHgt) { 														// No mid
 		$("#sizerLeftDiv").hide();										// Hide middle ones
-		$("#sizerBodyDiv").hide()
+		$("#sizerMidDiv").hide()
 		$("#sizerRightDiv").hide()
 		}
-	$("#headPtc").text(Math.floor(o.headerPct)+"%");					// Show %
+	$("#topPtc").text(Math.floor(o.topPct)+"%");						// Show %
 	$("#leftPtc").text(Math.floor(o.leftPct)+"%");					
-	$("#bodyPtc").text(Math.floor(100-o.leftPct-o.rightPct)+"%");		// Mid is 100-left-right			
+	$("#midPtc").text(Math.floor(100-o.leftPct-o.rightPct)+"%");		// Mid is 100-left-right			
 	$("#rightPtc").text(Math.floor(o.rightPct)+"%");					
-	$("#footerPtc").text(Math.floor(o.footerPct)+"%");				
+	$("#botPtc").text(Math.floor(o.botPct)+"%");				
 	$("#paneTitle").text(this.paneNames[this.curPane]);					// Pane name			
 	$("#lbcol").val(o.panes[this.curPane].borderCol);					// Set border color
 	ColorPicker("lbcol",-1,true);
@@ -213,7 +214,7 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	$("#lbgimg").val(o.panes[this.curPane].backImg);					// Set back image
 	$("#lbs").val(o.panes[this.curPane].borderSty);						// Set border style
 	$("#lbw").val(o.panes[this.curPane].borderWid);						// Set border width
-	$("#lmark").val(o.panes[this.curPane].markUp);						// Set markup
+	$("#lmark").html(o.panes[this.curPane].markUp);						// Set markup
 	$("#tgut").val(o.topGut);											// Set gutters
 	$("#lgut").val(o.leftGut);											
 	$("#rgut").val(o.rightGut);											
@@ -236,21 +237,21 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 	str+=MakeSelect("lbw",false,["None",1,2,3,4,5])+"</td></tr>";
 	str+="<tr height='28'><td>Border color &nbsp;</td>";					// Back col
 	str+="<td><input class='sf-is' id='lbcol' style='width:50px' type='text'></td></tr>";
-	str+="<tr height='28'><td>Header/footer space</td>";					// Gutter
+	str+="<tr height='28'><td>Top / bot gutter</td>";					// Gutter
 	str+="<td>"+MakeSelect("tgut",false,["None","Thin","Medium","Wide"])+" &nbsp;:&nbsp; ";
 	str+=MakeSelect("bgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";
-	str+="<tr height='28'><td>Left/right space</td>";						// Gutter
+	str+="<tr height='28'><td>Left / right gutter</td>";						// Gutter
 	str+="<td>"+MakeSelect("lgut",false,["None","Thin","Medium","Wide"])+" &nbsp;:&nbsp; ";
 	str+=MakeSelect("rgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";
 	str+="<tr height='28'><td>Aspect format</td><td>";						// Aspect
 	str+=MakeSelect("lasp",false,["Portrait","Landscape","Square"])+"</td></tr>";
-	str+="<tr><td>Default text</td><td><textarea class='sf-is' id='lmark' ";// Markup
-	str+="style='font-family:sans-serif'></textarea></td></tr>";
+	str+="<tr><td>Default text</td><td><div class='sf-is' id='lmark' ";	// Markup
+	str+="style='height:40px;overflow:hidden' contenteditable='true'></div></td></tr>";
 	str+="</table>";	
 	str+="<p><div class='sf-layoutPcts'>";	
-	str+="&nbsp; Top <span id='headPtc'></span>&nbsp Left <span id='leftPtc'></span> "; 
-	str+="&nbspMid <span id='bodyPtc'></span>&nbsp Right <span id='rightPtc'></span> "; 
-	str+="&nbspBot <span id='footerPtc'></span>&nbsp;</div></p>"; 
+	str+="&nbsp; Top <span id='topPtc'></span>&nbsp Left <span id='leftPtc'></span> "; 
+	str+="&nbspMid <span id='midPtc'></span>&nbsp Right <span id='rightPtc'></span> "; 
+	str+="&nbspBot <span id='botPtc'></span>&nbsp;</div></p>"; 
 	str+="Click on a pane to show its current settings.<br>";				// Help
 	str+="Drag in the space between panes to set a pane's height<br>or width.";
 	return str+"</div>";													// Return sizer
@@ -259,14 +260,14 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 layout.prototype.MakeSizer=function()									// PAGE SIZER 
 {
 	var str="<div  id='layoutSizerDiv' class='sf-layoutSizer'>";			// Overall div
-	str+="<div id='sizerHeaderDiv' class='sf-sizerHeader'>";				// Header div
-	str+="<div id='headerSizBar' style='position:relative;top:100%;width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize header'></div></div>";
+	str+="<div id='sizerTopDiv' class='sf-sizerTop'>";						// Top div
+	str+="<div id='topSizBar' style='position:relative;top:100%;width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize top'></div></div>";
 	str+="<div id='sizerLeftDiv' class='sf-sizerLeft'>";					// Left div
 	str+="<div id='leftSizBar' style='position:relative;top:0px;left:100%;height:100%;width:8px;cursor:col-resize' class='sf-unselectable' title='Resize left'></div></div>";
-	str+="<div id='sizerBodyDiv'   class='sf-sizerBody'>";					// Body div
+	str+="<div id='sizerMidDiv'   class='sf-sizerMid'>";					// Mid div
 	str+="<div id='rightSizBar' style='position:relative;top:0px;left:100%;height:100%;width:8px;cursor:col-resize' class='sf-unselectable' title='Resize right'></div></div>";
 	str+="<div id='sizerRightDiv'  class='sf-sizerRight'></div>";			// Right div
-	str+="<div id='sizerFooterDiv' class='sf-sizerFooter'>";				// Footer div
-	str+="<div id='footerSizBar' style='position:relative;width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize footer'></div></div>";
+	str+="<div id='sizerBotDiv' class='sf-sizerBot'>";						// Bot div
+	str+="<div id='botSizBar' style='position:relative;width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize bot'></div></div>";
 	return str+"</div>";													// Return sizer
 }

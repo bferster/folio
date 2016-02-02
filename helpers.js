@@ -122,9 +122,7 @@
 	
 	}
 	
-	
-	
-	function ShowLightBox(width, title, content)
+	function ShowLightBox(width, title, content, callback)
 	{
 		var str="<div id='lightBoxDiv' style='position:fixed;width:100%;height:100%;";	
 		str+="background:url(img/overlay.png) repeat;top:0px;left:0px';</div>";
@@ -134,10 +132,16 @@
 		str+="style='width:"+width+"px;left:"+x+"px;top:100px;'>";
 		str+="<img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
 		str+="<span id='lightBoxTitle' class='sf-lightBoxTitle'>"+title+"</span>";
-		str+="<img src='img/x.gif' style='cursor:pointer;position:absolute;top:22px;left:"+width+"px' "; 
-		str+="onclick='$(\"#lightBoxDiv\").remove(),Sound(\"click\")'>";
+		str+="<img src='img/x.gif' id='lbxBoxExit' style='cursor:pointer;position:absolute;top:22px;left:"+width+"px' "; 
 		str+="<div id='lightContentDiv'>"+content+"</div>";					
-		$("#lightBoxDiv").append(str);	
+		$("#lightBoxDiv").append(str);
+		
+		
+		$("#lbxBoxExit").on("click",function() {
+			Sound("click");
+			$("#lightBoxDiv").remove();
+			if (callback) callback();
+			});
 	}
 
 	function AlertBox(title, content, callback)								// ALERT BOX

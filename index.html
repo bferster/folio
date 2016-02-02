@@ -47,8 +47,8 @@
 		.sf-galleryBut  { cursor:pointer;margin-right:25px;
 						}
 		.sf-projectPage { display:inline-block;overflow-x:hidden;overflow-y:auto;
-						width:430px;margin:0px;color:#999;border-right:1px solid #ccc;
-						padding-right:16px;margin-left:12px;vertical-align:top;
+						width:430px;color:#999;border-right:1px solid #ccc;
+						padding-right:16px;margin:16px;vertical-align:top;
 						}
 		.sf-projectItems { width:440px;text-align:center;color:#aaa;margin-top:-16px;
 						}
@@ -61,6 +61,11 @@
 						}
 		.sf-itemPic    { width:128px;height:64px;border:1px solid #999;cursor:pointer;
 						}
+		.sf-player { 	height:calc(100% - 42px);width:100%;
+						}
+		.sf-playerPane{	display:inline-block;box-sizing:border-box;background-color:#ddd;border:1px solid #fff;
+						padding:8px;overflow:hidden;
+						}
 		.sf-layoutParams { float:left:width:55%;text-align:left;color:#888;margin:12px;
 						display:inline-block;
 						}
@@ -69,15 +74,15 @@
 						}
 		.sf-layoutPcts 	{ border:1px solid #999;border-radius:16px;padding:2px;color:#666;
 						}
-		.sf-sizerHeader { width:100%;background-color:#ddd;margin:1px;
+		.sf-sizerTop { width:100%;background-color:#ddd;margin:1px;
 						}
 		.sf-sizerLeft 	{ display:inline-block;box-sizing:border-box;background-color:#ddd;margin:1px;
 						}
-		.sf-sizerBody 	{ display:inline-block;box-sizing:border-box;background-color:#ddd;margin:1px;
+		.sf-sizerMid 	{ display:inline-block;box-sizing:border-box;background-color:#ddd;margin:1px;
 						}
 		.sf-sizerRight 	{ display:inline-block;box-sizing:border-box;background-color:#ddd;margin:1px;
 						}
-		.sf-sizerFooter { width:100%;box-sizing:border-box;background-color:#ddd;margin:1px;
+		.sf-sizerBot { width:100%;box-sizing:border-box;background-color:#ddd;margin:1px;
 						}
 		.sf-previewTitle { margin-top:8px;margin-bottom:-4px;color:#999;font-weight:bold;
 						}
@@ -109,7 +114,7 @@
 </head>
 <body>
 	<div id="mainDiv" class="sf-main unselectable" style="opacity:0">	
-		<div id="menuDiv" class="sf-menu">
+		<div id="menuDiv" class="sf-menu" >
 			<img src="img/menuheader.png">
 			<span style="vertical-align:10px">
 				S H A N T l
@@ -232,14 +237,19 @@ folio.prototype.Draw=function()											// DRAW PAGE
 	var h=window.innerHeight;												// Get height
 	var w=window.innerWidth;												// Get width
 	$("#bodyDiv").height(h-54);												// Set body height
-	this.DrawMenu();														// Set menu
-	this.DrawBody();														// Draw body
-	this.AddProjectItems();													// Add project items
+	sf.DrawMenu();															// Set menu
+	sf.DrawBody();															// Draw body
+	sf.AddProjectItems();													// Add project items
 	$("#projectDiv").height(h-78);											// Set project height
 	$("#itemPickerDiv").height(h-90);										// Set picker height
 	$("#itemPickerDiv").width(w-$("#projectDiv").width()-$("#galleryDiv").width()-92);					// Set picker width 
 	$("#itemPickerDiv").css("left",$("#projectDiv").width()+$("#projectDiv").offset().left+16+"px");	// Set picker left 
-
+	if (curMenu == "project")												// If a project
+ 		sf.AddProjectHandlers();											// Add project handlers
+	else if (curMenu == "page")												// If a page
+		sf.AddPageHandlers();												// Add page handlers
+	else if (curMenu == "item")												// If item
+ 		sf.AddItemHandlers();												// Add item handlers
 }
 		
 folio.prototype.DrawMenu=function()										// DRAW MENU AREA
@@ -297,12 +307,6 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 		str+="<div id='itemPickerDiv' class='sf-itemsPicker'></div>";		// Item picker container
 		}
 	$("#bodyDiv").html(str);												// Fill body
-	if (curMenu == "project")												// If a project
- 		this.AddProjectHandlers();											// Add project handlers
-	else if (curMenu == "page")												// If a page
- 		this.AddPageHandlers();												// Add page handlers
-	else if (curMenu == "item")												// If item
- 		this.AddItemHandlers();												// Add item handlers
 }
 	
 folio.prototype.MakeGallery=function()									// MAKE GALLERY 
@@ -555,9 +559,9 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		layoutObj.Set(sf.projects[curProject]);								// Set layout
 		});
 
-	$("#shareProject").on("click",function() { 								// SET LAYOUT
+	$("#shareProject").on("click",function() { 								// SHARE
 		sf.Do()																// Something changed
-		shareObj.Set(sf.projects[curProject]);								// Set layout
+		shareObj.Set(sf.projects[curProject]);								// Set share
 		});
 }	
 
@@ -568,22 +572,24 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 
 folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 {
-	var str="<div id='projectDiv' class='sf-projectPage' style='width:800px'>";	// Project container
+	var str="<div id='projectDiv' class='sf-projectPage' style='width:";	// Set project div
+	str+=($("#bodyDiv").height()-50)*.75+"px'>";							// Set width
 	if ((curProject < 0) || (curPage < 0))									// No project, page selected
 		return str+"</div>";												// Return empty page
 	var o=this.projects[curProject].pages[curPage];							// Point at page
-	str+="<p style='text-align:center'>Editing: <b>"+o.title+"</b></p>";	// Page being edited
-	str+="<div style='position:relative;top:calc(100% - 65px);text-align:center'>";
+	str+=playerObj.Make();													// Create divs for player
+	str+="<div style='position:absolute;top:calc(100% - 45px);text-align:center'>";
 	str+="<button class='sf-bs' id='setLayout'>Change this page's layout</button>&nbsp; &nbsp;";	// Set layout button
-	str+="</div>";
+	str+="<b>"+ShortenString(o.title,40)+"</b></div>";						// Page being edited
 	return str+"</div>";													// Return page page
 }
 
 folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 {
-	var i;
+
+	playerObj.Update(this.projects[curProject].pages[curPage],this.projects[curProject].layout);	// Add player obj
 	
-	for (i=0;i<sf.projects[curProject].pages.length;++i)					// For each page
+	for (var i=0;i<sf.projects[curProject].pages.length;++i)				// For each page
 		$("#galleryLab"+i).on("click", function(e) {						// ON PAGE CLICK
 			curPage=e.currentTarget.id.substr(10)-0;						// Extract id
 			Sound("click");													// Click
@@ -592,8 +598,8 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 
 	$("#setLayout").on("click",function() { 								// SET PAGE LAYOUT
 		sf.Do()																// Something changed
-		layoutObj.Set(sf.projects[curProject].pages[curPage]);				// Set layout
-  		});
+		layoutObj.Set(sf.projects[curProject].pages[curPage],sf.Draw);		// Set layout
+   		});
 }	
 
 folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
