@@ -46,9 +46,9 @@
 						}
 		.sf-galleryBut  { cursor:pointer;margin-right:25px;
 						}
-		.sf-projectPage { display:inline-block;overflow-x:hidden;overflow-y:auto;top:42px;left:186px;
-						width:430px;margin:12px;color:#999;border-right:1px solid #ccc;
-						padding-right:16px;margin-right:0px;
+		.sf-projectPage { display:inline-block;overflow-x:hidden;overflow-y:auto;
+						width:430px;margin:0px;color:#999;border-right:1px solid #ccc;
+						padding-right:16px;margin-left:12px;
 						}
 		.sf-projectItems { width:440px;text-align:center;color:#aaa;margin-top:-16px;
 						}
@@ -83,6 +83,13 @@
 		.sf-sizerFooter { width:100%;box-sizing:border-box;background-color:#ddd;margin:1px;
 						}
 		.sf-previewTitle { margin-top:8px;margin-bottom:-4px;color:#999;font-weight:bold;
+						}
+		.sf-pullDown {	position:absolute;background-color:#ddd;width:100px; 
+						}
+		.sf-pullDownItem {	padding-bottom:6px;cursor:pointer;width:92px;padding:6px;
+						padding-left:8px;padding-right:0px;
+						}
+		.sf-pullDownItem:hover{ background-color:#bbb;color:#eee
 						}
 		.sf-lightBox	{ position:absolute;padding:16px;border-radius:6px;z-index:2500;
 						background-color:#f8f8f8;font-size:12px;
@@ -569,7 +576,7 @@ folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 		return str+"</div>";												// Return empty page
 	var o=this.projects[curProject].pages[curPage];							// Point at page
 	str+="<p style='text-align:center'>Editing: <b>"+o.title+"</b></p>";	// Page being edited
-	str+="<div style='position:absolute;top:calc(100% - 24px);width:100%;text-align:center'>";
+	str+="<div style='position:relative;top:calc(100% - 65px);text-align:center'>";
 	str+="<button class='sf-bs' id='setLayout'>Change this page's layout</button>&nbsp; &nbsp;";	// Set layout button
 	str+="</div>";
 	return str+"</div>";													// Return page page
