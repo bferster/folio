@@ -12,10 +12,12 @@ function layout()													// CONSTRUCTOR
 layout.prototype.Init=function(container)							// INIT LAYOUT 
 {
 	container.layout={};												// Make one
-	container.layout.headerPct=10;										// Set default sizes
+	container.layout.headerPct=20;										// Set default sizes
 	container.layout.leftPct=20;
 	container.layout.rightPct=20;
 	container.layout.footerPct=10;
+	container.layout.aspect="Portrait";									
+
 	container.layout.panes=[];											// Holds pane info
 	if (container.cite == undefined) {
 		for (i=0;i<this.paneNames.length;++i) 							// For each pane
@@ -89,20 +91,24 @@ layout.prototype.Set=function(container)							// SET LAYOUT
 	$("#lbgimg").on("blur", function(e) {								// BACK IMG HANDLER
 			_this.plo.panes[_this.curPane].backImg=$(this).val();		// Set back img
 			}); 
-	$("#tgut").on("blur", function(e) {									// TOP GUTTER HANDLER
+	$("#tgut").on("change", function(e) {								// TOP GUTTER HANDLER
 			_this.plo.topGut=$(this).val();								// Set back img
 			}); 
-	$("#bgut").on("blur", function(e) {									// BOT GUTTER HANDLER
+	$("#bgut").on("change", function(e) {								// BOT GUTTER HANDLER
 			_this.plo.botGut=$(this).val();								// Set back img
 			}); 
-	$("#lgut").on("blur", function(e) {									// LEFT GUTTER HANDLER
+	$("#lgut").on("change", function(e) {								// LEFT GUTTER HANDLER
 			_this.plo.leftGut=$(this).val();							// Set back img
 			}); 
-	$("#rgut").on("blur", function(e) {									// RIGHT GUTTER HANDLER
+	$("#rgut").on("change", function(e) {								// RIGHT GUTTER HANDLER
 			_this.plo.rightGut=$(this).val();							// Set back img
 			}); 
 	$("#lmark").on("blur", function(e) {								// BACK IMG HANDLER
 			_this.plo.panes[_this.curPane].markUp=$(this).val();		// Set back img
+			}); 
+	$("#lasp").on("change", function(e) {								// ASPECT RATIO HANDLER
+			_this.plo.aspect=$(this).val();								// Set aspect
+			_this.Update();												// Update resizer
 			}); 
 	
 	$('[id$="SizBar"]').hover(											// HOVER ON HEADER
@@ -173,6 +179,10 @@ layout.prototype.Set=function(container)							// SET LAYOUT
 layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS 
 {
 	var o=this.plo;														// Point at layout object
+	if (o.aspect == "Landscape")	$("#layoutSizerDiv").height(200);	// Set size to match aspect
+	else if (o.aspect == "Square")	$("#layoutSizerDiv").height(300);
+	else 							$("#layoutSizerDiv").height(400);
+	
 	var midHgt=Math.max(Math.min(100-o.headerPct-o.footerPct,100),0);	// Get body% height 0-100
 	var midWid=Math.max(Math.min(100-o.rightPct-o.leftPct,100),0);		// Get body% width 0-100
 	$('[id^="sizer"]').show();											// Make sure they are all showing
@@ -205,6 +215,11 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	$("#lbs").val(o.panes[this.curPane].borderSty);						// Set border style
 	$("#lbw").val(o.panes[this.curPane].borderWid);						// Set border width
 	$("#lmark").val(o.panes[this.curPane].markUp);						// Set markup
+	$("#tgut").val(o.topGut);											// Set gutters
+	$("#lgut").val(o.leftGut);											
+	$("#rgut").val(o.rightGut);											
+	$("#bgut").val(o.botGut);											
+	$("#lasp").val(o.aspect);											// Set aspect
 }
 
 layout.prototype.MakeParams=function()									// PAGE SIZER 
@@ -223,11 +238,13 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 	str+="<tr height='28'><td>Border color &nbsp;</td>";					// Back col
 	str+="<td><input class='sf-is' id='lbcol' style='width:50px' type='text'></td></tr>";
 	str+="<tr height='28'><td>Header/footer space</td>";					// Gutter
-	str+="<td><input class='sf-is' style='width:50px' id='tgut' type='text'> &nbsp;/&nbsp; ";
-	str+="<input class='sf-is' style='width:50px' id='bgut' type='text'></td></tr>";
+	str+="<td>"+MakeSelect("tgut",false,["None","Thin","Medium","Wide"])+" &nbsp;:&nbsp; ";
+	str+=MakeSelect("bgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";
 	str+="<tr height='28'><td>Left/right space</td>";						// Gutter
-	str+="<td><input class='sf-is' style='width:50px' id='lgut' type='text'> &nbsp;/&nbsp; ";
-	str+="<input class='sf-is' style='width:50px' id='rgut' type='text'></td></tr>";
+	str+="<td>"+MakeSelect("lgut",false,["None","Thin","Medium","Wide"])+" &nbsp;:&nbsp; ";
+	str+=MakeSelect("rgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";
+	str+="<tr height='28'><td>Aspect format</td><td>";						// Aspect
+	str+=MakeSelect("lasp",false,["Portrait","Landscape","Square"])+"</td></tr>";
 	str+="<tr><td>Default text</td><td><textarea class='sf-is' id='lmark' ";// Markup
 	str+="style='font-family:sans-serif'></textarea></td></tr>";
 	str+="</table>";	
