@@ -44,7 +44,7 @@
 						}
 		.sf-galleryTool { text-align:left;padding-top:3px;
 						}
-		.sf-galleryBut  { cursor:pointer;margin-right:25px;
+		.sf-galleryBut  { cursor:pointer;margin-right:46px;
 						}
 		.sf-projectPage { display:inline-block;overflow-x:hidden;overflow-y:auto;
 						width:430px;color:#999;border-right:1px solid #ccc;
@@ -124,7 +124,7 @@
 				<span id="projectMenu" class="sf-menuItem"> Portfolios</span>
 				<span id="pageMenu" class="sf-menuItem">Pages</span>
 				<span id="helpMenu" class="sf-menuItem">Help</span>
-				<div id="breadMenu" class="sf-breadItem"><b>Project:</b></div>
+				<div id="breadMenu" class="sf-breadItem"><b>Portfolio:</b></div>
 			</span>
 		</div>
 		<div id="bodyDiv" class="sf-body"></div>
@@ -321,7 +321,7 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 
 	if (curMenu == "project") {												// Project gallery
 		if (!this.projects.length)											// No projects yet
-			str+="<br>Add a new project by clicking on the + icon below";	// Say so
+			str+="<br>Add a new portfolio by clicking on the + icon below";	// Say so
 		for (i=0;i<this.projects.length;++i) {								// For each project
 			labs[i]=this.projects[i].title;									// Set label
 			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
@@ -351,7 +351,6 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 	str+="<div class='sf-galleryTool'>";
 	str+="<img id='galleryAddBut' class='sf-galleryBut' src='img/addbut.gif' title='Add new project'>";
 	str+="<img id='galleryCopyBut' class='sf-galleryBut'src='img/copybut.gif'  title='Copy a project'>";
-	str+="<img id='gallerySettingsBut' class='sf-galleryBut' src='img/settingsbut.gif' title='Project settings'>";
 	str+="<img id='galleryTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='margin-right:0px' title='Remove a project'>";
 	str+="</div></div>";
 	return str;																// Return gallery
@@ -408,41 +407,51 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 
 folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 {
+
+	$("#galleryAddBut").on("click",function() { 							// ADD NEW PROJECT
+		sf.Do()																// Something changed
+		sf.projects.push({ title:"New project", items:[] });				// Add shell					
+		curProject=sf.projects.length-1;									// Point at it
+		Sound("add");														// Add
+		sf.Draw();															// Redraw
+		});
+
 	if (curProject < 0)														// If not a valid project										
 			return;															// Quit
+	
 	this.AddProjectItems(true);												// Add project items
 	
 	$("#pTitle").on("change",function() { 									// If changed
-		sf.projects[curProject].title=$("#pTitle").val();					// Set it	
 		sf.Do()																// Something changed
+		sf.projects[curProject].title=Escape($("#pTitle").val(),true);		// Set it	
 		});
 	
 	$("#pDesc").on("change",function() { 									// If changed
-		sf.projects[curProject].desc=$("#pDesc").val();						// Set it	
 		sf.Do()																// Something changed
+		sf.projects[curProject].desc=Escape($("#pDesc").val(),true);		// Set it	
 		});
 	
 	$("#pCite").on("change",function() { 									// If changed
-		sf.projects[curProject].cite=$("#pCite").val();						// Set it	
 		sf.Do()																// Something changed
+		sf.projects[curProject].cite=Escape($("#pCite").val(),true);		// Set it	
 		});
 	
 	$("#pTags").on("change",function() { 									// If changed
-		sf.projects[curProject].tags=$("#pTags").val();						// Set it	
 		sf.Do()																// Something changed
+		sf.projects[curProject].tags=Escape($("#pTags").val(),true);		// Set it	
 		});
 	
 	$("#pFormat").on("change",function() { 									// If changed
+		sf.Do()																// Something changed
 		sf.projects[curProject].format=$("#pFormat").val();					// Set it	
 		Sound("click");														// Click
-		sf.Do()																// Something changed
 		sf.Draw();															// Redraw
 		});
 	
 	$("#pTemp").on("change",function() { 									// If changed
+		sf.Do()																// Something changed
 		sf.projects[curProject].temp=$("#pTemp").val();						// Set it	
 		Sound("click");														// Click
-		sf.Do()																// Something changed
 		sf.Draw();															// Redraw
 		});
 
@@ -462,25 +471,17 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		itemType=$("#pType").val();											// Set it	
 		sf.Draw();															// Redraw
 		});
-
-	$("#galleryAddBut").on("click",function() { 							// ADD NEW PROJECT
-		sf.projects.push({ title:"New project", items:[] });				// Add shell					
-		curProject=sf.projects.length-1;									// Point at it
-		Sound("add");														// Add
-		sf.Do()																// Something changed
-		sf.Draw();															// Redraw
-		});
 	
 	$("#galleryCopyBut").on("click",function() { 							// COPY A PROJECT
 		if (curProject < 0)													// If not a valid project										
 			return;															// Quit
 		GetTextBox("Type project name", "This is the name of the new project made from the current one", "", function(s) {	// Ask for name
 			var o=JSON.stringify(sf.projects[curProject]);					// Deep copy current project as JSON
+			sf.Do()															// Something changed
 			sf.projects.push($.parseJSON(o));								// Add copy as object					
 			curProject=sf.projects.length-1;								// Point at it
 			sf.projects[sf.projects.length-1].title=s;						// Change title
 			Sound("add");													// Add
-			sf.Do()															// Something changed
 			sf.Draw();														// Redraw
 			});
 		});
@@ -489,22 +490,22 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		if (curProject < 0)													// If not a valid project										
 			return;															// Quit
 		ConfirmBox("This will delete the project:<br><br><b><i>"+sf.projects[curProject].title+"</b></i>", function() {
+			sf.Do()															// Something changed
 			sf.projects.splice(curProject,1);								// Remove it
 			curProject--;													// Go to previous projcet
 			Sound("delete");												// Delete
-			sf.Do()															// Something changed
 			sf.Draw();														// Redraw
 			});
 		});
 
 	$("#collabAddBut").on("click",function() { 								// ADD NEW COLLABORATOR
 		GetTextBox("Type name of collaborator", "", "", function(s) {		// Ask for name
+			sf.Do()															// Something changed
 			if (sf.projects[curProject].collab)								// If not first one
 				sf.projects[curProject].collab+=","+s;						// Add new collaborator
 			else															// Frist one one
 				sf.projects[curProject].collab=s;							// Add first collaborator
 			Sound("add");													// Add
-			sf.Do()															// Something changed
 			sf.Draw();														// Redraw
 			$("#pCollab").val(s);
 		});
@@ -515,11 +516,11 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 			if (!s)															// Nothing selected
 				return;														// Quit
 		ConfirmBox("This will delete <b>"+s+" </b>from the project", function() {
+			sf.Do()															// Something changed
 			var v=sf.projects[curProject].collab.split(",");				// Make into array		
 			v.splice($("#pCollab").prop('selectedIndex'),1);				// Delete it
 			sf.projects[curProject].collab=v.toString();					// Combine into string
 			Sound("delete");												// Delete
-			sf.Do()															// Something changed
 			sf.Draw();														// Redraw
 			});
 		});
@@ -527,23 +528,22 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 	$("#projectDiv").droppable({
 		 drop: function(event, ui) {										// On drop
 			if (ui.draggable.prop("id").substr(0,5)== "item-") {			// From items corpus
+				sf.Do()													   	// Something changed
 		 		sf.projects[curProject].items.push(ui.draggable.prop("id").substr(5));	// Add to items
 				Sound("add");											 	// Add
-				sf.Do()													   	// Something changed
 				sf.AddProjectItems();								 	 	// Add project items
 				}
 			}
 		 });
 	
 	$("#addPages").on("click",function() { 									// ADD PAGES
-		var str="This will add a page for each item in the project, in the order they are in now."
+		var str="This will add a page for each item in the portfolio, in the order they are in now."
 		str+="You can reorder and edit them in the Page editor.<br><br>";
-		str+="<b>NOTE: </b>This will remove any pages you already have made by hand."
+		str+="<b>PLEASE NOTE: </b>This will remove any pages you already have made!."
 		ConfirmBox(str, function() {										// Confirm it
-			sf.AddPages();													// Add pages
-			Sound("ding");													// Ding
-			curMenu="page";													// Set for page
 			sf.Do()															// Something changed
+			sf.AddPages();													// Add pages
+			curMenu="page";													// Set for page
 			sf.Draw();														// Redraw
 			});
 		});
@@ -577,6 +577,7 @@ folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 	if ((curProject < 0) || (curPage < 0))									// No project, page selected
 		return str+"</div>";												// Return empty page
 	var o=this.projects[curProject].pages[curPage];							// Point at page
+	trace(curPage)
 	str+=playerObj.Make();													// Create divs for player
 	str+="<div style='position:absolute;top:calc(100% - 45px);text-align:center'>";
 	str+="<button class='sf-bs' id='setLayout'>Change this page's layout</button>&nbsp; &nbsp;";	// Set layout button
@@ -595,6 +596,42 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 			Sound("click");													// Click
 			sf.Draw();														// Redraw
 			});
+
+	$("#galleryAddBut").on("click",function() { 							// ADD A PAGE
+		if (curProject < 0)													// If not a valid project									
+			return;															// Quit
+		var p=sf.projects[curProject].pages;								// Point p at pages array
+		sf.Do()																// Something changed
+		p.push({ title:"New page"});										// Add page
+		curPage=p.length-1;													// Point at it
+		Sound("add");														// Add
+		sf.Draw();															// Redraw
+		});
+	
+	$("#galleryCopyBut").on("click",function() { 							// COPY A PAGE
+		if ((curPage < 0) || (curProject < 0))								// If not a valid project/page										
+			return;															// Quit
+		var p=sf.projects[curProject].pages;								// Point p at pages
+		sf.Do()																// Something changed
+		p.push($.parseJSON(JSON.stringify(p[curPage])));					// Copy as object					
+		curPage=p.length-1;													// Point at it
+		Sound("add");														// Add
+		sf.Draw();															// Redraw
+		});
+	
+	$("#galleryTrashBut").on("click",function() { 							// DELETE PROJECT
+		if ((curPage < 0) || (curProject < 0))								// If not a valid project/page										
+			return;															// Quit
+		ConfirmBox("This will delete this page", function() {				// Sure?
+			sf.Do()															// Something changed
+			var p=sf.projects[curProject].pages;							// Point p at pages
+			p.splice(curPage,1);											// Remove it
+			curPage--;														// Go to previous projcet
+			Sound("delete");												// Delete
+			sf.Draw();														// Redraw
+			});
+		});
+
 
 	$("#setLayout").on("click",function() { 								// SET PAGE LAYOUT
 		sf.Do()																// Something changed
@@ -663,7 +700,7 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 		}
 	else if (curMenu == "page") {											// Page page
 		div="itemPickerDiv";												// Point at item picker
-		str="<p style='text-align:center'>Project items to use in pages</p>";
+		str="<p style='text-align:center'>Portfolio items to use in pages</p>";
 		}
 	for (i=0;i<n;++i) {														// For each item
 		if (typ != "all types")												// If filtering by type
@@ -708,13 +745,16 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 	
 	if ((curMenu == "project") || (curMenu == "page")) 						// If filling project items
 		for (i=0;i<n;++i) {													// For each item in project
+
+			$("#pitem-"+i).off();	 										// Remove all handlers
+
 			$("#pitem-"+i).draggable({ 										// Make item draggable
 				helper:'clone',appendTo:'body',			 					// Beyond parent frame
 				stop: function(e, ui) {										// On stop dragging
 					if ((curMenu == "project") && ((ui.position.left > 600) || (ui.position.left < 100))) {	// Out of project items box
+						sf.Do()												// Something changed
 				 		sf.projects[curProject].items.splice(e.target.id.substr(6),1);	// Remove it
 						Sound("delete");									// Delete
-						sf.Do()												// Something changed
 						sf.AddProjectItems();								// Add project items
 						}
 					}
@@ -726,12 +766,12 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 					var from=ui.draggable.prop('id').substr(6);				// Get id of dragged item
 					var to=$(event.target).prop('id').substr(6);			// Get id of receiver item
 					if (curMenu == "project") {								// Project
+						sf.Do()												// Something changed
 						var o=sf.projects[curProject].items;				// Point at items
 						var t=o[to];										// Save to item
 						o[to]=o[from];										// Copy from -> to
 						o[from]=t;											// Reset to
 						Sound("click");										// Click
-						sf.Do()												// Something changed
 						sf.AddProjectItems();								// Add project items
 						}
 					}

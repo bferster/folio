@@ -20,8 +20,10 @@ player.prototype.Make=function()										// MAKE PLAYER
 
 player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 {
-	var asp=defLayout.aspect;												// Start with project default
+	var asp=defLayout.aspect;												// Start with default
 	var parent=$("#playerDiv").parent();									// Point at panrent container
+	if (!page)																// If no page
+		return;																// Quit
 	if (page.layout && (page.layout.aspect != undefined))					// If a layout val set
 		asp=page.layout.aspect;												// Use page override
 	var w=$("#playerDiv").width();											// Get width of container
@@ -31,16 +33,16 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	else 							h=$("#playerDiv").height();				// Set portrait size
 	$("#playerDiv").height(h);												// Set overall height
 
-	var tpct=defLayout.topPct;												// Start with project default
+	var tpct=defLayout.topPct;												// Start with default
 	if (page.layout && (page.layout.topPct != undefined))					// If a layout val set
 		tpct=page.layout.topPct;											// Use page override
-	var bpct=defLayout.botPct;												// Start with project default
+	var bpct=defLayout.botPct;												// Start with default
 	if (page.layout && (page.layout.topPct != undefined))					// If a layout val set
 		bpct=page.layout.botPct;											// Use page override
-	var lpct=defLayout.leftPct;												// Start with project default
+	var lpct=defLayout.leftPct;												// Start with default
 	if (page.layout && (page.layout.leftPct != undefined))					// If a layout val set
 		lpct=page.layout.leftPct;											// Use page override
-	var rpct=defLayout.rightPct;											// Start with project default
+	var rpct=defLayout.rightPct;											// Start with default
 	if (page.layout && (page.layout.rightPct != undefined))					// If a layout val set
 		rpct=page.layout.rightPct;											// Use page override
 

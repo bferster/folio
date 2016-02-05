@@ -3,6 +3,20 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+	function Escape(str, entity)											// ESCAPE STRING
+	{
+		if (!str)	return str;													// Quit on null
+		if (entity) {															// HTML entities
+			str=str.replace(/\"/g,"&quot;");									// Replace						
+			str=str.replace(/\'/g,"&apos;");								
+			}
+		else{																	// slashes
+			str=str.replace(/\"/g,"\"");										// Replace						
+			str=str.replace(/\'/g,"\';");								
+			}
+		return str;
+	}
+
 	function MakeSelect(id, multi, items, sel, extra, values)				// CREATE HTML SELECT
 	{
 		var	str="<select class='sf-is' id='"+id+"'";							// Header

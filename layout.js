@@ -52,8 +52,8 @@ layout.prototype.Set=function(container, callback)					// SET LAYOUT
 	var str="<br>"+this.MakeParams();									// Make page params UI
 	str+=this.MakeSizer();												// Make page sizer UI
 	ShowLightBox(700,"Set page layout",str,callback);					// Put up dialog
-	CKEDITOR.inline($("#lmark")[0]);									// Enable rich text editor
 	this.Update();														// Update resizer/params
+	CKEDITOR.inline($("#lmark")[0]);									// Enable rich text editor
 
 	$('[id^="sizer"]').on("click", function(e) {						// CLICK ON ANY DIV STARRING WITH 'SIZER'
 		$('[class^="sf-sizer"]').css("border", "1px none");				// Clear all

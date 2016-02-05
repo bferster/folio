@@ -16,4 +16,7 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'colors', groups: [ 'colors' ] }
 	];
 	config.removeButtons = 'Cut,Copy,Paste,PasteText,Anchor,Maximize,Format,PasteFromWord,Source,Strike,Iframe';
-};
+	config.enterMode = CKEDITOR.ENTER_BR 					// ENTER KEY = <br>
+	config.shiftEnterMode = CKEDITOR.ENTER_P;				// SHIFT + ENTER KEYS = <p>
+	config.autoParagraph = false; 							// Stops insertion of <p> on focus
+ };
