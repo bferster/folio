@@ -19,6 +19,8 @@
 		body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
 						padding:0px;border:0px;margin:8px;
 						}
+		.sf-splash { 	text-align:center;position:absolute;top:200px;left:calc(50% - 240px);
+						}
 		.sf-main {		min-width:1024px;margin:0px;padding:0px;box-sizing:border-box;
 						}
 		.sf-menu {		width:100%;height:32px;color:#666;
@@ -113,6 +115,7 @@
 	</style>
 </head>
 <body>
+	<div id="splashDiv" class="sf-splash"><img src="flogo.png"></div>
 	<div id="mainDiv" class="sf-main unselectable" style="opacity:0">	
 		<div id="menuDiv" class="sf-menu" >
 			<img src="img/menuheader.png">
@@ -156,9 +159,11 @@ $(document).ready(function() {											// ON PAGE LOADED
 	playerObj=new player();													// Load player object
  	sf=new folio();															// Load main object
 
-	$("#mainDiv").animate({ opacity:1},1000, function() {				
+	$("#splashDiv").animate({ opacity:0},1000);								// Hide logo
+	$("#mainDiv").animate({ opacity:1},2000, function() {				
 		$("#mainDiv").css("opacity",1);
 		});				 
+	
 	$("#itemMenu").on("click",function() { 
 		curMenu="item";
 		Sound("click");												
@@ -643,8 +648,6 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 		var id=e.currentTarget.id.substr(10);								// Extract id
 		p["markUp"+id]=$(this).html();										// Copy hlml contents of pane into page
    		});
-	
-
 }	
 
 folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
