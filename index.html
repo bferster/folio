@@ -577,7 +577,6 @@ folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 	if ((curProject < 0) || (curPage < 0))									// No project, page selected
 		return str+"</div>";												// Return empty page
 	var o=this.projects[curProject].pages[curPage];							// Point at page
-	trace(curPage)
 	str+=playerObj.Make();													// Create divs for player
 	str+="<div style='position:absolute;top:calc(100% - 45px);text-align:center'>";
 	str+="<button class='sf-bs' id='setLayout'>Change this page's layout</button>&nbsp; &nbsp;";	// Set layout button
@@ -636,17 +635,30 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 	$("#setLayout").on("click",function() { 								// SET PAGE LAYOUT
 		sf.Do()																// Something changed
 		layoutObj.Set(sf.projects[curProject].pages[curPage],sf.Draw);		// Set layout
+  		});
+
+	$('[id^="playerPane"]').on("blur",function(e) { 						// EDIT PAGE PANE
+		sf.Do()																// Something changed
+		var p=sf.projects[curProject].pages[curPage];						// Point p at page
+		var id=e.currentTarget.id.substr(10);								// Extract id
+		p["markUp"+id]=$(this).html();										// Copy hlml contents of pane into page
    		});
+	
+
 }	
 
 folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 {
-	var i,title,o,p;
+	var i,title,o,p,po;
 	this.Do();																// Something changed
-	p=this.projects[curProject].pages=[];									// Clear them out and point p at them
-	for (i=0;i<sf.projects[curProject].items.length;++i) {					// For each item in project
-		o=this.items[this.projects[curProject].items[i]];					// Point at item			
-		p.push({ title:o.title});											// Add page
+	p=this.projects[curProject];											// Point p at project
+	p.pages=[];																// Clear pages
+	for (i=0;i<p.items.length;++i) {										// For each item in project
+		o=this.items[p.items[i]];											// Point at item			
+		po={ title:o.title};												// New page object
+		if (p.layout && (p.layout.panes[0].markUp != undefined))			// If a layout markup set for top
+			po.markUpTop=p.layout.panes[0].markUp;							// Use it
+		p.pages.push(po);													// Add page
 		}
 }
 
