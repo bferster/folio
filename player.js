@@ -5,6 +5,7 @@
 
 function player()														// CONSTRUCTOR
 {
+	this.ckTop=this.ckMid=this.ckLeft=this.chRight=this.ckBot=null;			// Holds CKEditor instances
 }	
 
 player.prototype.Make=function()										// MAKE PLAYER
@@ -20,6 +21,7 @@ player.prototype.Make=function()										// MAKE PLAYER
 
 player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 {
+	var markUp;
 	var asp=defLayout.aspect;												// Start with default
 	var parent=$("#playerDiv").parent();									// Point at panrent container
 	if (!page)																// If no page
@@ -64,11 +66,20 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	if (!$("#playerMidDiv").width())	$("#playerMidDiv").hide();			// Hide mid if invisible
 	if (!$("#playerRightDiv").width())	$("#playerRightDiv").hide();		// Hide right if invisible
 	if (!$("#playerBotDiv").height())	$("#playerBotDiv").hide();			// Hide bot if invisible
-	CKEDITOR.inline( $("#playerTopDiv")[0] );								// Enable rich text
-	CKEDITOR.inline( $("#playerLeftDiv")[0] );
-	CKEDITOR.inline( $("#playerMidDiv")[0] );
-	CKEDITOR.inline( $("#playerRightDiv")[0] );
-	CKEDITOR.inline( $("#playerBotDiv")[0] );
+	if (this.ckTop)		this.ckTop.destroy();								// Remove old editors
+	if (this.ckLeft)	this.ckLeft.destroy();								
+	if (this.ckMid)		this.ckMid.destroy();								
+	if (this.ckRight)	this.ckRight.destroy();								
+	if (this.ckTop)		this.ckTop.destroy();								
+	
+	this.ckTop=CKEDITOR.inline( $("#playerTopDiv")[0] );					// Enable rich text
+	this.ckLeft=CKEDITOR.inline( $("#playerLeftDiv")[0] );
+	this.ckMid=CKEDITOR.inline( $("#playerMidDiv")[0] );
+	this.ckRight=CKEDITOR.inline( $("#playerRightDiv")[0] );
+	this.ckBot=CKEDITOR.inline( $("#playerBotDiv")[0] );
+	if (defLayout && (defLayout.panes[0].markUp != undefined))				// If a layout markup set
+		markUp=defLayout.panes[0].markUp;									// Use it
+	$("#playerTopDiv").html(markUp ? markUp : ""); 							// Set html
 }	
 
 

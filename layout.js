@@ -6,6 +6,7 @@
 function layout()													// CONSTRUCTOR
 {
 	this.plo=null;														// Ptr to 				
+	this.ckMark=null;													// CKEditor instance
 	this.paneNames=["Top","Left","Mid","Right","Bot"];					// Name of all the panes
 }	
 
@@ -53,7 +54,8 @@ layout.prototype.Set=function(container, callback)					// SET LAYOUT
 	str+=this.MakeSizer();												// Make page sizer UI
 	ShowLightBox(700,"Set page layout",str,callback);					// Put up dialog
 	this.Update();														// Update resizer/params
-	CKEDITOR.inline($("#lmark")[0]);									// Enable rich text editor
+	if (this.ckMark)	this.ckMark.destroy();							// Kill old instance						
+	this.ckMark=CKEDITOR.inline($("#lmark")[0]);						// Enable rich text editor
 
 	$('[id^="sizer"]').on("click", function(e) {						// CLICK ON ANY DIV STARRING WITH 'SIZER'
 		$('[class^="sf-sizer"]').css("border", "1px none");				// Clear all
