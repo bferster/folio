@@ -121,7 +121,7 @@ layout.prototype.Set=function(container, callback)					// SET LAYOUT
 	$("#topSizBar").draggable({											// DRAG TOP HEIGHT HANDLER
 		cursor: "row-resize", axis:"y",									// Y-only
 		stop: function(event, ui) {										// When done
-			$(this).css({ top:"100%" });								// Reset resizer bar
+			_this.Update();												// Update resizer
 			},
 		drag: function(event, ui) {										// On drag
 			var y=event.clientY-$("#sizerTopDiv").offset().top;			// Position within layout block
@@ -130,14 +130,13 @@ layout.prototype.Set=function(container, callback)					// SET LAYOUT
 			r=Math.min(100-_this.plo.botPct,Math.max(0,r*100));			// Cap 0-100% - bot
 			_this.plo.topPct=r;											// Set val
 			_this.Update();												// Update resizer
-			$(this).css({ top:"100%" });								// Reset resizer bar
 			}
 		});
 
 	$("#botSizBar").draggable({											// DRAG TOP HEIGHT HANDLER
 		cursor: "row-resize", axis:"y",									// Y-only
 		stop: function(event, ui) {										// When done
-			$(this).css({ top:"0%" });									// Reset resizer bar
+			_this.Update();												// Update resizer
 			},
 		drag: function(event, ui) {										// On drag
 			var y=event.clientY-$("#sizerTopDiv").offset().top;		// Position within layout block
@@ -152,7 +151,7 @@ layout.prototype.Set=function(container, callback)					// SET LAYOUT
 	$("#leftSizBar").draggable({										// DRAG LEFT WIDTH HANDLER
 		cursor: "col-resize", axis:"x",									// X-only
 		stop: function(event, ui) {										// When done
-			$(this).css({ left:"100%" });								// Reset resizer bar
+			_this.Update();												// Update resizer
 			},
 		drag: function(event, ui) {										// On drag
 			var x=event.clientX-$("#layoutSizerDiv").offset().left;		// Position within width
@@ -166,7 +165,7 @@ layout.prototype.Set=function(container, callback)					// SET LAYOUT
 	$("#rightSizBar").draggable({										// DRAG RIGHT WIDTH HANDLER
 		cursor: "col-resize", axis:"x",									// X-only
 		stop: function(event, ui) {										// When done
-			$(this).css({ left:"100%" });								// Reset resizer bar
+			_this.Update();												// Update resizer
 			},
 		drag: function(event, ui) {										// On drag
 			var x=event.clientX-$("#layoutSizerDiv").offset().left;		// Position within width
@@ -203,11 +202,25 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 		$("#sizerMidDiv").hide()
 		$("#sizerRightDiv").hide()
 		}
-	$("#topPtc").text(Math.floor(o.topPct)+"%");						// Show %
-	$("#leftPtc").text(Math.floor(o.leftPct)+"%");					
-	$("#midPtc").text(Math.floor(100-o.leftPct-o.rightPct)+"%");		// Mid is 100-left-right			
-	$("#rightPtc").text(Math.floor(o.rightPct)+"%");					
-	$("#botPtc").text(Math.floor(o.botPct)+"%");				
+
+	var t=$("#sizerTopDiv").position().top;								// Top of pane
+	$("#topSizBar").css("top",$("#sizerTopDiv").height()+t-3+"px");		// Y pos top
+	$("#topSizBar").width($("#sizerTopDiv").width());					// Wid top
+	$("#botSizBar").css("top",$("#sizerBotDiv").position().top+3+"px");	// Y pos bot
+	$("#botSizBar").width($("#sizerTopDiv").width());					// Wid bot
+	
+	$("#leftSizBar").css("top",$("#sizerTopDiv").height()+t+5+"px");	// Y pos top
+	$("#leftSizBar").css("left",$("#sizerLeftDiv").width()+$("#sizerLeftDiv").position().left+"px"); // X pos left
+	$("#leftSizBar").height($("#sizerLeftDiv").height());				// Hgt left
+	$("#rightSizBar").css("top",$("#sizerTopDiv").height()+t+5+"px");	// Y pos top
+	$("#rightSizBar").css("left",$("#sizerRightDiv").position().left+"px"); // X pos left
+	$("#rightSizBar").height($("#sizerRightDiv").height());				// Hgt left
+
+	$("#topPct").text(Math.floor(o.topPct)+"%");						// Show %
+	$("#leftPct").text(Math.floor(o.leftPct)+"%");					
+	$("#midPct").text(Math.floor(100-o.leftPct-o.rightPct)+"%");		// Mid is 100-left-right			
+	$("#rightPct").text(Math.floor(o.rightPct)+"%");					
+	$("#botPct").text(Math.floor(o.botPct)+"%");				
 	$("#paneTitle").text(this.paneNames[this.curPane]);					// Pane name			
 	$("#lbcol").val(o.panes[this.curPane].borderCol);					// Set border color
 	ColorPicker("lbcol",-1,true);
@@ -249,11 +262,7 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 	str+=MakeSelect("lasp",false,["Portrait","Landscape","Square"])+"</td></tr>";
 	str+="<tr><td>Default text</td><td><div class='sf-is' id='lmark' ";	// Markup
 	str+="style='height:40px;overflow:hidden' contenteditable='true'></div></td></tr>";
-	str+="</table>";	
-	str+="<p><div class='sf-layoutPcts'>";	
-	str+="&nbsp; Top <span id='topPtc'></span>&nbsp Left <span id='leftPtc'></span> "; 
-	str+="&nbspMid <span id='midPtc'></span>&nbsp Right <span id='rightPtc'></span> "; 
-	str+="&nbspBot <span id='botPtc'></span>&nbsp;</div></p>"; 
+	str+="</table><br>";	
 	str+="Click on a pane to show its current settings.<br>";				// Help
 	str+="Drag in the space between panes to set a pane's height<br>or width.";
 	return str+"</div>";													// Return sizer
@@ -261,15 +270,15 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 
 layout.prototype.MakeSizer=function()									// PAGE SIZER 
 {
-	var str="<div  id='layoutSizerDiv' class='sf-layoutSizer'>";			// Overall div
-	str+="<div id='sizerTopDiv' class='sf-sizerTop'>";						// Top div
-	str+="<div id='topSizBar' style='position:relative;top:100%;width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize top'></div></div>";
-	str+="<div id='sizerLeftDiv' class='sf-sizerLeft'>";					// Left div
-	str+="<div id='leftSizBar' style='position:relative;top:0px;left:100%;height:100%;width:8px;cursor:col-resize' class='sf-unselectable' title='Resize left'></div></div>";
-	str+="<div id='sizerMidDiv'   class='sf-sizerMid'>";					// Mid div
-	str+="<div id='rightSizBar' style='position:relative;top:0px;left:100%;height:100%;width:8px;cursor:col-resize' class='sf-unselectable' title='Resize right'></div></div>";
-	str+="<div id='sizerRightDiv'  class='sf-sizerRight'></div>";			// Right div
-	str+="<div id='sizerBotDiv' class='sf-sizerBot'>";						// Bot div
-	str+="<div id='botSizBar' style='position:relative;width:100%;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize bot'></div></div>";
+	var str="<div id='layoutSizerDiv' class='sf-layoutSizer'>";				// Overall div
+	str+="<div id='sizerTopDiv' 	class='sf-sizerTop'><br>Top <span id='topPct'></span></div>";	
+	str+="<div id='sizerLeftDiv' 	class='sf-sizerLeft'><br>Left<br><span id='leftPct'></div>";					
+	str+="<div id='sizerMidDiv' 	class='sf-sizerMid'><br>Mid<br><span id='midPct'></div>";					
+	str+="<div id='sizerRightDiv' 	class='sf-sizerRight'><br>Right<br><span id='rightPct'></span></div>";			
+	str+="<div id='sizerBotDiv' 	class='sf-sizerBot'><br>Bot <span id='botPct'></span></div>";						
+	str+="<div id='topSizBar' 	style='position:absolute;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize top'></div>";
+	str+="<div id='leftSizBar' 	style='position:absolute;width:8px;cursor:col-resize'  class='sf-unselectable' title='Resize left'></div>";
+	str+="<div id='rightSizBar' style='position:absolute;width:8px;cursor:col-resize'  class='sf-unselectable' title='Resize right'></div>";
+	str+="<div id='botSizBar' 	style='position:absolute;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize bot'></div>";
 	return str+"</div>";													// Return sizer
 }

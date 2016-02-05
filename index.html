@@ -66,25 +66,30 @@
 		.sf-player { 	height:calc(100% - 42px);width:100%;color:#000;
 						}
 		.sf-playerPane{	display:inline-block;box-sizing:border-box;background-color:#ddd;border:1px solid #fff;
-						padding:8px;overflow:hidden;
+						overflow:hidden;
 						}
 		.sf-layoutParams { float:left:width:55%;text-align:left;color:#888;margin:12px;
 						display:inline-block;
 						}
-		.sf-layoutSizer   { float:right;width:45%;height:400px;cursor:pointer;display:inline-block;
+		.sf-layoutSizer { display:inline-block;float:right;width:45%;height:400px;cursor:pointer;
 						text-align:left;color:#999;margin-bottom:20px;margin-right:16px;
 						}
 		.sf-layoutPcts 	{ border:1px solid #999;border-radius:16px;padding:2px;color:#666;
 						}
-		.sf-sizerTop { width:100%;background-color:#ddd;margin:1px;
+		.sf-sizerTop { 	box-sizing:border-box;overflow:hidden;;margin:1px;
+						background-color:#ddd;text-align:center;
 						}
-		.sf-sizerLeft 	{ display:inline-block;box-sizing:border-box;background-color:#ddd;margin:1px;
+		.sf-sizerLeft { display:inline-block;box-sizing:border-box;margin:1px;overflow:hidden;
+						background-color:#ddd;text-align:center;
 						}
-		.sf-sizerMid 	{ display:inline-block;box-sizing:border-box;background-color:#ddd;margin:1px;
+		.sf-sizerMid { 	display:inline-block;box-sizing:border-box;margin:1px;overflow:hidden;
+						background-color:#ddd;text-align:center;
 						}
-		.sf-sizerRight 	{ display:inline-block;box-sizing:border-box;background-color:#ddd;margin:1px;
+		.sf-sizerRight { display:inline-block;box-sizing:border-box;margin:1px;overflow:hidden;
+						background-color:#ddd;text-align:center;
 						}
-		.sf-sizerBot { width:100%;box-sizing:border-box;background-color:#ddd;margin:1px;
+		.sf-sizerBot { 	box-sizing:border-box;overflow:hidden;;margin:1px;
+						background-color:#ddd;text-align:center;
 						}
 		.sf-previewTitle { margin-top:8px;margin-bottom:-4px;color:#999;font-weight:bold;
 						}
@@ -544,7 +549,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 	$("#addPages").on("click",function() { 									// ADD PAGES
 		var str="This will add a page for each item in the portfolio, in the order they are in now."
 		str+="You can reorder and edit them in the Page editor.<br><br>";
-		str+="<b>PLEASE NOTE: </b>This will remove any pages you already have made!."
+		str+="<b>NOTE: </b>This will remove any pages you already have made!"
 		ConfirmBox(str, function() {										// Confirm it
 			sf.Do()															// Something changed
 			sf.AddPages();													// Add pages
