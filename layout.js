@@ -33,7 +33,7 @@ layout.prototype.Init=function(container)							// INIT LAYOUT
 			o={};														// Pane obj
 			o.borderCol="#999999";										// Set default pane params
 			o.borderSty="None";							
-			o.borderWid="None";							
+			o.borderWid="1";							
 			o.backCol="#eeeeee";
 			o.backImg="";
 			o.markUp="";
@@ -249,7 +249,7 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 	str+="<tr height='28'><td>Border style</td><td>";						// Border style
 	str+=MakeSelect("lbs",false,["None","Solid","Dashed","Double","Groove","Ridge","Inset","Outset"])+"</td></tr>";
 	str+="<tr height='28'><td>Border width</td><td>";						// Border width
-	str+=MakeSelect("lbw",false,["None",1,2,3,4,5])+"</td></tr>";
+	str+=MakeSelect("lbw",false,[1,2,3,4,5])+"</td></tr>";
 	str+="<tr height='28'><td>Border color &nbsp;</td>";					// Back col
 	str+="<td><input class='sf-is' id='lbcol' style='width:50px' type='text'></td></tr>";
 	str+="<tr height='28'><td>Top / bot gutter</td>";					// Gutter

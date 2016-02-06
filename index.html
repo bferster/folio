@@ -65,8 +65,8 @@
 						}
 		.sf-player { 	height:calc(100% - 42px);width:100%;color:#000;
 						}
-		.sf-playerPane{	display:inline-block;box-sizing:border-box;background-color:#ddd;border:1px solid #fff;
-						overflow:hidden;padding:8px;
+		.sf-playerPane{	display:inline-block;box-sizing:border-box;background-color:#eeeeee;
+						overflow:hidden;padding:8px;margin:0px;
 						}
 		.sf-layoutParams { display:inline-block;width:50%;text-align:left;color:#888;margin:12px;
 						display:inline-block;margin-right:24px;
@@ -402,7 +402,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:20px;margin-right:10px' title='Add new collaborator'>";
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
 	str+="<tr height='28'><td>Format style</td><td>";
-	str+=MakeSelect("pFormat",false,["Booklet","SinglePage","Canvas","Slideshow"],pFormat)+"</td></tr>";
+	str+=MakeSelect("pFormat",false,["Booklet","Single page","Canvas","Slide show","Up/Down"],pFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
 	str+=MakeSelect("pTemp",false,["Full","Top & body","Custom"],pTemp)+"</td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
