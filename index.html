@@ -66,7 +66,7 @@
 		.sf-player { 	height:calc(100% - 42px);width:100%;color:#000;
 						}
 		.sf-playerPane{	display:inline-block;box-sizing:border-box;background-color:#eeeeee;
-						overflow:hidden;padding:8px;margin:0px;
+						overflow:hidden;padding:8px;
 						}
 		.sf-layoutParams { display:inline-block;width:50%;text-align:left;color:#888;margin:12px;
 						display:inline-block;margin-right:24px;
@@ -164,7 +164,9 @@ $(document).ready(function() {											// ON PAGE LOADED
 	playerObj=new player();													// Load player object
  	sf=new folio();															// Load main object
 
-	$("#splashDiv").animate({ opacity:0},1000);								// Hide logo
+	$("#splashDiv").animate({ opacity:0},1000, function(){					// Hide logo
+		$("#splashDiv").css("visibility","hidden");							
+		});								
 	$("#mainDiv").animate({ opacity:1},2000, function() {					// Animate in content		
 		$("#mainDiv").css("opacity",1);
 		});				 
@@ -220,6 +222,8 @@ $(document).ready(function() {											// ON PAGE LOADED
 function folio()														// CONSTRUCTOR
 {
 	sf=this;																// Point to folio
+	this.projects=[];														// Holds project
+	this.items=[];															// Holds items
 	this.Init("");															// Init folio
 	this.Draw();															// Draw 
 	}	
@@ -227,13 +231,16 @@ function folio()														// CONSTRUCTOR
 folio.prototype.Init=function(data)										// INIT 
 {
 	var i;
-	this.projects=projects;
+	
+	this.projects=projects;													// REPLACE!!
 	this.items=items;
 	this.firstName="Teresa";
 	this.lastName="Sullivan";
-	for (i=0;i<this.projects.length;++i) {
-		layoutObj.Init(this.projects[i]);
+	
+	for (i=0;i<this.projects.length;++i) {									// For each project
+		layoutObj.Init(this.projects[i]);									// Init layout
 		}
+	curProject=Math.min(this.projects.length-1,0);							// Init on 1st project
 }
 
 

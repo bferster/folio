@@ -3,22 +3,24 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-function player()														// CONSTRUCTOR
+function player(showOnly)														// CONSTRUCTOR
 {
 	this.divs=["#playerPaneTop","#playerPaneLeft","#playerPaneMid","#playerPaneRight","#playerPaneBot"]; // Array of div names
-	this.guts=[];															// Gutter sizes
+	this.guts=[];																// Gutter sizes
 	this.guts["None"]=0;  this.guts["Thin"]=2;  this.guts["Medium"]=8; this.guts["Wide"]=16;	
-	this.ckTop=this.ckMid=this.ckLeft=this.chRight=this.ckBot=null;			// Holds CKEditor instances
+	this.ckTop=this.ckMid=this.ckLeft=this.chRight=this.ckBot=null;				// Holds CKEditor instances
+	this.editable=!showOnly;													// Editable mode?
 }	
 
 player.prototype.Make=function()										// MAKE PLAYER
 {
+	var s=this.editable ? " contenteditable='true'" : "";					// Editable flag for CKEditor if editing
 	var str="<div id='playerDiv'  class='sf-player'>";						// Player container
-	str+="<div id='playerPaneTop'  class='sf-playerPane'  contenteditable='true'></div>";				
-	str+="<div id='playerPaneLeft' class='sf-playerPane'  contenteditable='true'></div>";	// Left
-	str+="<div id='playerPaneMid'  class='sf-playerPane'  contenteditable='true'></div>";	// Mid
-	str+="<div id='playerPaneRight' class='sf-playerPane' contenteditable='true'></div>";	// Right
-	str+="<div id='playerPaneBot'  class='sf-playerPane'  contenteditable='true'></div>";	// Bot	
+	str+="<div id='playerPaneTop'  class='sf-playerPane'"+s+" style='margin-bottom:-2px'></div>"; // Top			
+	str+="<div id='playerPaneLeft' class='sf-playerPane'"+s+"></div>";		// Left
+	str+="<div id='playerPaneMid'  class='sf-playerPane'"+s+"></div>";		// Mid
+	str+="<div id='playerPaneRight' class='sf-playerPane'"+s+"></div>";		// Right
+	str+="<div id='playerPaneBot'  class='sf-playerPane'"+s+"style='margin-top:-3px'></div>";	// Bot	
 	return str+"</div>";													// Return player
 }
 
@@ -97,12 +99,13 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	$("#playerPaneMid").html(page.markUpMid ? page.markUpMid : ""); 		
 	$("#playerPaneRight").html(page.markUpRight ? page.markUpRight : ""); 		
 	$("#playerPaneBot").html(page.markUpBot ? page.markUpBot : ""); 		
-		
-	this.ckTop=CKEDITOR.inline( $("#playerPaneTop")[0] );					// Enable rich text
-	this.ckLeft=CKEDITOR.inline( $("#playerPaneLeft")[0] );
-	this.ckMid=CKEDITOR.inline( $("#playerPaneMid")[0] );
-	this.ckRight=CKEDITOR.inline( $("#playerPaneRight")[0] );
-	this.ckBot=CKEDITOR.inline( $("#playerPaneBot")[0] );
+	if (this.editable) {													// If editable
+		this.ckTop=CKEDITOR.inline( $("#playerPaneTop")[0] );				// Enable rich text
+		this.ckLeft=CKEDITOR.inline( $("#playerPaneLeft")[0] );
+		this.ckMid=CKEDITOR.inline( $("#playerPaneMid")[0] );
+		this.ckRight=CKEDITOR.inline( $("#playerPaneRight")[0] );
+		this.ckBot=CKEDITOR.inline( $("#playerPaneBot")[0] );
+		}
 	this.StylePage(page,defLayout);											// Style page
 }	
 
@@ -125,10 +128,10 @@ player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
 			val=page.layout.panes[i].borderSty;									// Use it
 		val2=defLayout.panes[i].borderWid ? defLayout.panes[i].borderWid : "";	// If def border width, use it
 		if (page.layout && (page.layout.panes[i].borderWid != undefined))		// If a page override set
-				val2=page.layout.panes[i].borderWid;							// Use it
+			val2=page.layout.panes[i].borderWid;								// Use it
 		val3=defLayout.panes[i].borderCol ? defLayout.panes[i].borderCol : "";	// If def border color, use it
 		if (page.layout && (page.layout.panes[i].borderCol != undefined))		// If a page override set
-				val3=page.layout.panes[i].borderCol;							// Use it
+			val3=page.layout.panes[i].borderCol;								// Use it
 		if (val) $(this.divs[i]).css("border",val2+"px "+val+" "+val3);			// Apply value if set 
 		}
 	
