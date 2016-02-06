@@ -84,7 +84,7 @@
 		
 		var x=$("#"+name).offset().left+10;										// Get left
 		var y=$("#"+name).offset().top+10;										// Top
-		var	str="<div id='colorPickerDiv' style='position:absolute;left:"+x+"px;top:"+y+"px;width:160px;height:225px;z-index:100;border-radius:12px;background-color:#eee'>";
+		var	str="<div id='colorPickerDiv' style='position:absolute;left:"+x+"px;top:"+y+"px;width:160px;height:225px;z-index:3000;border-radius:12px;background-color:#eee'>";
 		$("body").append("</div>"+str);											// Add palette to dialog
 		$("#colorPickerDiv").draggable();										// Make it draggable
 		str="<p style='text-shadow:1px 1px white' align='center'><b>Choose a new color</b></p>";

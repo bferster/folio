@@ -240,9 +240,9 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 layout.prototype.MakeParams=function()									// PAGE SIZER 
 {
 	var str="<div id='layoutParamsDiv' class='sf-layoutParams'>";			// Overall div
-	str+="<table style='width:100%;text-align:left'>";						// Table
-	str+="<tr><td>Pane<td style='color:#009900;font-weight:bold' id='paneTitle'></td></tr>";	// Pane name
-	str+="<tr height='28'><td>Background image &nbsp;</td>";				// Back Pic
+	str+="<table style='width:100%;text-align:left'>";	// Table
+	str+="<tr height='28'><td>Pane<td style='color:#009900;font-weight:bold' id='paneTitle'></td></tr>";	// Pane name
+	str+="<tr height='28'><td>Background image &nbsp; </td>";				// Back Pic
 	str+="<td><input class='sf-is' id='lbgimg' type='text'></td></tr>";
 	str+="<tr height='28'><td>Background color &nbsp;</td>";				// Back col
 	str+="<td><input class='sf-is' style='width:50px' id='lbgcol' type='text'></td></tr>";
@@ -264,13 +264,13 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 	str+="style='height:40px;overflow:hidden' contenteditable='true'></div></td></tr>";
 	str+="</table><br>";	
 	str+="Click on a pane to show its current settings.<br>";				// Help
-	str+="Drag in the space between panes to set a pane's height<br>or width.";
+	str+="Drag in the space between panes to set a pane's height or width.<br><br><br>";
 	return str+"</div>";													// Return sizer
 }
 
 layout.prototype.MakeSizer=function()									// PAGE SIZER 
 {
-	var str="<div id='layoutSizerDiv' class='sf-layoutSizer'>";				// Overall div
+	var str="<div id='layoutSizerDiv' class='sf-layoutSizer'><br>";			// Overall div
 	str+="<div id='sizerTopDiv' 	class='sf-sizerTop'><br>Top <span id='topPct'></span></div>";	
 	str+="<div id='sizerLeftDiv' 	class='sf-sizerLeft'><br>Left<br><span id='leftPct'></div>";					
 	str+="<div id='sizerMidDiv' 	class='sf-sizerMid'><br>Mid<br><span id='midPct'></div>";					

@@ -66,13 +66,13 @@
 		.sf-player { 	height:calc(100% - 42px);width:100%;color:#000;
 						}
 		.sf-playerPane{	display:inline-block;box-sizing:border-box;background-color:#ddd;border:1px solid #fff;
-						overflow:hidden;
+						overflow:hidden;padding:8px;
 						}
-		.sf-layoutParams { float:left:width:55%;text-align:left;color:#888;margin:12px;
-						display:inline-block;
+		.sf-layoutParams { display:inline-block;width:50%;text-align:left;color:#888;margin:12px;
+						display:inline-block;margin-right:24px;
 						}
-		.sf-layoutSizer { display:inline-block;float:right;width:45%;height:400px;cursor:pointer;
-						text-align:left;color:#999;margin-bottom:20px;margin-right:16px;
+		.sf-layoutSizer { display:inline-block;width:calc(50% - 55px);height:400px;cursor:pointer;
+						text-align:left;color:#999;margin-bottom:20px;margin-right:16px;vertical-align:top;
 						}
 		.sf-layoutPcts 	{ border:1px solid #999;border-radius:16px;padding:2px;color:#666;
 						}
@@ -409,7 +409,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<button class='sf-bs' style='width:90px' id='addPages'>Add pages</button>&nbsp; &nbsp;";		// Add pages button
 	str+="<button class='sf-bs' style='width:90px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
 	str+="<button class='sf-bs' style='width:90px' id='editPages'>Edit pages</button>&nbsp; &nbsp;";	// View pages button
-	str+="<button class='sf-bs' style='width:90px' id='shareProject'>Share</button></td></tr>";			// Share button
+	str+="<button class='sf-bs' style='width:90px' id='shareProject'>Share</button> </td></tr>";		// Share button
 	str+="</table>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'></div>";		// Items div
 	return str+"</div>";													// Return project page
@@ -690,9 +690,8 @@ folio.prototype.AddItemHandlers=function()								// ADD ITEM HANDLERS
 folio.prototype.PreviewItem=function(id)								// PREVIEW ITEM
 {
 	var str="<div class='sf-previewTitle'>"+this.items[id].title+"</div><br>";
-	var h=window.innerHeight-350;
-	str+="<iframe frameborder='0' height='"+h+"' width='100%' style='opacity:0,border:1px solid #666' src='"+this.items[id].src+"'/>";
-	ShowLightBox(500,"Preview",str);
+	str+="<iframe frameborder='0' height='500' width='100%' style='opacity:0,border:1px solid #666' src='"+this.items[id].src+"'/>";
+	ShowLightBox(800,"Preview",str);
 }
 	
 folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
@@ -766,7 +765,8 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 	if ((curMenu == "project") || (curMenu == "page")) 						// If filling project items
 		for (i=0;i<n;++i) {													// For each item in project
 
-			$("#pitem-"+i).off();	 										// Remove all handlers
+			$("#pitem-"+i).off("dblclick");	 								// Remove dblclick handlers
+			$("#pitem-"+i).off("doubletap");	 							// Remove doubletap handlers
 
 			$("#pitem-"+i).draggable({ 										// Make item draggable
 				helper:'clone',appendTo:'body',			 					// Beyond parent frame

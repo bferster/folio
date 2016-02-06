@@ -22,7 +22,7 @@ share.prototype.Set=function(project)								// SHARE DIALOG
 	var _this=this;														// Get context
 	this.project=project
 	this.Init();														// Init object
-	var str="<br>This will contain ways to share portfolios";			// 
+	var str="<br><br>This will contain ways to share portfolios";			// 
 	Sound("click");														// Click
 	ShowLightBox(700,"Portfolio Sharing",str);							// Create dialog
 }	
