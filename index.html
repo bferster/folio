@@ -14,6 +14,7 @@
 	<script src="share.js"></script>
 	<script src="collect.js"></script>
 	<script src="player.js"></script>
+	<script src="template.js"></script>
 
 	<style type="text/css">
 		body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
@@ -144,12 +145,13 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 var sf=null;																// Holds main folio object	
-var curProject=-1,curPage=-1;												// Keeps tabes on current places	
+var curProject=-1,curPage=-1,curTemplate=0;									// Keeps tabs on current places	
 var playerObj=null,layoutObj=null,collectObj=null,shareObj=null;			// Objects							
+var tempObj=null;
 var isMobile=false;															// Is it mobile?
 var changed=false;															// Anything changed?
-var itemType="All types",itemFilter="";								// Filtering
-var curMenu="project";														// Current menu ite,
+var itemType="All types",itemFilter="";										// Filtering
+var curMenu="project";														// Current menu item
 		
 $(window).resize(function() {											// ON WINDOW RESIZE
 	if (sf)																	// If loaded
@@ -159,6 +161,7 @@ $(window).resize(function() {											// ON WINDOW RESIZE
 $(document).ready(function() {											// ON PAGE LOADED
 	isMobile=navigator.userAgent.match(/(ipad|iphone|ipod|android)/i) ? true : false; // Set mobile flag
 	collectObj=new collect();												// Load collect object
+ 	tempObj=new template();													// Load template object
 	shareObj=new share();													// Load layout object
 	layoutObj=new layout();													// Load share object
 	playerObj=new player();													// Load player object
@@ -238,7 +241,7 @@ folio.prototype.Init=function(data)										// INIT
 	this.lastName="Sullivan";
 	
 	for (i=0;i<this.projects.length;++i) {									// For each project
-		layoutObj.Init(this.projects[i]);									// Init layout
+		layoutObj.Init(this.projects[i],tempObj.templates[curTemplate]);// Init layout
 		}
 	curProject=Math.min(this.projects.length-1,0);							// Init on 1st project
 }
@@ -573,7 +576,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 
 	$("#setLayout").on("click",function() { 								// SET LAYOUT
 		sf.Do()																// Something changed
-		layoutObj.Set(sf.projects[curProject]);								// Set layout
+		layoutObj.Set(sf.projects[curProject],tempObj.templates[curTemplate]);	// Set layout
 		});
 
 	$("#shareProject").on("click",function() { 								// SHARE
@@ -651,7 +654,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 
 	$("#setLayout").on("click",function() { 								// SET PAGE LAYOUT
 		sf.Do()																// Something changed
-		layoutObj.Set(sf.projects[curProject].pages[curPage],sf.Draw);		// Set layout
+		layoutObj.Set(sf.projects[curProject].pages[curPage],tempObj.templates[curTemplate],sf.Draw);	// Set layout
   		});
 
 	$('[id^="playerPane"]').on("blur",function(e) { 						// EDIT PAGE PANE

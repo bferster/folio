@@ -1,54 +1,47 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // LAYOUT
+//
+// Assumes access to global var sf
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
-
-function layout()													// CONSTRUCTOR
+function layout()											// CONSTRUCTOR
 {
 	this.plo=null;														// Ptr to 				
 	this.ckMark=null;													// CKEditor instance
 	this.paneNames=["Top","Left","Mid","Right","Bot"];					// Name of all the panes
 }	
 
-layout.prototype.Init=function(container)							// INIT LAYOUT 
+layout.prototype.Init=function(container, template)					// INIT LAYOUT 
 {
 	container.layout={};												// Make one
-	container.layout.topPct=20;											// Set default sizes
-	container.layout.leftPct=20;
-	container.layout.rightPct=20;
-	container.layout.botPct=10;
-	container.layout.aspect="Portrait";									
-
+	container.layout.topPct=template.layout.topPct;						// Set default sizes
+	container.layout.leftPct=template.layout.leftPct;
+	container.layout.rightPct=template.layout.rightPct;
+	container.layout.botPct=template.layout.botPct;
+	container.layout.aspect="";									
 	container.layout.panes=[];											// Holds pane info
-	if (container.cite == undefined) {
+	if (container.cite == undefined) {									// If called as a page override
 		for (i=0;i<this.paneNames.length;++i) 							// For each pane
 			container.layout.panes.push({});							// Alloc pane obj
+		var o=sf.projects[curProject].layout;							// Point at current project's layout
+		container.layout.topPct=o.topPct;								// Set default sizes from project
+		container.layout.leftPct=o.leftPct;
+		container.layout.rightPct=o.rightPct;
+		container.layout.botPct=o.botPct;
 		}
-	else{
-		container.layout.topGut="None";									// Set default gutters
-		container.layout.leftGut="None";
-		container.layout.rightGut="None";
-		container.layout.botGut="None";
-		for (i=0;i<this.paneNames.length;++i) {							// For each pane
-			o={};														// Pane obj
-			o.borderCol="#999999";										// Set default pane params
-			o.borderSty="None";							
-			o.borderWid="1";							
-			o.backCol="#eeeeee";
-			o.backImg="";
-			o.markUp="";
-			container.layout.panes.push(o);								// Add to array
-			}
+	else{																// Set default
+		var o=JSON.stringify(template.layout);							// Deep copy default layout as JSON
+		container.layout=$.parseJSON(o);								// Use template as inits
 		}
 }
 
-layout.prototype.Set=function(container, callback)					// SET LAYOUT 
+layout.prototype.Set=function(container, template, callback)		// SET LAYOUT 
 {
 	var i,o;
 	var _this=this;														// Get context
 	this.curPane=0;														// Start with top
 	if (!container.layout) 												// If no layout object yet
-		this.Init(container);											// Init object
+		this.Init(container,template);									// Init object
 	this.plo=container.layout;											// Point at layout object							
 	var str="<br>"+this.MakeParams();									// Make page params UI
 	str+=this.MakeSizer();												// Make page sizer UI
@@ -194,7 +187,7 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	$("#sizerBotDiv").css({ height:o.botPct+"%" })						// Set bot		
 	$("#sizerMidDiv").width($("#sizerMidDiv").width()-6);				// Remove extra margins
 	if (!midWid && $("#sizerleftDiv").width())							// No mid, but left visible
-		$("#sizerLeftDiv").width($("#sizerLeftDiv").width()-6);			// Remove extra margins
+		$("#sizerLeftDiv").width($("#sizerLeftDiv").width()-8);			// Remove extra margins
 	else if (!midWid && $("#sizerRightDiv").width())					// No mid, but right visible
 		$("#sizerRightDiv").width($("#sizerRightDiv").width()-6);		// Remove extra margins
 	if (!midHgt) { 														// No mid
