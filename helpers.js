@@ -237,16 +237,14 @@
 		return str;															// Return string
 		}
 
-	function TextStyleBox(title, style, className, callback)			// TEXT STYLE BOX
+	function TextStyleBox(title, style, callback)						// TEXT STYLE BOX
 	{
 		if (!style)															// If not style set
 			return null;													// Quit
-		var c="";
 		var s=style.split(",");												// Get as array (font,size,color,weight,align,height)
 		Sound("click");														// Click													
 		$("#alertBoxDiv").remove();											// Remove any current one												
-		if (className)	c=" "+className+" ";								// Add classname, if set
-		$("body").append("<div class='unselectable"+c+"' id='alertBoxDiv'></div>");														
+		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
 		var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
 		str+="<span style='font-size:18px;color:#000'><b>"+title+"</b></span><p>";
 		str+="<table style='width:100%;text-align:left;font-size:12px'>";	// Table

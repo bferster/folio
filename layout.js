@@ -107,13 +107,13 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 			}); 
 	$("#ltfont").on("click", function(e) {								// SET TITLE FONT
 			if (_this.plo.panes[_this.curPane].titleStyle)				// If a style set
-				TextStyleBox("Title font",_this.plo.panes[_this.curPane].titleStyle,"sf-titleFont", function(s) {	// Style it
+				TextStyleBox("Title font",_this.plo.panes[_this.curPane].titleStyle,"titleDiv", function(s) {	// Style it
 					_this.plo.panes[_this.curPane].titleStyle=s;		// Set val
 					});
 			}); 
 	$("#lbfont").on("click", function(e) {								// SET BODY FONT
 			if (_this.plo.panes[_this.curPane].bodyStyle)				// If a style set
-				TextStyleBox("Body font",_this.plo.panes[_this.curPane].bodyStyle, "sf-bodyFont",function(s) {	// Style it
+				TextStyleBox("Body font",_this.plo.panes[_this.curPane].bodyStyle, "bodyDiv",function(s) {	// Style it
 					_this.plo.panes[_this.curPane].bodyStyle=s;			// Set val
 					});
 				}); 

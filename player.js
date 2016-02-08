@@ -100,7 +100,7 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	$("#playerPaneRight").html(page.markUpRight ? page.markUpRight : ""); 		
 	$("#playerPaneBot").html(page.markUpBot ? page.markUpBot : ""); 		
 
-// Set default css
+// Get body style and set class via css
 
 	if (this.editable) {													// If editable
 		this.ckTop=CKEDITOR.inline( $("#playerPaneTop")[0] );				// Enable rich text
