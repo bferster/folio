@@ -410,12 +410,14 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<td><input class='sf-is' id='pTags' type='text' value='"+pTags+"'></td></tr>";
 	str+="<tr height='28'><td>Collaborators&nbsp;&nbsp;&nbsp;</td>";
 	str+="<td>"+MakeSelect("pCollab",false,pCollab);
-	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:20px;margin-right:10px' title='Add new collaborator'>";
+	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new collaborator'>";
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
 	str+="<tr height='28'><td>Format style</td><td>";
 	str+=MakeSelect("pFormat",false,["Booklet","Single page","Canvas","Slide show","Up/Down"],pFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
-	str+=MakeSelect("pTemp",false,["Default","Top & body","Custom"],pTemp)+"</td></tr>";
+	str+=MakeSelect("pTemp",false,["Default","Top & body","Custom"],pTemp);
+	str+="<img id='tempAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new termplate'>";
+	str+="<img id='tempTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a template'></td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
 	str+="<button class='sf-bs' style='width:90px' id='addPages'>Add pages</button>&nbsp; &nbsp;";		// Add pages button
 	str+="<button class='sf-bs' style='width:90px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
@@ -532,15 +534,34 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		});
 	});
 
-	$("#collabTrashBut").on("click",function() { 							// DELETE PROJECT
+	$("#collabTrashBut").on("click",function() { 							// DELETE COLLABORATOR
 			var s=$("#pCollab").val();
 			if (!s)															// Nothing selected
 				return;														// Quit
-		ConfirmBox("This will delete <b>"+s+" </b>from the project", function() {
+		ConfirmBox("This will delete  <b>"+s+" </b>from the project", function() {
 			sf.Do()															// Something changed
 			var v=sf.projects[curProject].collab.split(",");				// Make into array		
 			v.splice($("#pCollab").prop('selectedIndex'),1);				// Delete it
 			sf.projects[curProject].collab=v.toString();					// Combine into string
+			Sound("delete");												// Delete
+			sf.Draw();														// Redraw
+			});
+		});
+
+	$("#tempAddBut").on("click",function() { 								// ADD NEW TEMPLATE
+		GetTextBox("Type a short name of the new template", "This will create a new project template, based on the current one. [TBD]", "", function(s) {		// Ask for name
+			sf.Do()															// Something changed
+			Sound("add");													// Add
+			sf.Draw();														// Redraw
+			});
+	});
+
+	$("#tempTrashBut").on("click",function() { 								// DELETE TEMPLATE
+			var s=$("#pTemp").val();										// Get current val
+			if (!s)															// Nothing selected
+				return;														// Quit
+		ConfirmBox("This will delete the template named <b>"+s+" </b>from the project. [TBD]", function() {
+			sf.Do()															// Something changed
 			Sound("delete");												// Delete
 			sf.Draw();														// Redraw
 			});

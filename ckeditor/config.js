@@ -1,7 +1,6 @@
 CKEDITOR.editorConfig = function( config ) {
-	config.extraPlugins = 'font,panelbutton,colorbutton,justify,lineheight';
+	config.extraPlugins = 'colorbutton,justify,lineheight';
 	config.toolbarGroups = [
-		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
 		{ name: 'clipboard', groups: [ 'clipboard', 'undo' ] },
 		{ name: 'editing', groups: [ 'find', 'selection', 'spellchecker', 'editing' ] },
 		{ name: 'links', groups: [ 'links' ] },
@@ -15,6 +14,7 @@ CKEDITOR.editorConfig = function( config ) {
 		{ name: 'basicstyles', groups: [ 'basicstyles', 'cleanup' ] },
 		{ name: 'colors', groups: [ 'colors' ] }
 	];
+
 	config.removeButtons = 'Cut,Copy,Paste,PasteText,Anchor,Maximize,Format,PasteFromWord,Source,Strike,Styles';
 	config.enterMode = CKEDITOR.ENTER_BR 					// ENTER KEY = <br>
 	config.shiftEnterMode = CKEDITOR.ENTER_P;				// SHIFT + ENTER KEYS = <p>
@@ -22,3 +22,4 @@ CKEDITOR.editorConfig = function( config ) {
     config.line_height='75%;100%;125%;150%;175%;200%;300%;400%';
     config.uiBorder = 0
 };
+
