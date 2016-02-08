@@ -152,7 +152,7 @@ var isMobile=false;															// Is it mobile?
 var changed=false;															// Anything changed?
 var itemType="All types",itemFilter="";										// Filtering
 var curMenu="project";														// Current menu item
-var editMode=true;
+var editMode=false;
 		
 $(window).resize(function() {											// ON WINDOW RESIZE
 	if (sf)																	// If loaded
@@ -619,9 +619,10 @@ folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 	if ((curProject < 0) || (curPage < 0))									// No project, page selected
 		return str+"</div>";												// Return empty page
 	var o=this.projects[curProject].pages[curPage];							// Point at page
-	str+=playerObj.Make();													// Create divs for player
+	str+=playerObj.Make(editMode);											// Create divs for player
 	str+="<div style='position:absolute;top:calc(100% - 45px);text-align:center'>";
 	str+="<button class='sf-bs' id='setLayout'>Change this page's layout</button>&nbsp; &nbsp;";	// Set layout button
+	str+="<input type='checkbox' id='editMode'"+(editMode ? " checked " : "")+"style='vertical-align:-3px'>Preview?";
 	return str+"</div>";													// Return page page
 }
 
@@ -684,6 +685,12 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 		var id=e.currentTarget.id.substr(10);								// Extract id
 		p["markUp"+id]=$(this).html();										// Copy hlml contents of pane into page
    		});
+
+	$("#editMode").on("click",function() { 									// SET PAGE LAYOUT
+		editMode=!editMode;													// Toggle
+		sf.Draw();															// Redraw
+		});
+
 }	
 
 folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT

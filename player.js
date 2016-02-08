@@ -3,17 +3,17 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-function player(showOnly)														// CONSTRUCTOR
+function player(showOnly)													// CONSTRUCTOR
 {
 	this.divs=["#playerPaneTop","#playerPaneLeft","#playerPaneMid","#playerPaneRight","#playerPaneBot"]; // Array of div names
 	this.guts=[];																// Gutter sizes
 	this.guts["None"]=0;  this.guts["Thin"]=2;  this.guts["Medium"]=8; this.guts["Wide"]=16;	
 	this.ckTop=this.ckMid=this.ckLeft=this.chRight=this.ckBot=null;				// Holds CKEditor instances
-	this.editable=!showOnly;													// Editable mode?
 }	
 
-player.prototype.Make=function()										// MAKE PLAYER
+player.prototype.Make=function(showOnly)									// MAKE PLAYER
 {
+	this.editable=!showOnly;												// Editable mode?
 	var s=this.editable ? " contenteditable='true'" : "";					// Editable flag for CKEditor if editing
 	var str="<div id='playerDiv'  class='sf-player'>";						// Player container
 	str+="<div id='playerPaneTop'  class='sf-playerPane'"+s+" style='margin-bottom:-3px'></div>"; // Top			
