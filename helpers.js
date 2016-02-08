@@ -215,10 +215,27 @@
 
 	function ShortenString(str, len)									// SHORTEN A STRING TO LENGTH
 	{
-		if (str.length > len)												// Too long
-			str=str.substr(0,(len-3)/2)+"..."+str.slice((len-3)/-2);			// Shorten	
+		if (str && str.length > len)										// Too long
+			str=str.substr(0,(len-3)/2)+"..."+str.slice((len-3)/-2);		// Shorten	
 		return str;															// Return string
 	}
+
+	function StyleText(orig, style)										// STYLE TEXT
+	{
+		if (!style)															// No style
+			return orig;													// Return string
+		var s=style.split(",");												// Get as array (font,size,color,weight,align,height)
+		var str="<div style='text-align:"+s[4]+"'>";						// Alignment div
+		str+="<span style='font-family:"+s[0]+"'>";							// Family
+		str+="<span style='font-size:"+s[1]+"'>";							// Size
+		str+="<span style='color:"+s[2]+"'>";								// Color
+		str+="<span style='line-height:"+s[5]+"'>";							// Line height
+		if (s[3] == "bold")	str+="<strong>";								// Start strong
+		str+=orig;															// Add title
+		if (s[3] == "bold")	str+="</strong>";								// Stop strong
+		str+="</span></span></span></span></div>";							// End spans and div
+		return str;															// Return string
+		}
 
 	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
 	{

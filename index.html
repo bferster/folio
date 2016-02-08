@@ -152,6 +152,7 @@ var isMobile=false;															// Is it mobile?
 var changed=false;															// Anything changed?
 var itemType="All types",itemFilter="";										// Filtering
 var curMenu="project";														// Current menu item
+var editMode=true;
 		
 $(window).resize(function() {											// ON WINDOW RESIZE
 	if (sf)																	// If loaded
@@ -414,7 +415,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<tr height='28'><td>Format style</td><td>";
 	str+=MakeSelect("pFormat",false,["Booklet","Single page","Canvas","Slide show","Up/Down"],pFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
-	str+=MakeSelect("pTemp",false,["Full","Top & body","Custom"],pTemp)+"</td></tr>";
+	str+=MakeSelect("pTemp",false,["Default","Top & body","Custom"],pTemp)+"</td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
 	str+="<button class='sf-bs' style='width:90px' id='addPages'>Add pages</button>&nbsp; &nbsp;";		// Add pages button
 	str+="<button class='sf-bs' style='width:90px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
@@ -600,7 +601,6 @@ folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 	str+=playerObj.Make();													// Create divs for player
 	str+="<div style='position:absolute;top:calc(100% - 45px);text-align:center'>";
 	str+="<button class='sf-bs' id='setLayout'>Change this page's layout</button>&nbsp; &nbsp;";	// Set layout button
-	str+="<b>"+ShortenString(o.title,40)+"</b></div>";						// Page being edited
 	return str+"</div>";													// Return page page
 }
 
@@ -667,15 +667,29 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 
 folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 {
-	var i,title,o,p,po;
+	var i,j,t,o,p,po,str;
+	paneNames=["Top","Left","Mid","Right","Bot"];							// Names of the panes
 	this.Do();																// Something changed
 	p=this.projects[curProject];											// Point p at project
 	p.pages=[];																// Clear pages
 	for (i=0;i<p.items.length;++i) {										// For each item in project
+		str="";																// Assume nothing
 		o=this.items[p.items[i]];											// Point at item			
-		po={ title:o.title};												// New page object
-		if (p.layout && (p.layout.panes[0].markUp != undefined))			// If a layout markup set for top
-			po.markUpTop=p.layout.panes[0].markUp;							// Use it
+		po={};																// New page object
+		for (j=0;j<5;++j) {													// For each pane
+			if (p.layout && (p.layout.panes[j].markUp != undefined))		// If a layout markup set for top
+				po["markUp"+paneNames[j]]=p.layout.panes[j].markUp;			// Use it
+			}		
+		t=tempObj.templates[curTemplate];									// Point at template
+		if (o.title) 														// If a value title
+			str+=StyleText(o.title,t.titleStyle); // Style text
+		if (o.src) {														// If a source
+			str+="<br><div style='text-align:"+t.itemAlign+"'>";			// Div for iframe	
+			str+="<iframe frameborder='0' width='"+t.itemWid+"' ";			// Width
+			str+="style='border:"+t.itemBorder+"' ";						// Opacity/border
+			str+="src='"+o.src+"'></iframe></div>";							// Src
+			}
+		po.markUpMid+=str;													// Add title and iframe
 		p.pages.push(po);													// Add page
 		}
 }
