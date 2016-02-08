@@ -93,12 +93,15 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	if (this.ckMid)		this.ckMid.destroy();								
 	if (this.ckRight)	this.ckRight.destroy();								
 	if (this.ckTop)		this.ckTop.destroy();								
-	
+		
 	$("#playerPaneTop").html(page.markUpTop ? page.markUpTop : ""); 		// Set html of panes
 	$("#playerPaneLeft").html(page.markUpLeft ? page.markUpLeft : ""); 		
 	$("#playerPaneMid").html(page.markUpMid ? page.markUpMid : ""); 		
 	$("#playerPaneRight").html(page.markUpRight ? page.markUpRight : ""); 		
 	$("#playerPaneBot").html(page.markUpBot ? page.markUpBot : ""); 		
+
+// Set default css
+
 	if (this.editable) {													// If editable
 		this.ckTop=CKEDITOR.inline( $("#playerPaneTop")[0] );				// Enable rich text
 		this.ckLeft=CKEDITOR.inline( $("#playerPaneLeft")[0] );

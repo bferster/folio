@@ -708,16 +708,16 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 			if (p.layout && (p.layout.panes[j].markUp != undefined))		// If a layout markup set for top
 				po["markUp"+paneNames[j]]=p.layout.panes[j].markUp;			// Use it
 			}		
-		t=tempObj.templates[curTemplate];									// Point at template
+		t=tempObj.templates[curTemplate].layout;							// Point at template
 		if (o.title) 														// If a value title
-			str+=StyleText(o.title,t.layout.titleStyle); 					// Style text
+			str+=StyleText(o.title,t.panes[2].titleStyle); 					// Style text using middle pane setting
 		if (o.src) {														// If a source
 			str+="<br><div style='text-align:"+t.itemAlign+"'>";			// Div for iframe	
 			str+="<iframe frameborder='0' width='"+t.itemWid+"' ";			// Width
 			str+="style='border:"+t.itemBorder+"' ";						// Opacity/border
 			str+="src='"+o.src+"'></iframe></div>";							// Src
 			}
-		po.markUpMid+=str;													// Add title and iframe
+		po.markUpMid+=str+"<p></p>";													// Add title and iframe
 		p.pages.push(po);													// Add page
 		}
 }

@@ -237,16 +237,18 @@
 		return str;															// Return string
 		}
 
-	function TextStyleBox(title, style, callback)						// TEXT STYLE BOX
+	function TextStyleBox(title, style, className, callback)			// TEXT STYLE BOX
 	{
 		if (!style)															// If not style set
 			return null;													// Quit
+		var c="";
 		var s=style.split(",");												// Get as array (font,size,color,weight,align,height)
 		Sound("click");														// Click													
 		$("#alertBoxDiv").remove();											// Remove any current one												
-		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
+		if (className)	c=" "+className+" ";								// Add classname, if set
+		$("body").append("<div class='unselectable"+c+"' id='alertBoxDiv'></div>");														
 		var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
-		str+="<span style='font-size:18px;color:#666'><b>"+title+"</b></span><p>";
+		str+="<span style='font-size:18px;color:#000'><b>"+title+"</b></span><p>";
 		str+="<table style='width:100%;text-align:left;font-size:12px'>";	// Table
 		str+="<tr height='28'><td>Face</td>";
 		str+="<td>"+MakeSelect("fFace",false,["sans-serif","serif","monospace"])+"</td></tr>";
@@ -268,7 +270,7 @@
 									}});	
 		$(".ui-dialog-titlebar").hide();
 		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
-		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
+		$(".ui-dialog").css({"border-radius":"8px", "box-shadow":"4px 4px 8px #ccc"});
  		$(".ui-button").css({"border-radius":"30px","outline":"none","background":"none","background-color":"#e8e8e8"});
 		Update();
  		
@@ -290,7 +292,6 @@
  			ColorPicker("fCol",-1,true);
  			}
  	}
-
 
 
 	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
