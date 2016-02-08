@@ -26,7 +26,7 @@ player.prototype.Make=function(showOnly)									// MAKE PLAYER
 
 player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 {
-	var markUp;
+	var markUp,s,css;
 	var asp=defLayout.aspect;												// Start with default
 	var parent=$("#playerDiv").parent();									// Point at panrent container
 	if (!page)																// If no page
@@ -100,8 +100,11 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	$("#playerPaneRight").html(page.markUpRight ? page.markUpRight : ""); 		
 	$("#playerPaneBot").html(page.markUpBot ? page.markUpBot : ""); 		
 
-// Get body style and set class via css
-
+	for (i=0;i<5;++i) {														// For each pane
+		s=defLayout.panes[i].bodyStyle.split(',');							// Get pane style array (font,size,color,weight,align,height)
+		css={ "font-family":s[0],"font-size":s[1],"color":s[2],"font-weight":s[3],"text-align":s[4],"line-height":s[5] };
+		$(this.divs[i]).css(css);											// Set style
+		}
 	if (this.editable) {													// If editable
 		this.ckTop=CKEDITOR.inline( $("#playerPaneTop")[0] );				// Enable rich text
 		this.ckLeft=CKEDITOR.inline( $("#playerPaneLeft")[0] );
