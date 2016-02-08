@@ -710,7 +710,7 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 			}		
 		t=tempObj.templates[curTemplate];									// Point at template
 		if (o.title) 														// If a value title
-			str+=StyleText(o.title,t.titleStyle); // Style text
+			str+=StyleText(o.title,t.layout.titleStyle); 					// Style text
 		if (o.src) {														// If a source
 			str+="<br><div style='text-align:"+t.itemAlign+"'>";			// Div for iframe	
 			str+="<iframe frameborder='0' width='"+t.itemWid+"' ";			// Width

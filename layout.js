@@ -105,6 +105,19 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 			_this.plo.aspect=$(this).val();								// Set aspect
 			_this.Update();												// Update resizer
 			}); 
+	$("#ltfont").on("click", function(e) {								// SET TITLE FONT
+			if (_this.plo.titleStyle)									// If a style set
+				TextStyleBox("Title font",_this.plo.titleStyle, function(s) {	// Style it
+					_this.plo.titleStyle=s;								// Set val
+					});
+			}); 
+	$("#lbfont").on("click", function(e) {								// SET BODY FONT
+			if (_this.plo.bodyStyle)									// If a style set
+				TextStyleBox("Body font",_this.plo.bodyStyle, function(s) {	// Style it
+					_this.plo.bodyStyle=s;								// Set val
+					});
+				}); 
+
 	
 	$('[id$="SizBar"]').hover(											// HOVER ON PANE SIZER
 		function(){ $(this).css("background-color","#acc3db")},			// Highlight
@@ -219,6 +232,8 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	ColorPicker("lbcol",-1,true);
 	$("#lbgcol").val(o.panes[this.curPane].backCol);					// Set back color
 	ColorPicker("lbgcol",-1,true);
+	$("#lbfont").val(o.bodyStyle);										// Set body font style
+	$("#ltfont").val(o.titleStyle);										// Set title font style
 	$("#lbgimg").val(o.panes[this.curPane].backImg);					// Set back image
 	$("#lbs").val(o.panes[this.curPane].borderSty);						// Set border style
 	$("#lbw").val(o.panes[this.curPane].borderWid);						// Set border width
@@ -245,16 +260,19 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 	str+=MakeSelect("lbw",false,[1,2,3,4,5])+"</td></tr>";
 	str+="<tr height='28'><td>Border color &nbsp;</td>";					// Back col
 	str+="<td><input class='sf-is' id='lbcol' style='width:50px' type='text'></td></tr>";
-	str+="<tr height='28'><td>Top / bot gutter</td>";					// Gutter
+	str+="<tr height='28'><td>Top / bot gutter</td>";						// Gutter
 	str+="<td>"+MakeSelect("tgut",false,["None","Thin","Medium","Wide"])+" &nbsp;:&nbsp; ";
 	str+=MakeSelect("bgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";
-	str+="<tr height='28'><td>Left / right gutter</td>";						// Gutter
+	str+="<tr height='28'><td>Left / right gutter</td>";					// Gutter
 	str+="<td>"+MakeSelect("lgut",false,["None","Thin","Medium","Wide"])+" &nbsp;:&nbsp; ";
 	str+=MakeSelect("rgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";
 	str+="<tr height='28'><td>Aspect format</td><td>";						// Aspect
 	str+=MakeSelect("lasp",false,["Portrait","Landscape","Square"])+"</td></tr>";
-	str+="<tr><td>Default text</td><td><div class='sf-is' id='lmark' ";	// Markup
-	str+="style='height:40px;overflow:hidden' contenteditable='true'></div></td></tr>";
+	str+="<tr height='28'><td>Font styles</td>";							$// Font styles
+	str+="<td><button class='sf-is' id='lbfont' style='width:46%'>Body</button> &nbsp; ";
+	str+="<button class='sf-is' id='ltfont' style='width:46%'>Title </button></td></tr>";
+	str+="<tr><td>Default text</td><td><div class='sf-is' id='lmark' ";		// Markup
+	str+="style='height:50px;overflow:hidden' contenteditable='true'></div></td></tr>";
 	str+="</table><br>";	
 	str+="Click on a pane to show its current settings.<br>";				// Help
 	str+="Drag in the space between panes to set a pane's height or width.<br><br><br>";

@@ -237,6 +237,62 @@
 		return str;															// Return string
 		}
 
+	function TextStyleBox(title, style, callback)						// TEXT STYLE BOX
+	{
+		if (!style)															// If not style set
+			return null;													// Quit
+		var s=style.split(",");												// Get as array (font,size,color,weight,align,height)
+		Sound("click");														// Click													
+		$("#alertBoxDiv").remove();											// Remove any current one												
+		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
+		var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+		str+="<span style='font-size:18px;color:#666'><b>"+title+"</b></span><p>";
+		str+="<table style='width:100%;text-align:left;font-size:12px'>";	// Table
+		str+="<tr height='28'><td>Face</td>";
+		str+="<td>"+MakeSelect("fFace",false,["sans-serif","serif","monospace"])+"</td></tr>";
+		str+="<tr height='28'><td>Size</td>";
+		str+="<td>"+MakeSelect("fSize",false,["8px","9px","10px","11px","12px","13px","14px","16px","18px","20px","24px","32px","48px"])+"</td></tr>";
+		str+="<tr height='28'><td>Color</td>";
+		str+="<td><input class='sf-is' id='fCol' style='width:50px' type='text'></td></tr>";
+		str+="<tr height='28'><td>Style</td>";
+		str+="<td>"+MakeSelect("fWgt",false,["normal","bold","1talic"])+"</td></tr>";
+		str+="<tr height='28'><td>Align</td>";
+		str+="<td>"+MakeSelect("fAlign",false,["left","right","center"])+"</td></tr>";
+		str+="<tr height='28'><td>Height</td>";
+		str+="<td>"+MakeSelect("fHgt",false,["75%","100%","125%","150%","175%","200%","300%","400%"])+"</td></tr>";
+		str+="</table>";	
+		$("#alertBoxDiv").append(str+"</div>");	
+		$("#alertBoxDiv").dialog({ width:200, buttons: {
+					            	"OK": function() { $(this).remove(); callback(s.toString()) },
+					            	"Cancel":  function() { $(this).remove();  }
+									}});	
+		$(".ui-dialog-titlebar").hide();
+		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
+		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
+ 		$(".ui-button").css({"border-radius":"30px","outline":"none"});
+		Update();
+ 		
+ 		$("#fFace").on("change",function() { s[0]=$(this).val(); });
+ 		$("#fSize").on("change",function() { s[1]=$(this).val(); });
+ 		$("#fCol").on("click",function()    { ColorPicker("fCol",-1) });
+ 		$("#fCol").on("blur",function()    { s[2]=$(this).val(); });
+ 		$("#fWgt").on("change",function()  { s[3]=$(this).val(); });
+ 		$("#fAlign").on("change",function(){ s[4]=$(this).val(); });
+ 		$("#fHgt").on("change",function()  { s[5]=$(this).val(); });
+ 		
+ 		function Update() {
+ 			$("#fFace").val(s[0]);
+			$("#fSize").val(s[1]);
+			$("#fCol").val(s[2]);
+			$("#fWgt").val(s[3]);
+			$("#fAlign").val(s[4]);
+ 			$("#fHgt").val(s[5]);	
+ 			ColorPicker("fCol",-1,true);
+ 			}
+ 	}
+
+
+
 	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
 	{
 		if (p4 != undefined)
