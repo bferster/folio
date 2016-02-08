@@ -171,7 +171,7 @@
 		$(".ui-dialog-titlebar").hide();
 		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
 		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
-  		$(".ui-button").css({"border-radius":"30px","outline":"none"});
+		$(".ui-button").css({"border-radius":"30px","outline":"none","background":"none","background-color":"#e8e8e8"});
 	}
 
 	function ConfirmBox(content, callback)									// COMFIRM BOX
@@ -190,7 +190,7 @@
 		$(".ui-dialog-titlebar").hide();
 		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
 		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
- 		$(".ui-button").css({"border-radius":"30px","outline":"none"});
+		$(".ui-button").css({"border-radius":"30px","outline":"none","background":"none","background-color":"#e8e8e8"});
  	}
 
 	function GetTextBox(title, content, def, callback)					// GET TEXT LINE BOX
@@ -210,7 +210,7 @@
 		$(".ui-dialog-titlebar").hide();
 		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
 		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
- 		$(".ui-button").css({"border-radius":"30px","outline":"none"});
+		$(".ui-button").css({"border-radius":"30px","outline":"none","background":"none","background-color":"#e8e8e8"});
  	}
 
 	function ShortenString(str, len)									// SHORTEN A STRING TO LENGTH
@@ -269,7 +269,7 @@
 		$(".ui-dialog-titlebar").hide();
 		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
 		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
- 		$(".ui-button").css({"border-radius":"30px","outline":"none"});
+ 		$(".ui-button").css({"border-radius":"30px","outline":"none","background":"none","background-color":"#e8e8e8"});
 		Update();
  		
  		$("#fFace").on("change",function() { s[0]=$(this).val(); });
