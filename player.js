@@ -6,6 +6,7 @@
 function player(showOnly)													// CONSTRUCTOR
 {
 	this.divs=["#playerPaneTop","#playerPaneLeft","#playerPaneMid","#playerPaneRight","#playerPaneBot"]; // Array of div names
+	this.paneNames=["Top","Left","Mid","Right","Bot"];							// Name of all the panes
 	this.guts=[];																// Gutter sizes
 	this.guts["None"]=0;  this.guts["Thin"]=2;  this.guts["Medium"]=8; this.guts["Wide"]=16;	
 	this.ckTop=this.ckMid=this.ckLeft=this.chRight=this.ckBot=null;				// Holds CKEditor instances
@@ -88,29 +89,14 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	if (!$("#playerPaneRight").width())	$("#playerPaneRight").hide();		// Hide right if invisible
 	if (!$("#playerPaneBot").height())	$("#playerPaneBot").hide();			// Hide bot if invisible
 
-	if (this.ckTop)		this.ckTop.destroy();								// Remove old editors
-	if (this.ckLeft)	this.ckLeft.destroy();								
-	if (this.ckMid)		this.ckMid.destroy();								
-	if (this.ckRight)	this.ckRight.destroy();								
-	if (this.ckTop)		this.ckTop.destroy();								
-		
-	$("#playerPaneTop").html(page.markUpTop ? page.markUpTop : ""); 		// Set html of panes
-	$("#playerPaneLeft").html(page.markUpLeft ? page.markUpLeft : ""); 		
-	$("#playerPaneMid").html(page.markUpMid ? page.markUpMid : ""); 		
-	$("#playerPaneRight").html(page.markUpRight ? page.markUpRight : ""); 		
-	$("#playerPaneBot").html(page.markUpBot ? page.markUpBot : ""); 		
-
 	for (i=0;i<5;++i) {														// For each pane
+		if (this["ck"+this.paneNames[i]]) this["ck"+this.paneNames[i]].destroy(); // Remove old editors
+		$(this.divs[i]).html(page["markUp"+this.paneNames[i]] ? page["markUp"+this.paneNames[i]] : defLayout.panes[i].markUp ? defLayout.panes[i].markUp : ""); 		// Set html of panes
 		s=defLayout.panes[i].bodyStyle.split(',');							// Get pane style array (font,size,color,weight,align,height)
 		css={ "font-family":s[0],"font-size":s[1],"color":s[2],"font-weight":s[3],"text-align":s[4],"line-height":s[5] };
 		$(this.divs[i]).css(css);											// Set style
-		}
-	if (this.editable) {													// If editable
-		this.ckTop=CKEDITOR.inline( $("#playerPaneTop")[0] );				// Enable rich text
-		this.ckLeft=CKEDITOR.inline( $("#playerPaneLeft")[0] );
-		this.ckMid=CKEDITOR.inline( $("#playerPaneMid")[0] );
-		this.ckRight=CKEDITOR.inline( $("#playerPaneRight")[0] );
-		this.ckBot=CKEDITOR.inline( $("#playerPaneBot")[0] );
+		if (this.editable) 													// If editable
+			this["ck"+this.paneNames[i]]=CKEDITOR.inline( $(this.divs[i])[0] );	// Enable rich text editor
 		}
 	this.StylePage(page,defLayout);											// Style page
 }	

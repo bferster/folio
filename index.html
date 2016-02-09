@@ -15,6 +15,7 @@
 	<script src="collect.js"></script>
 	<script src="player.js"></script>
 	<script src="template.js"></script>
+	<script src="item.js"></script>
 
 	<style type="text/css">
 		body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
@@ -145,9 +146,10 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 var sf=null;																// Holds main folio object	
-var curProject=-1,curPage=-1,curTemplate=0;									// Keeps tabs on current places	
-var playerObj=null,layoutObj=null,collectObj=null,shareObj=null;			// Objects							
-var tempObj=null;
+var curProject=-1,curPage=-1,curItem=-1,curTemplate=0;						// Keeps tabs on current places	
+var playerObj=null,layoutObj=null,collectObj=null;							// Objects							
+var tempObj=null,shareObj=null,itemObj=null;
+var projObj=null,pageObj=null;												// TBD
 var isMobile=false;															// Is it mobile?
 var changed=false;															// Anything changed?
 var itemType="All types",itemFilter="";										// Filtering
@@ -161,7 +163,7 @@ $(window).resize(function() {											// ON WINDOW RESIZE
 			
 $(document).ready(function() {											// ON PAGE LOADED
 	isMobile=navigator.userAgent.match(/(ipad|iphone|ipod|android)/i) ? true : false; // Set mobile flag
-	collectObj=new collect();												// Load collect object
+	itemObj=new item();														// Load item object
  	tempObj=new template();													// Load template object
 	shareObj=new share();													// Load layout object
 	layoutObj=new layout();													// Load share object
@@ -270,7 +272,7 @@ folio.prototype.Draw=function()											// DRAW PAGE
 	else if (curMenu == "page")												// If a page
 		sf.AddPageHandlers();												// Add page handlers
 	else if (curMenu == "item")												// If item
- 		sf.AddItemHandlers();												// Add item handlers
+ 		itemObj.AddHandlers();												// Add item handlers
 }
 		
 folio.prototype.DrawMenu=function()										// DRAW MENU AREA
@@ -323,10 +325,8 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 	else if (curMenu == "edit") {											// If edit
 		str+="<div id='projectDiv' class='sf-projectPage' style='left:0px;width:50%;min-width:500px'>";	// Project container
 		}
-	else if (curMenu == "item") {											// If item
-		str+=this.MakeItemPage();											// Add item page
-		str+="<div id='itemPickerDiv' class='sf-itemsPicker'></div>";		// Item picker container
-		}
+	else if (curMenu == "item") 											// If item
+		str+=itemObj.MakePage();											// Add item page
 	$("#bodyDiv").html(str);												// Fill body
 }
 	
@@ -695,7 +695,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 
 folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 {
-	var i,j,t,o,p,po,str;
+	var i,j,o,p,po,str;
 	paneNames=["Top","Left","Mid","Right","Bot"];							// Names of the panes
 	this.Do();																// Something changed
 	p=this.projects[curProject];											// Point p at project
@@ -708,13 +708,12 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 			if (p.layout && (p.layout.panes[j].markUp != undefined))		// If a layout markup set for top
 				po["markUp"+paneNames[j]]=p.layout.panes[j].markUp;			// Use it
 			}		
-		t=tempObj.templates[curTemplate].layout;							// Point at template
 		if (o.title) 														// If a value title
-			str+=StyleText(o.title,t.panes[2].titleStyle); 					// Style text using middle pane setting
+			str+=StyleText(o.title,p.layout.panes[2].titleStyle); 			// Style text using middle pane setting
 		if (o.src) {														// If a source
-			str+="<br><div style='text-align:"+t.itemAlign+"'>";			// Div for iframe	
-			str+="<iframe frameborder='0' width='"+t.itemWid+"' ";			// Width
-			str+="style='border:"+t.itemBorder+"' ";						// Opacity/border
+			str+="<br><div style='text-align:"+p.layout.itemAlign+"'>";		// Div for iframe	
+			str+="<iframe frameborder='0' width='"+p.layout.itemWid+"' ";	// Width
+			str+="style='border:"+p.layout.itemBorder+"' ";					// Border
 			str+="src='"+o.src+"'></iframe></div>";							// Src
 			}
 		po.markUpMid+=str+"<p></p>";													// Add title and iframe
@@ -722,30 +721,6 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 		}
 }
 
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// ITEMS
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-
-
-folio.prototype.MakeItemPage=function()									// MAKE ITEMS PAGE
-{
-	var str="<div id='projectDiv' class='sf-projectPage'>";					// Items container
-	str+="<p style='text-align:center'>This is where items are collected</p>";
-	return str+"</div>";													// Return iterms page
-}
-
-folio.prototype.AddItemHandlers=function()								// ADD ITEM HANDLERS
-{
-	this.AddProjectItems(true);												// Add items
-}	
-
-folio.prototype.PreviewItem=function(id)								// PREVIEW ITEM
-{
-	var str="<div class='sf-previewTitle'>"+this.items[id].title+"</div><br>";
-	str+="<iframe frameborder='0' height='500' width='100%' style='opacity:0,border:1px solid #666' src='"+this.items[id].src+"'/>";
-	ShowLightBox(800,"Preview",str);
-}
-	
 folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 {
 	var o,i,n,lab,pic,str,div;
@@ -851,12 +826,12 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 
 			$("#pitem-"+i).on("dblclick",function() {						// ON DOUBLE CLICK
 				var id=$(this).prop("id").substr(6);						// Get id of project item
-					sf.PreviewItem(sf.projects[curProject].items[id]);		// Preview		
+					itemObj.Preview(sf.projects[curProject].items[id]);		// Preview		
 				});
 
 			$("#pitem-"+i).on("doubletap",function() {						// ON DOUBLE CLICK MOBILE
 				var id=$(this).prop("id").substr(6);						// Get id of project item
-					sf.PreviewItem(sf.projects[curProject].items[id]);		// Preview		
+					itemObj.Preview(sf.projects[curProject].items[id]);		// Preview		
 				});
 			}
 
@@ -864,10 +839,10 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 			for (i=0;i<n;++i) {												// For each item
 				
 				$("#item-"+i).on("dblclick",function() {					// ON DOUBLE CLICK
-					sf.PreviewItem($(this).prop("id").substr(5));			// Preview		
+					itemObj.Preview($(this).prop("id").substr(5));			// Preview		
 					});
 				$("#item-"+i).on("doubletap",function() {					// ON DOUBLE CLICK MOBILE
-					sf.PreviewItem($(this).prop("id").substr(5));			// Preview		
+					itemObj.Preview($(this).prop("id").substr(5));			// Preview		
 					});
 				
 				$("#item-"+i).draggable({ 									// Make item draggable

@@ -198,7 +198,7 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	$("#sizerMidDiv").css({   height:midHgt+"%",width:midWid+"%" });	// Set mid
 	$("#sizerRightDiv").css({  height:midHgt+"%",width:o.rightPct+"%" });// Set right
 	$("#sizerBotDiv").css({ height:o.botPct+"%" })						// Set bot		
-	$("#sizerMidDiv").width($("#sizerMidDiv").width()-6);				// Remove extra margins
+	$("#sizerMidDiv").width($("#sizerMidDiv").width()-7);				// Remove extra margins
 	if (!midWid && $("#sizerleftDiv").width())							// No mid, but left visible
 		$("#sizerLeftDiv").width($("#sizerLeftDiv").width()-8);			// Remove extra margins
 	else if (!midWid && $("#sizerRightDiv").width())					// No mid, but right visible
