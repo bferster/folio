@@ -47,7 +47,7 @@ item.prototype.UpdatePage=function()							// UPDATE ITEM PAGE
 		$("#iTitle").val("");	$("#iDesc").val("") 				// Clear it out				
 		$("#iCite").val("");	$("#iSrc").val("") 					
 		$("#iThumb").val("");						
-		$("#iType").prop("selectedIndex",0)
+		$("#iType").val("")
 		}
 	if ($("#iThumb").val())											// If a thumb spec'd
 		pic=$("#iThumb").val();										// Use it

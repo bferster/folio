@@ -311,7 +311,9 @@
 		var pic="img/";															// Add folder
 		if (src && src.match(/\.png|.gif|\.jpg|.jpeg/i)) 						// An image
 			return src;															// Return image as icon
-		switch (type.toLowerCase()) {											// Route on type
+		if (!type)																// No type set
+			return pic+"nullitem.png";											// Return null icon
+			switch (type.toLowerCase()) {										// Route on type
 			case 	"media": 		pic+="mediaitem"; 			break;			// Set
 			case 	"qmedia": 		pic+="qmediaitem"; 			break;			
 			case 	"image": 		pic+="imageitem"; 			break;			
