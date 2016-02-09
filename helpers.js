@@ -306,6 +306,27 @@
 			console.log(msg);
 		}
 
+	function GetMediaIcon(type, src)
+	{
+		var pic="img/";															// Add folder
+		if (src && src.match(/\.png|.gif|\.jpg|.jpeg/i)) 						// An image
+			return src;															// Return image as icon
+		switch (type.toLowerCase()) {											// Route on type
+			case 	"media": 		pic+="mediaitem"; 			break;			// Set
+			case 	"qmedia": 		pic+="qmediaitem"; 			break;			
+			case 	"image": 		pic+="imageitem"; 			break;			
+			case 	"pdf": 			pic+="pdfitem"; 			break;			
+			case 	"map": 			pic+="mapitem"; 			break;			
+			case 	"shiva": 		pic+="shivaitem"; 			break;			
+			case 	"visualeyes": 	pic+="veitem"; 				break;			
+			case 	"mandala": 		pic+="mandalaitem"; 		break;			
+			case 	"wordpress": 	pic+="wordpressitem"; 		break;			
+			default: 				pic+="webitem"; 			break;			// All others use web pic
+			}
+		pic+=".png";															// Add ext
+		return pic;																// Return icon url
+	}
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DATA
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

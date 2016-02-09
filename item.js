@@ -6,6 +6,7 @@
 
 function item()													// CONSTRUCTOR
 {
+	this.mediaTypeNames=["Web","Image","Map","Media","WordPress","Mandala","SHIVA","Qmedia","VisualEyes"];
 }	
 
 item.prototype.item=function()									// DRAW
@@ -28,34 +29,31 @@ item.prototype.Preview=function(id)								// PREVIEW ITEM
 
 item.prototype.UpdatePage=function()							// UPDATE ITEM PAGE	
 {
+	var i,pic="";
 	if (curItem != -1) {											// If a valid item
 		var o=sf.items[curItem];									// Point at item
-		$("#iType").val(o.type);									// Set type
+		for (i=0;i<this.mediaTypeNames.length;++i) 					// For each type
+			if (o.type.toLowerCase() == this.mediaTypeNames[i].toLowerCase()) {	// A lc match
+				$("#iType").prop("selectedIndex",i);				// Set select
+				break;
+				}
 		$("#iTitle").val(o.title ? o.title: "") 					// Set title
 		$("#iDesc").val(o.desc ?   o.desc: "");						// Set desc
 		$("#iCite").val(o.cite ?   o.cite: "");						// Set cite
+		$("#iSrc").val(o.src ?     o.src: "");						// Set src
 		$("#iThumb").val(o.thumb ? o.thumb: "");					// Set thumb
 		}
-	var pic="";
+	else{															// Start fresh
+		$("#iTitle").val("");	$("#iDesc").val("") 				// Clear it out				
+		$("#iCite").val("");	$("#iSrc").val("") 					
+		$("#iThumb").val("");						
+		$("#iType").prop("selectedIndex",0)
+		}
 	if ($("#iThumb").val())											// If a thumb spec'd
 		pic=$("#iThumb").val();										// Use it
-	else{															// Use generic images
-		pic="img/";													// Add folder
-		switch ($("#iType").val().toLowerCase()) {					// Route on type
-			case 	"media": 		pic+="mediaitem"; 		break;	// Set icon
-			case 	"qmedia": 		pic+="qmediaitem"; 		break;			
-			case 	"image": 		pic+="imageitem"; 		break;			
-			case 	"pdf": 			pic+="pdfitem"; 		break;			
-			case 	"map": 			pic+="mapitem"; 		break;			
-			case 	"shiva": 		pic+="shivaitem"; 		break;			
-			case 	"visualeyes": 	pic+="veitem"; 			break;			
-			case 	"mandala": 		pic+="mandalaitem"; 	break;			
-			case 	"wordpress": 	pic+="wordpressitem"; 	break;			
-			default: 				pic+="webitem"; 		break;	// All others use web pic
-			}
-		pic+=".png";												// Add ext
-		}	
-	$("#iPic").prop("src",pic);
+	else															// Use generic images
+		pic=GetMediaIcon($("#iType").val(),$("#iSrc").val());		// Get proper icon	
+	$("#iPic").prop("src",pic);										// Set src
 	sf.AddProjectItems(true);										// Add items
 }
 	
@@ -64,20 +62,23 @@ item.prototype.MakePage=function()								// PREVIEW ITEM
 	var str="<div id='projectDiv' class='sf-projectPage'>";			// Items container
 	str+="<table style='width:90%;font-weight:bold;text-align:left'>";
 	str+="<tr><td height='28'>Item type</td><td>";
-	str+=MakeSelect("iType",false,["Web","Image","Map","Media","WordPress","Mandala","SHIVA","Qmedia","VisualEyes"])+"</td></tr>";
+	str+=MakeSelect("iType",false,this.mediaTypeNames)+"</td></tr>";
 	str+="<tr><td height='28'>Title</td><td>";
 	str+="<input type='text' class='sf-is' id='iTitle'></td></tr>";
 	str+="<tr><td height='28'>Description</td><td>";
 	str+="<textarea class='sf-is' id='iDesc'></textarea></td></tr>";		
 	str+="<tr><td height='28'>Citation</td><td>";
 	str+="<input type='text' class='sf-is' id='iCite'></td></tr>";
+	str+="<tr><td height='28'>Source</td><td>";
+	str+="<input type='text' class='sf-is' id='iSrc'></td></tr>";
 	str+="<tr><td height='28'>Thumbnail pic</td><td>";
 	str+="<input type='text' class='sf-is' id='iThumb'></td></tr>";
 	str+="<tr><td>Icon</td><td><img id='iPic' class='sf-itemPic'>";				
 	str+="</table>";
 	str+="<p style='text-align:center'>Drag item  from the right to edit and existing item, or click on the + button below to add a new item to your collection.</p>";
-	str+="<br><div style='text-align:center;'><img id='itemAddBut' class='sf-galleryBut' src='img/addbut.gif' title='Add new item'>";
-	str+="<img id='itemDeleteBut' class='sf-galleryBut'src='img/trashbut.gif'  title='Delete an item'></div>";
+	str+="<div style='text-align:center;'><img id='itemAddBut' class='sf-itemBut' src='img/addbut.gif' title='Add new item'>";
+	str+="<img id='itemDeleteBut' class='sf-itemBut' src='img/trashbut.gif'  title='Delete an item'>";
+	str+=MakeSelect("iImp",false,["Import items","Flickr","Delicious","Diigo"])+"</div>";
 	str+="</div><div id='itemPickerDiv' class='sf-itemsPicker'></div>";	// Item picker container
 	return str;														// Return page
 }
@@ -127,6 +128,14 @@ item.prototype.AddHandlers=function()								// ADD  HANDLERS
 			}								
 		_this.UpdatePage();												// Update page
 		});
+	$("#iSrc").on("blur",function() { 									// EDIT SOURCE
+		if (curItem != -1) {											// If an existing item	
+			sf.Do();													// something changed
+			sf.items[curItem].src=$(this).val();						// Set value
+			sf.AddProjectItems(true);									// Redraw items
+			}								
+		_this.UpdatePage();												// Update page
+		});
 	
 	$("#itemAddBut").on("click",function() { 							// ADD NEW ITEM
 		sf.Do()															// Something changed
@@ -136,6 +145,7 @@ item.prototype.AddHandlers=function()								// ADD  HANDLERS
 		o.title=$("#iTitle").val() ? $("#iTitle").val() : "New item" ;	// Set title
 		o.desc=$("#iDesc").val();										// Set desc
 		o.cite=$("#iCite").val();										// Set cite
+		o.src=$("#iSrc").val();											// Set src
 		o.thumb=$("#iThumb").val();										// Set thumb
 		sf.items.push(o)
 		curItem=sf.items.length-1;										// Point to this one
@@ -153,5 +163,16 @@ item.prototype.AddHandlers=function()								// ADD  HANDLERS
 				})
 		});
 	
+	$("#projectDiv").droppable({
+		 drop: function(event, ui) {									// On drop
+			if (ui.draggable.prop("id").substr(0,5  )== "item-") {		// From items corpus
+				curItem=ui.draggable.prop("id").substr(5);				// Get id
+				Sound("ding");											// Ding
+				_this.UpdatePage();										// Update page
+				}
+			}
+		 });
 
 }
+
+

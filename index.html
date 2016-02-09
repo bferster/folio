@@ -97,6 +97,8 @@
 						}
 		.sf-pullDown {	position:absolute;background-color:#ddd;width:100px; 
 						}
+		.sf-itemBut  { 	cursor:pointer;margin-right:20px;vertical-align:-4px;
+						}
 		.sf-pullDownItem {	padding-bottom:6px;cursor:pointer;width:92px;padding:6px;
 						padding-left:8px;padding-right:0px;
 						}
@@ -735,7 +737,7 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 		fil=itemFilter.toLowerCase();										// Filter as lc
 		div="itemPickerDiv";												// Point at item picker
 		str="<div style='text-align:center;margin-bottom:16px;'>Show only&nbsp;";			
-		str+=MakeSelect("pType",false,["All types","Web","Image","Map","Media","WordPress","Mandala","SHIVA","Qmedia","VisualEyes"],itemType);
+		str+=MakeSelect("pType",false,["All types"].concat(itemObj.mediaTypeNames,itemType),itemType);
 		str+="&nbsp; filtered&nbsp;by&nbsp;&nbsp;<input type='text' class='sf-is' id='pFilter' value='"+itemFilter+"' style='width:80px'> &nbsp;";
 		str+="</div>"; 
 		n=this.items.length;												// Number of items
@@ -770,22 +772,8 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 			lab=ShortenString(o.title,35);									// Add it
 		if (o.thumb)														// If a thumb
 			pic=o.thumb;													// Add it
-		else{																// Use generic images
-			pic="img/";														// Add folder
-			switch (o.type.toLowerCase()) {									// Route on type
-				case 	"media": 		pic+="mediaitem"; 			break;	// Set
-				case 	"qmedia": 		pic+="qmediaitem"; 			break;			
-				case 	"image": 		pic+="imageitem"; 			break;			
-				case 	"pdf": 			pic+="pdfitem"; 			break;			
-				case 	"map": 			pic+="mapitem"; 			break;			
-				case 	"shiva": 		pic+="shivaitem"; 			break;			
-				case 	"visualeyes": 	pic+="veitem"; 				break;			
-				case 	"mandala": 		pic+="mandalaitem"; 		break;			
-				case 	"wordpress": 	pic+="wordpressitem"; 		break;			
-				default: 				pic+="webitem"; 			break;	// All others use web pic
-				}
-			pic+=".png";													// Add ext
-			}	
+		else																// Use generic images
+			pic=GetMediaIcon(o.type,o.src);									// Get icon
 		str+="<img src='"+pic+"' class='sf-itemPic'>"+lab+"</div>";			// Add pic	
 		}
 	$("#"+div).html(str);													// Add items to div
