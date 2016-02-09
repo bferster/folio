@@ -28,13 +28,21 @@ item.prototype.Preview=function(id)								// PREVIEW ITEM
 
 item.prototype.UpdatePage=function()							// UPDATE ITEM PAGE	
 {
+	if (curItem != -1) {											// If a valid item
+		var o=sf.items[curItem];									// Point at item
+		$("#iType").val(o.type);									// Set type
+		$("#iTitle").val(o.title ? o.title: "") 					// Set title
+		$("#iDesc").val(o.desc ?   o.desc: "");						// Set desc
+		$("#iCite").val(o.cite ?   o.cite: "");						// Set cite
+		$("#iThumb").val(o.thumb ? o.thumb: "");					// Set thumb
+		}
 	var pic="";
 	if ($("#iThumb").val())											// If a thumb spec'd
 		pic=$("#iThumb").val();										// Use it
 	else{															// Use generic images
 		pic="img/";													// Add folder
 		switch ($("#iType").val().toLowerCase()) {					// Route on type
-			case 	"media": 		pic+="mediaitem"; 		break;	// Set
+			case 	"media": 		pic+="mediaitem"; 		break;	// Set icon
 			case 	"qmedia": 		pic+="qmediaitem"; 		break;			
 			case 	"image": 		pic+="imageitem"; 		break;			
 			case 	"pdf": 			pic+="pdfitem"; 		break;			
@@ -49,7 +57,6 @@ item.prototype.UpdatePage=function()							// UPDATE ITEM PAGE
 		}	
 	$("#iPic").prop("src",pic);
 	sf.AddProjectItems(true);										// Add items
-
 }
 	
 item.prototype.MakePage=function()								// PREVIEW ITEM
@@ -61,7 +68,7 @@ item.prototype.MakePage=function()								// PREVIEW ITEM
 	str+="<tr><td height='28'>Title</td><td>";
 	str+="<input type='text' class='sf-is' id='iTitle'></td></tr>";
 	str+="<tr><td height='28'>Description</td><td>";
-	str+="<textarea class='sf-is' id='iDdesc'></textarea></td></tr>";		
+	str+="<textarea class='sf-is' id='iDesc'></textarea></td></tr>";		
 	str+="<tr><td height='28'>Citation</td><td>";
 	str+="<input type='text' class='sf-is' id='iCite'></td></tr>";
 	str+="<tr><td height='28'>Thumbnail pic</td><td>";
@@ -82,31 +89,40 @@ item.prototype.AddHandlers=function()								// ADD  HANDLERS
 
 	$("#iType").on("change",function() { 								// CHANGE TYPE
 		if (curItem != -1) {											// If an existing item	
-			sd.Do();													// something changed
+			sf.Do();													// something changed
+			sf.items[curItem].type=$(this).val();						// Set value
 			sf.AddProjectItems(true);									// Redraw items
 			}								
 		_this.UpdatePage();												// Update page
 		});
 	$("#iTitle").on("blur",function() { 								// EDIT TITLE
 		if (curItem != -1) {											// If an existing item	
-			sd.Do();													// something changed
+			sf.Do();													// something changed
+			sf.items[curItem].title=$(this).val();						// Set value
 			sf.AddProjectItems(true);									// Redraw items
 			}								
 		_this.UpdatePage();												// Update page
 		});
 	$("#iDesc").on("blur",function() { 									// EDIT DESC
 		if (curItem != -1) {											// If an existing item	
-			sd.Do();													// something changed
+			sf.Do();													// something changed
+			sf.items[curItem].desc=$(this).val();						// Set value
 			sf.AddProjectItems(true);									// Redraw items
 			}								
 		_this.UpdatePage();												// Update page
 		});
 	$("#iCite").on("blur",function() { 									// EDIT CITE
+		if (curItem != -1) {											// If an existing item	
+			sf.Do();													// something changed
+			sf.items[curItem].cite=$(this).val();						// Set value
+			sf.AddProjectItems(true);									// Redraw items
+			}								
 		_this.UpdatePage();												// Update page
 		});
 	$("#iThumb").on("blur",function() { 								// EDIT THUMB
 		if (curItem != -1) {											// If an existing item	
-			sd.Do();													// something changed
+			sf.Do();													// something changed
+			sf.items[curItem].thumb=$(this).val();						// Set value
 			sf.AddProjectItems(true);									// Redraw items
 			}								
 		_this.UpdatePage();												// Update page
@@ -114,7 +130,27 @@ item.prototype.AddHandlers=function()								// ADD  HANDLERS
 	
 	$("#itemAddBut").on("click",function() { 							// ADD NEW ITEM
 		sf.Do()															// Something changed
+		Sound("add");													// Add sound
+		var o={};														// Holds new item
+		o.type=$("#iType").val();										// Set type
+		o.title=$("#iTitle").val() ? $("#iTitle").val() : "New item" ;	// Set title
+		o.desc=$("#iDesc").val();										// Set desc
+		o.cite=$("#iCite").val();										// Set cite
+		o.thumb=$("#iThumb").val();										// Set thumb
+		sf.items.push(o)
+		curItem=sf.items.length-1;										// Point to this one
 		_this.UpdatePage();												// Update page
+		});
+	
+	$("#itemDeleteBut").on("click",function() { 						// ADD NEW ITEM
+		if (curItem != -1)
+			ConfirmBox("This will delete the item titled:<br><br><b><i>"+sf.items[curItem].title+"</b></i>", function() {
+				sf.Do()													// Something changed
+				sf.items.splice(curItem,1);								// Remove it
+				curItem=-1;												// Go to previous projcet
+				Sound("delete");										// Delete
+				_this.UpdatePage();											// Update page
+				})
 		});
 	
 
