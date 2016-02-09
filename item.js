@@ -29,11 +29,12 @@ item.prototype.Preview=function(id)								// PREVIEW ITEM
 
 item.prototype.UpdatePage=function()							// UPDATE ITEM PAGE	
 {
-	var i,pic="";
+	var i,pic="", typ="";
 	if (curItem != -1) {											// If a valid item
 		var o=sf.items[curItem];									// Point at item
+		if (o.type)  typ=o.type.toLowerCase();						// Make type lc
 		for (i=0;i<this.mediaTypeNames.length;++i) 					// For each type
-			if (o.type.toLowerCase() == this.mediaTypeNames[i].toLowerCase()) {	// A lc match
+			if (typ == this.mediaTypeNames[i].toLowerCase()) {		// A lc match
 				$("#iType").prop("selectedIndex",i);				// Set select
 				break;
 				}
