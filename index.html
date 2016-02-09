@@ -772,7 +772,7 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 			pic=o.thumb;													// Add it
 		else{																// Use generic images
 			pic="img/";														// Add folder
-			switch (o.type) {												// Route on type
+			switch (o.type.toLowerCase()) {									// Route on type
 				case 	"media": 		pic+="mediaitem"; 			break;	// Set
 				case 	"qmedia": 		pic+="qmediaitem"; 			break;			
 				case 	"image": 		pic+="imageitem"; 			break;			
