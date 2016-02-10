@@ -180,16 +180,6 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 				})
 		});
 	
-	$("#projectDiv").droppable({
-		 drop: function(event, ui) {									// On drop
-			if (ui.draggable.prop("id").substr(0,5  )== "item-") {		// From items corpus
-				curItem=ui.draggable.prop("id").substr(5);				// Get id
-				Sound("ding");											// Ding
-				_this.UpdatePage();										// Update page
-				}
-			}
-		 });
-
 	$("#iImport").on("change",function() { 								// IMPORT
 		if ($(this).val() == "Flickr")									// If Flickr
 			_this.ImportFlickr();										// Run importer

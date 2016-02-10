@@ -132,7 +132,7 @@
 				S H A N T l
 				<span style="margin-left:100px"></span>
 				<span id="editMenu" class="sf-menuItem" style="margin-left:100px">Edit</span>
-				<span id="itemMenu" class="sf-menuItem"> Items</span>
+				<span id="theitemMenu" class="sf-menuItem"> Items</span>
 				<span id="projectMenu" class="sf-menuItem"> Portfolios</span>
 				<span id="pageMenu" class="sf-menuItem">Pages</span>
 				<span id="helpMenu" class="sf-menuItem">Help</span>
@@ -179,7 +179,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 		$("#mainDiv").css("opacity",1);
 		});				 
 	
-	$("#itemMenu").on("click",function() { 
+	$("#theitemMenu").on("click",function() { 
 		curMenu="item";
 		Sound("click");												
 		sf.Draw();
@@ -296,7 +296,7 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 		str+=" &nbsp;|&nbsp; "+(curPage-0+1);								// Add to breadcrumb
 		}
 	else if (curMenu == "item") 											// If item
-		$("#itemMenu").css("color","#00aa00");								// Highlight it
+		$("#theitemMenu").css("color","#00aa00");							// Highlight it
 	else if (curMenu == "help") 											// If help
 		$("#helpMenu").css("color","#00aa00");								// Highlight it
 	$("#breadMenu").html(str);												// Set breadcrumb
