@@ -35,26 +35,26 @@ item.prototype.UpdatePage=function()							// UPDATE ITEM PAGE
 		if (o.type)  typ=o.type.toLowerCase();						// Make type lc
 		for (i=0;i<this.mediaTypeNames.length;++i) 					// For each type
 			if (typ == this.mediaTypeNames[i].toLowerCase()) {		// A lc match
-				$("#iType").prop("selectedIndex",i);				// Set select
+				$("#imType").prop("selectedIndex",i);				// Set select
 				break;
 				}
-		$("#iTitle").val(o.title ? o.title: "") 					// Set title
-		$("#iDesc").val(o.desc   ? o.desc: "");						// Set desc
-		$("#iCite").val(o.cite   ? o.cite: "");						// Set cite
-		$("#iSrc").val(o.src     ? o.src: "");						// Set src
-		$("#iTags").val(o.tags   ? o.tags: "");						// Set tags
-		$("#iThumb").val(o.thumb ? o.thumb: "");					// Set thumb
+		$("#imTitle").val(o.title ? o.title: "") 					// Set title
+		$("#imDesc").val(o.desc   ? o.desc: "");					// Set desc
+		$("#imCite").val(o.cite   ? o.cite: "");					// Set cite
+		$("#imSrc").val(o.src     ? o.src: "");						// Set src
+		$("#imTags").val(o.tags   ? o.tags: "");					// Set tags
+		$("#imThumb").val(o.thumb ? o.thumb: "");					// Set thumb
 		}
 	else{															// Start fresh
-		$("#iTitle").val("");	$("#iDesc").val("") 				// Clear it out				
-		$("#iCite").val("");	$("#iSrc").val("") 					
-		$("#iThumb").val("");	$("#iTags").val("");					
-		$("#iType").val("")
+		$("#imTitle").val("");	$("#imDesc").val("") 				// Clear it out				
+		$("#imCite").val("");	$("#imSrc").val("") 					
+		$("#imThumb").val("");	$("#imTags").val("");					
+		$("#imType").val("")
 		}
-	if ($("#iThumb").val())											// If a thumb spec'd
-		pic=$("#iThumb").val();										// Use it
+	if ($("#imThumb").val())										// If a thumb spec'd
+		pic=$("#imThumb").val();									// Use it
 	else															// Use generic images
-		pic=GetMediaIcon($("#iType").val(),$("#iSrc").val());		// Get proper icon	
+		pic=GetMediaIcon($("#imType").val(),$("#imSrc").val());		// Get proper icon	
 	$("#iPic").prop("src",pic);										// Set src
 	sf.AddProjectItems(true);										// Add items
 	this.AddHandlers(true);											// Re-add handlers
@@ -66,27 +66,27 @@ item.prototype.MakePage=function()								// PREVIEW ITEM
 	var str="<div id='projectDiv' class='sf-projectPage'>";			// Items container
 	str+="<table style='width:90%;font-weight:bold;text-align:left'>";
 	str+="<tr><td height='28'>Item type</td><td>";
-	str+=MakeSelect("iType",false,this.mediaTypeNames)+"</td></tr>";
+	str+=MakeSelect("imType",false,this.mediaTypeNames)+"</td></tr>";
 	str+="<tr><td height='28'>Title</td><td>";
-	str+="<input type='text' class='sf-is' id='iTitle'></td></tr>";
+	str+="<input type='text' class='sf-is' id='imTitle'></td></tr>";
 	str+="<tr><td height='28'>Description</td><td>";
-	str+="<textarea class='sf-is' id='iDesc'></textarea></td></tr>";		
+	str+="<textarea class='sf-is' id='imDesc'></textarea></td></tr>";		
 	str+="<tr><td height='28'>Citation</td><td>";
-	str+="<input type='text' class='sf-is' id='iCite'></td></tr>";
+	str+="<input type='text' class='sf-is' id='imCite'></td></tr>";
 	str+="<tr><td height='28'>Source</td><td>";
-	str+="<input type='text' class='sf-is' id='iSrc'></td></tr>";
+	str+="<input type='text' class='sf-is' id='imSrc'></td></tr>";
 	str+="<tr><td height='28'>Thumbnail&nbsp;pic&nbsp;&nbsp;</td><td>";
-	str+="<input type='text' class='sf-is' id='iThumb'></td></tr>";
+	str+="<input type='text' class='sf-is' id='imThumb'></td></tr>";
 	str+="<tr><td height='28'>Tags &nbsp;</td><td>";
-	str+="<input type='text' class='sf-is' id='iTags'></td></tr>";
+	str+="<input type='text' class='sf-is' id='imTags'></td></tr>";
 	str+="<tr><td>Icon</td><td><img id='iPic' class='sf-itemPic'>";				
 	str+="</table>";
 	str+="<p style='text-align:center'>Click item  from the right to edit an existing item, or click on the + button below to add a new item to your collection.</p>";
-	str+="<div style='text-align:center;'><img id='itemAddBut' class='sf-itemBut' src='img/addbut.gif' title='Add new item'>";
-	str+="<img id='itemDeleteBut' class='sf-itemBut' src='img/trashbut.gif'  title='Delete an item'>";
-	str+=MakeSelect("iImport",false,["Import items","Flickr","Delicious","Diigo","Hard drive"])+"</div>";
+	str+="<div style='text-align:center;'><img id='imAddBut' class='sf-itemBut' src='img/addbut.gif' title='Add new item'>";
+	str+="<img id='imDeleteBut' class='sf-itemBut' src='img/trashbut.gif'  title='Delete an item'>";
+	str+=MakeSelect("imImport",false,["Import items","Flickr","Delicious","Diigo","Hard drive"])+"</div>";
 	str+="</div><div id='itemPickerDiv' class='sf-itemsPicker'></div>";	// Item picker container
-	return str;														// Return page
+	return str;															// Return page
 }
 
 item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
@@ -94,9 +94,10 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 	var _this=this;														// Save context
 	if (!fromUpdate)	this.UpdatePage();								// Update page, unless recursive
 
-	$('[id^="i"]').off();												// Remove old handlers that start with 'i'
+	$('[id^="im"]').off();												// Remove old handlers that start with 'im'
+	$('[id^="item-"]').off();
 
-	$("#iType").on("change",function() { 								// CHANGE TYPE
+	$("#imType").on("change",function() { 								// CHANGE TYPE
 		if (curItem != -1) {											// If an existing item	
 			sf.Do();													// something changed
 			sf.items[curItem].type=$(this).val();						// Set value
@@ -104,7 +105,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			}								
 		_this.UpdatePage();												// Update page
 		});
-	$("#iTitle").on("blur",function() { 								// EDIT TITLE
+	$("#imTitle").on("blur",function() { 								// EDIT TITLE
 		if (curItem != -1) {											// If an existing item	
 			sf.Do();													// something changed
 			sf.items[curItem].title=$(this).val();						// Set value
@@ -112,7 +113,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			}								
 		_this.UpdatePage();												// Update page
 		});
-	$("#iDesc").on("blur",function() { 									// EDIT DESC
+	$("#imDesc").on("blur",function() { 								// EDIT DESC
 		if (curItem != -1) {											// If an existing item	
 			sf.Do();													// something changed
 			sf.items[curItem].desc=$(this).val();						// Set value
@@ -120,7 +121,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			}								
 		_this.UpdatePage();												// Update page
 		});	
-	$("#iCite").on("blur",function() { 									// EDIT CITE
+	$("#imCite").on("blur",function() { 								// EDIT CITE
 		if (curItem != -1) {											// If an existing item	
 			sf.Do();													// something changed
 			sf.items[curItem].cite=$(this).val();						// Set value
@@ -128,7 +129,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			}								
 		_this.UpdatePage();												// Update page
 		});
-	$("#iThumb").on("blur",function() { 								// EDIT THUMB
+	$("#imThumb").on("blur",function() { 								// EDIT THUMB
 		if (curItem != -1) {											// If an existing item	
 			sf.Do();													// something changed
 			sf.items[curItem].thumb=$(this).val();						// Set value
@@ -136,7 +137,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			}								
 		_this.UpdatePage();												// Update page
 		});
-	$("#iSrc").on("blur",function() { 									// EDIT SOURCE
+	$("#imSrc").on("blur",function() { 									// EDIT SOURCE
 		if (curItem != -1) {											// If an existing item	
 			sf.Do();													// something changed
 			sf.items[curItem].src=$(this).val();						// Set value
@@ -144,7 +145,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			}								
 		_this.UpdatePage();												// Update page
 		});
-	$("#iTags").on("blur",function() { 									// EDIT TAGS
+	$("#imTags").on("blur",function() { 								// EDIT TAGS
 		if (curItem != -1) {											// If an existing item	
 			sf.Do();													// something changed
 			sf.items[curItem].tags=$(this).val();						// Set value
@@ -153,23 +154,23 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 		_this.UpdatePage();												// Update page
 		});
 		
-	$("#itemAddBut").on("click",function() { 							// ADD NEW ITEM
+	$("#imAddBut").on("click",function() { 								// ADD NEW ITEM
 		sf.Do()															// Something changed
 		Sound("add");													// Add sound
 		var o={};														// Holds new item
-		o.type=$("#iType").val();										// Set type
-		o.title=$("#iTitle").val() ? $("#iTitle").val() : "New item" ;	// Set title
-		o.desc=$("#iDesc").val();										// Set desc
-		o.cite=$("#iCite").val();										// Set cite
-		o.src=$("#iSrc").val();											// Set src
-		o.tags=$("#iTags").val();										// Set tags
-		o.thumb=$("#iThumb").val();										// Set thumb
+		o.type=$("#imType").val();										// Set type
+		o.title=$("#imTitle").val() ? $("#imTitle").val() : "New item" ;// Set title
+		o.desc=$("#imDesc").val();										// Set desc
+		o.cite=$("#imCite").val();										// Set cite
+		o.src=$("#imSrc").val();										// Set src
+		o.tags=$("#imTags").val();										// Set tags
+		o.thumb=$("#imThumb").val();									// Set thumb
 		sf.items.push(o)
 		curItem=sf.items.length-1;										// Point to this one
 		_this.UpdatePage();												// Update page
 		});
 	
-	$("#itemDeleteBut").on("click",function() { 						// ADD NEW ITEM
+	$("#imDeleteBut").on("click",function() { 							// ADD NEW ITEM
 		if (curItem != -1)
 			ConfirmBox("This will delete the item titled:<br><br><b><i>"+sf.items[curItem].title+"</b></i>", function() {
 				sf.Do()													// Something changed
@@ -180,7 +181,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 				})
 		});
 	
-	$("#iImport").on("change",function() { 								// IMPORT
+	$("#imImport").on("change",function() { 							// IMPORT
 		if ($(this).val() == "Flickr")									// If Flickr
 			_this.ImportFlickr();										// Run importer
 		$(this).prop("selectedIndex",0);								// Set select to top
@@ -200,6 +201,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 	$('[id^="item-"]').on("click",function() {							// ON SINGLE CLICK ON ITEM
 		curItem=$(this).prop("id").substr(5);							// Set current item
 		_this.UpdatePage();												// Update page
+//		itemObj.Preview($(this).prop("id").substr(5));					// Preview		
 		});
 
 }
