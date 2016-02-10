@@ -337,7 +337,7 @@
 			return;																// Quit
 			}
 		var str="<img src='img/loading.gif' width='"+size+"' ";					// Img
-		str+="id='sf-loadingIcon' style='position:absolute;top:50%;left:50%;z-index:5000'>";	
+		str+="id='sf-loadingIcon' style='position:absolute;top:calc(50% - "+size/2+"px);left:calc(50% - "+size/2+"px);z-index:5000'>";	
 		$(container).append(str);												// Add icon to container
 	}
 
