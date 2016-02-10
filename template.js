@@ -33,8 +33,8 @@ function template()													// CONSTRUCTOR
 		o.backCol="#eeeeee";
 		o.backImg="";
 		o.markUp="";
-		o.bodyStyle="sans-serif,13px,#000000,normal,left,100%";			// Body text style
-		o.titleStyle="sans-serif,18px,#999999,bold,center,100%";		// Title text style
+		o.bodyStyle="sans-serif,13px,#66666,normal,left,100%";			// Body text style
+		o.titleStyle="sans-serif,18px,#cc6600,bold,center,100%";		// Title text style
 		t.layout.panes.push(o);											// Add pane to array
 		}
 }	

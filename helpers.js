@@ -338,7 +338,7 @@ var items=[ {
 	src:"//www.kaltura.com/p/2003471/sp/0/playManifest/entryId/1_c7z7zuiv/format/url/flavorParamId/2003471/video.mp4",
 	thumb:"https://cfvod.kaltura.com/p/343772/sp/34377200/thumbnail/entry_id/1_c7z7zuiv/version/100011/acv/121",
 	title:"HipVoter.com intro video",
-	desc:"A video to encourage millenial voting",
+	desc:"A video to encourage millenial voting. To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election.<br><br>The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
 	citation:"© 2015 University of Virginia. http://www.hipvoter.com",
 	startDate:"12/12/2015",
 	placeName:"Charlottesville, VA",
@@ -352,11 +352,13 @@ var items=[ {
 	src:"//www.barackobama.com",
 	title:"Barack Obama website",
 	citation:"© 2016 Organizing for Action. All Rights Reserved.",
+	desc:"With more than 250 local chapters around the country, OFA volunteers are building this organization from the ground up, community by community, one conversation at a time—whether that\’s on a front porch or on Facebook.<br><br>We’re committed to finding and training the next generation of great progressive organizers, because at the end of the day, we aren\’t the first to fight for progressive change, and we won\’t be the last.",
 	thumb:"//www.logodesignlove.com/images/monograms/obama-08-logo-15.jpg"
 	},{
 	type:"visualeyes",
 	src:"//viseyes.org/visualeyes?712",
 	title:"A tale of two tours",
+	desc:"Welcome to our Tale of Two Tours where we will lead you through a digital experience of Paul McCartney\'s 1989 World Tour and his 2009 Summer Tour. Here you will find setlist information, tour member biographies, and individual concert facts. Hope you enjoy!",
 	citation:"© 2015 Imani Nichols, Ashlyn Royer and Liz Carter",
 	},{
 	type:"pdf",
@@ -368,6 +370,7 @@ var items=[ {
 	type:"qmedia",
 	src:"//qmediaplayer.com?1",
 	title:"Clinton's TED talk",
+	desc:"Accepting the 2007 TED Prize, Bill Clinton asks for help in bringing health care to Rwanda — and the rest of the world.<br<br>Through his William J. Clinton Foundation, former US President Bill Clinton has become a vital and innovative force for world change. He works in four critical areas: health, economic empowerment, citizen service, and reconciliation.",
 	citation:"© 2013 Bill Ferster",
 	},{
 	type:"map",
@@ -384,7 +387,7 @@ var items=[ {
 	src:"//www.viseyes.org/shiva/qmedia/clinton01.jpg",
 	title:"Bill Clinton at TED",
 	citation:"© 2007 TED conference",
-	thumb:"//www.viseyes.org/shiva/qmedia/clinton01.jpg"
+	desc:"Accepting the 2007 TED Prize, Bill Clinton asks for help in bringing health care to Rwanda — and the rest of the world.<br<br>Through his William J. Clinton Foundation, former US President Bill Clinton has become a vital and innovative force for world change. He works in four critical areas: health, economic empowerment, citizen service, and reconciliation.",
 	},{
 	type:"shiva",
 	src:"//www.viseyes.org/shiva/go.htm?e=1121",
