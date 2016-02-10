@@ -199,36 +199,6 @@ item.prototype.ImportFlickr=function()								// FLICKR IMPORTER
 
 	function GetFlickrImage(callback)										// GET FLICKR IMAGE
 	{
-		$("#alertBoxDiv").remove();												// Remove any old ones
-		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
-		var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
-		str+="<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#000099'><b>Get Flickr Image</b></span><p>";
-		str+="<div style='font-size:14px;margin:14px'>";
-		
-		str+="<br><br><div style='display:inline-block;width:300px;max-height:200px;overflow-y:auto;background-color:#f8f8f8;padding:8px;border:1px solid #999;border-radius:8px'>";		// Scrollable container
-		str+="<table id='collectTable' style='font-size:13px;width:100%;padding:0px;border-collapse:collapse;'>";	// Add table
-		str+="<tr><td><b>Collection</b></td><td width='20'></td></tr>";			// Add header
-		str+="<tr><td colspan='2'><hr></td></tr>";								// Add rule
-		str+="</table></div>&nbsp;&nbsp;&nbsp;"									// End table
-	
-		str+="<div style='vertical-align:top;display:inline-block;width:300px;max-height:200px;overflow-y:auto;background-color:#f8f8f8;padding:8px;border:1px solid #999;border-radius:8px'>";		// Scrollable container
-		str+="<dl id='setTable' style='font-size:13px;margin-top:2px;margin-bottom:2px'>";		// Add table
-		str+="<dt><b>Set</b></dt>";												// Add header
-		str+="<dt><hr></dt>";													// Add rule
-		str+="</dl></div><div style='font-size:12px'<br><p><hr></p>";			// End table
-	
-		$("#alertBoxDiv").append(str+"</div>");	
-		$("#alertBoxDiv").dialog({ width:800, buttons: {
-					            	"Done":  function() { $(this).remove(); }
-									}});	
-		$(".ui-dialog-titlebar").hide();
-		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
-		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
- 		$(".ui-button").css({"border-radius":"30px","outline":"none"});
- 	}
-
-	function GetFlickrImage(callback)										// GET FLICKR IMAGE
-	{
 		var apiKey="edc6ee9196af0ad174e8dd2141434de3";
 		var trsty=" style='cursor:pointer;background-color:#f8f8f8' onMouseOver='this.style.backgroundColor=\"#dee7f1\"' onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
 		var cols,photos,str;
@@ -258,8 +228,7 @@ item.prototype.ImportFlickr=function()								// FLICKR IMPORTER
 
 		$("#alertBoxDiv").append(str+"</div>");	
 		$("#alertBoxDiv").dialog({ width:800, buttons: {
-					            	"OK": 		function() { callback($("#ftbx").val()); $(this).remove(); },
-					            	"Cancel":  	function() { $(this).remove(); }
+					            	"Cancel":  	function() { LoadingIcon(false); $(this).remove(); }
 									}});	
 		$(".ui-dialog-titlebar").hide();
 		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
@@ -272,8 +241,10 @@ item.prototype.ImportFlickr=function()								// FLICKR IMPORTER
 			var id=$("#idName").val();											// ID name
  			var url="https://api.flickr.com/services/rest/?method=flickr.people.findByUsername&format=rest&api_key="+apiKey+"&username="+id;
 	 		SetCookie("flickr",id,7);											// Save cookie
+ 			LoadingIcon(true,64);												// Show loading icon
  			$.ajax({ type:"GET", url:url, dataType:"xml",						// Call REST to get user id
   				success: function(xml){											// Om XML
+	   				LoadingIcon(false);											// Hide loading icon
 	   				if ($(xml).find("err").length) {							// If an error tag
 	   					$("#picGal").html("<p style='text-align:center;color:990000'><b>"+$(xml).find("err").attr("msg")+"</b></p>");
 	   					return;													// Quit
@@ -288,11 +259,13 @@ item.prototype.ImportFlickr=function()								// FLICKR IMPORTER
 	{
 		var i=0,o,oo;
 		var url="https://api.flickr.com/services/rest/?method=flickr.collections.getTree&format=rest&api_key="+apiKey+"&user_id="+userId;
+		LoadingIcon(true,64);														// Show loading icon
 		$.ajax({ type:"GET", url:url, dataType:"xml",								// Call REST to get user tree	
 			success: function(xml) {												// On XML
 				$("#collectTable tr:gt(1)").remove();								// Remove all rows
 				$("#setTable tr").remove();											// Remove all rows
 				$("#picGal").html("<p style='text-align:center'><b>Choose collection to view</b></p>");
+		   		LoadingIcon(false);													// Hide loading icon
 				$(xml).find("collection").each( function() {						// For each collection
 					o={};															// New obj
 					o.sets=[];														// Array of sets
@@ -308,8 +281,10 @@ item.prototype.ImportFlickr=function()								// FLICKR IMPORTER
 				});
 			
 			url="https://api.flickr.com/services/rest/?method=flickr.photosets.getList&format=rest&api_key="+apiKey+"&user_id="+userId;
+			LoadingIcon(true,64);													// Show loading icon
 			$.ajax({ type:"GET", url:url, dataType:"xml",							// Call REST to get user tree	
 				success: function(xml) {											// On XML
+			   		LoadingIcon(false);												// Hide loading icon
 					o={};															// New obj
 					o.sets=[];														// Array of sets
 					o.title="All";													// Get title
@@ -366,10 +341,12 @@ item.prototype.ImportFlickr=function()								// FLICKR IMPORTER
 		var i,j=0,str="",oo,t;
 		id=cols[curCollection].sets[id].id;										// Get set id
 		var url="https://api.flickr.com/services/rest/?method=flickr.photosets.getphotos&format=rest&api_key="+apiKey+"&photoset_id="+id;
+		LoadingIcon(true,64);													// Show loading icon
 		$.ajax({ type:"GET", url:url, dataType:"xml",							// Call REST to get list of photos
 			success: function(xml) {											// On XML
 				photos=[];														// New photo array
 				$(xml).find("photo").each( function() {							// For each set
+			   		LoadingIcon(false);												// Hide loading icon
 					oo={};														// New obj
 					oo.id=$(this).attr("id");									// Get id
 					oo.secret=$(this).attr("secret");							// Get secret
@@ -398,8 +375,10 @@ item.prototype.ImportFlickr=function()								// FLICKR IMPORTER
  	{
 		var o,sizes=[],i;
 		var url="https://api.flickr.com/services/rest/?method=flickr.photos.getSizes&format=rest&api_key="+apiKey+"&photo_id="+photos[id].id;
+		LoadingIcon(true,64);													// Show loading icon
 		$.ajax({ type:"GET", url:url, dataType:"xml",							// Call REST to get sizes
 			success: function(xml) {											// On XML
+				LoadingIcon(false);												// Hide loading icon
 				$(xml).find("size").each( function() {							// For each size
 					o={};														// New obj
 					o.source=$(this).attr("source");							// Get source

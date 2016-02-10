@@ -329,6 +329,19 @@
 		return pic;																// Return icon url
 	}
 
+	function LoadingIcon(mode, size, container)							// SHOW/HIDE LOADING ICON		
+	{
+		container=container ? "#"+containern: "body";							// If no container spec'd, use body
+		if (!mode) {															// If hiding
+			$("#sf-loadingIcon").remove();										// Remove it
+			return;																// Quit
+			}
+		var str="<img src='img/loading.gif' width='"+size+"' ";					// Img
+		str+="id='sf-loadingIcon' style='position:absolute;top:50%;left:50%;z-index:5000'>";	
+		$(container).append(str);												// Add icon to container
+	}
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DATA
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
