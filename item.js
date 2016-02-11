@@ -88,7 +88,7 @@ item.prototype.MakePage=function()								// PREVIEW ITEM
 	str+="<p style='text-align:center'>Click item  from the right to edit an existing item, or click on the + button below to add a new item to your collection.</p>";
 	str+="<div style='text-align:center;'><img id='imAddBut' class='sf-itemBut' src='img/addbut.gif' title='Add new item'>";
 	str+="<img id='imDeleteBut' class='sf-itemBut' src='img/trashbut.gif'  title='Delete an item'>";
-	str+=MakeSelect("imImport",false,["Import items","Flickr","Delicious","Diigo","Hard drive"])+"</div>";
+	str+=MakeSelect("imImport",false,["Import items","Flickr","Delicious","Diigo","Mandala","Hard drive"])+"</div>";
 	str+="</div><div id='itemPickerDiv' class='sf-itemsPicker'></div>";	// Item picker container
 	return str;															// Return page
 }
@@ -205,6 +205,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 	$('[id^="item-"]').on("click",function(e) {							// ON SINGLE/DOUBLE CLICK ON ITEM
 		curItem=$(this).prop("id").substr(5);							// Set current item
 		_this.UpdatePage();												// Update page
+		Sound("click");													// Click
 		if (e.timeStamp-_this.lastClick < 400)							// A double click		
 			itemObj.Preview($(this).prop("id").substr(5));				// Preview		
 		_this.lastClick=e.timeStamp

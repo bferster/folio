@@ -245,12 +245,16 @@ folio.prototype.Init=function(data)										// INIT
 	this.firstName="Teresa";
 	this.lastName="Sullivan";
 	
-	for (i=0;i<this.projects.length;++i) {									// For each project
-		layoutObj.Init(this.projects[i],tempObj.templates[curTemplate]);// Init layout
-		}
+	for (i=0;i<this.projects.length;++i) 									// For each project
+		this.InitProject(i);												// Init
 	curProject=Math.min(this.projects.length-1,0);							// Init on 1st project
 }
 
+
+folio.prototype.InitProject=function(num)									// INIT PROJECT
+{
+	layoutObj.Init(this.projects[num],tempObj.templates[curTemplate]);			// Init project's layout object
+}
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DRAW
@@ -313,7 +317,7 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 		str+="<div id='itemPickerDiv' class='sf-itemsPicker'></div>";		// Item picker container
 		}
 	else if (curMenu == "page") {											// If page
-		if ((curProject >= 0) &&(curPage < 0) && this.projects[curProject].pages.length)		// Nothing selected and something there
+		if ((curProject >= 0) && (curPage < 0) && this.projects[curProject].pages && this.projects[curProject].pages.length)		// Nothing selected and something there
 			curPage=0;														// Pick first one
 		str+=this.MakeGallery();											// Add Gallery
 		str+=this.MakePagePage();											// Add page page
@@ -435,8 +439,9 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 
 	$("#galleryAddBut").on("click",function() { 							// ADD NEW PROJECT
 		sf.Do()																// Something changed
-		sf.projects.push({ title:"New project", items:[] });				// Add shell					
+		sf.projects.push({ title:"New project", cite:"", items:[] });		// Add shell					
 		curProject=sf.projects.length-1;									// Point at it
+		sf.InitProject(curProject);											// Init project
 		Sound("add");														// Add
 		sf.Draw();															// Redraw
 		});
@@ -505,7 +510,8 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 			sf.Do()															// Something changed
 			sf.projects.push($.parseJSON(o));								// Add copy as object					
 			curProject=sf.projects.length-1;								// Point at it
-			sf.projects[sf.projects.length-1].title=s;						// Change title
+			sf.projects[curProject].title=s;								// Change title
+			sf.InitProject(curProject);										// Init project
 			Sound("add");													// Add
 			sf.Draw();														// Redraw
 			});
@@ -631,6 +637,22 @@ folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 {
 
+	$("#galleryAddBut").on("click",function() { 							// ADD A PAGE
+		if (curProject < 0)													// If not a valid project									
+			return;															// Quit
+		var p=sf.projects[curProject].pages;								// Point p at pages array
+		if (!p) p=sf.projects[curProject].pages=[];							// Create it														
+		sf.Do()																// Something changed
+		p.push({ title:"New page"});										// Add page
+		curPage=p.length-1;													// Point at it
+		Sound("add");														// Add
+		sf.Draw();															// Redraw
+		});
+
+
+	if (!this.projects[curProject].pages)
+		return;
+		
 	playerObj.Update(this.projects[curProject].pages[curPage],this.projects[curProject].layout);	// Add player obj
 	
 	for (var i=0;i<sf.projects[curProject].pages.length;++i)				// For each page
@@ -640,17 +662,6 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 			sf.Draw();														// Redraw
 			});
 
-	$("#galleryAddBut").on("click",function() { 							// ADD A PAGE
-		if (curProject < 0)													// If not a valid project									
-			return;															// Quit
-		var p=sf.projects[curProject].pages;								// Point p at pages array
-		sf.Do()																// Something changed
-		p.push({ title:"New page"});										// Add page
-		curPage=p.length-1;													// Point at it
-		Sound("add");														// Add
-		sf.Draw();															// Redraw
-		});
-	
 	$("#galleryCopyBut").on("click",function() { 							// COPY A PAGE
 		if ((curPage < 0) || (curProject < 0))								// If not a valid project/page										
 			return;															// Quit
