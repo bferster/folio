@@ -26,10 +26,9 @@ item.prototype.Preview=function(id)								// PREVIEW ITEM
 	var o=sf.items[id];												// Point at item
 	var str="<div class='sf-previewTitle'>"+o.title+"</div><br>";	// Add title
 	if (o.src && o.src.match(/\.png|.gif|\.jpg|.jpeg/i)) 			// An image
-		str+="<div style='width:792px;max-height:"+h+"px;border:1px solid #999;overflow-y:auto'><img style='width:100%' src='"+o.src+"'></div>";
+		str+="<div style='width:798px;max-height:"+h+"px;border:1px solid #999;overflow-y:auto'><img style='width:100%' src='"+o.src+"'></div>";
 	else
 		str+="<iframe frameborder='0' height='"+h+"' width='100%' style='0,border:1px solid #666;width:100%' src='"+o.src+"'/>";
-trace(str)
 	ShowLightBox(800,"Preview",str);								// Show lightbox
 }
 
