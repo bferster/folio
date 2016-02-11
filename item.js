@@ -6,6 +6,7 @@
 
 function item()													// CONSTRUCTOR
 {
+	this.lastClick=0;												// Helps mediate single/double clicking
 	this.mediaTypeNames=["Web","Image","Map","Media","WordPress","Mandala","SHIVA","Qmedia","VisualEyes"];
 }	
 
@@ -198,10 +199,16 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 		_this.UpdatePage();												// Update page
 		});
 
-	$('[id^="item-"]').on("click",function() {							// ON SINGLE CLICK ON ITEM
+	$('[id^="item-"]').on("click",function(e) {							// ON SINGLE/DOUBLE CLICK ON ITEM
 		curItem=$(this).prop("id").substr(5);							// Set current item
 		_this.UpdatePage();												// Update page
-//		itemObj.Preview($(this).prop("id").substr(5));					// Preview		
+		if (e.timeStamp-_this.lastClick < 400)							// A double click		
+			itemObj.Preview($(this).prop("id").substr(5));				// Preview		
+		_this.lastClick=e.timeStamp
+		});
+		
+	$('[id^="item-"]').on("doubletap",function() {						// ON DOUBLE TAP MOBILE
+		itemObj.Preview($(this).prop("id").substr(5));					// Preview		
 		});
 
 }
