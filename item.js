@@ -24,7 +24,10 @@ item.prototype.Preview=function(id)								// PREVIEW ITEM
 {
 	var o=sf.items[id];												// Point at item
 	var str="<div class='sf-previewTitle'>"+o.title+"</div><br>";	// Add title
-	str+="<iframe frameborder='0' height='500' width='100%' style='opacity:0,border:1px solid #666' src='"+o.src+"'/>";
+	if (o.src && o.src.match(/\.png|.gif|\.jpg|.jpeg/i)) 			// An image
+		str+="<img style='border:1px solid #666;width:100%' src='"+o.src+"'>";
+	else
+		str+="<iframe frameborder='0' height='500' width='100%' style='0,border:1px solid #666;width:100%' src='"+o.src+"'/>";
 	ShowLightBox(800,"Preview",str);								// Show lightbox
 }
 
@@ -80,7 +83,7 @@ item.prototype.MakePage=function()								// PREVIEW ITEM
 	str+="<input type='text' class='sf-is' id='imThumb'></td></tr>";
 	str+="<tr><td height='28'>Tags &nbsp;</td><td>";
 	str+="<input type='text' class='sf-is' id='imTags'></td></tr>";
-	str+="<tr><td>Icon</td><td><img id='iPic' class='sf-itemPic'>";				
+	str+="<tr><td>Icon</td><td><div class='sf-itemPic'><img width='100%' id='iPic'><div></td></tr>";				
 	str+="</table>";
 	str+="<p style='text-align:center'>Click item  from the right to edit an existing item, or click on the + button below to add a new item to your collection.</p>";
 	str+="<div style='text-align:center;'><img id='imAddBut' class='sf-itemBut' src='img/addbut.gif' title='Add new item'>";

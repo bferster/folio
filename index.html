@@ -63,7 +63,7 @@
 		.sf-item, .sf-pitem	{ display:inline-block;width:130px;height:64px;padding-bottom:40px;
 						text-align:center;margin-right:16px;color:#888;overflow:hidden;vertical-align:top;
 						}
-		.sf-itemPic    { width:128px;height:64px;border:1px solid #999;cursor:pointer;
+		.sf-itemPic { 	width:128px;height:64px;border:1px solid #999;cursor:pointer;overflow:hidden;
 						}
 		.sf-player { 	height:calc(100% - 42px);width:100%;color:#000;
 						}
@@ -777,7 +777,8 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 			pic=o.thumb;													// Add it
 		else																// Use generic images
 			pic=GetMediaIcon(o.type,o.src);									// Get icon
-		str+="<img src='"+pic+"' class='sf-itemPic'>"+lab+"</div>";			// Add pic	
+		str+="<div class='sf-itemPic'>";									// Image container div
+		str+="<img src='"+pic+"' width='100%'></div>"+lab+"</div>";			// Add pic	
 		}
 	$("#"+div).html(str);													// Add items to div
 	

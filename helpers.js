@@ -138,12 +138,14 @@
 	
 	function ShowLightBox(width, title, content, callback)
 	{
+		var h=window.innerHeight-200;										// Get max height
+
 		var str="<div id='lightBoxDiv' style='position:fixed;width:100%;height:100%;";	
 		str+="background:url(img/overlay.png) repeat;top:0px;left:0px';</div>";
 		$("body").append(str);														
 		var x=$("#lightBoxDiv").width()/2-width/2;
 		str="<div id='lightBoxIntDiv' class='unselectable sf-lightBox' ";
-		str+="style='width:"+width+"px;left:"+x+"px;top:100px;'>";
+		str+="style='width:"+width+"px;left:"+x+"px;top:100px;height:"+h+"px'>";
 		str+="<img src='img/shantilogo32.png' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
 		str+="<span id='lightBoxTitle' class='sf-lightBoxTitle'>"+title+"</span>";
 		str+="<img src='img/x.gif' id='lbxBoxExit' style='cursor:pointer;position:absolute;top:22px;left:"+width+"px' "; 
