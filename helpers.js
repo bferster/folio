@@ -139,7 +139,6 @@
 	function ShowLightBox(width, title, content, callback)					// LIGHTBOX
 	{
 		var h=window.innerHeight-200;											// Get max height
-
 		var str="<div id='lightBoxDiv' style='position:fixed;width:100%;height:100%;";	
 		str+="background:url(img/overlay.png) repeat;top:0px;left:0px';</div>";
 		$("body").append(str);														

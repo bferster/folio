@@ -32,6 +32,7 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	var parent=$("#playerDiv").parent();									// Point at panrent container
 	if (!page)																// If no page
 		return;																// Quit
+	var w=$("#playerDiv").width();											// Get width of container
 	var h=$("#playerDiv").height();											// Get height of container
 
 	var v1=defLayout.topGut ? this.guts[defLayout.topGut] : 0;				// If def top gutter, use it

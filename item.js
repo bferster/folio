@@ -22,12 +22,14 @@ item.prototype.Set=function(project)							// DIALOG
 
 item.prototype.Preview=function(id)								// PREVIEW ITEM
 {
+	var h=window.innerHeight-200-75;								// Get height
 	var o=sf.items[id];												// Point at item
 	var str="<div class='sf-previewTitle'>"+o.title+"</div><br>";	// Add title
 	if (o.src && o.src.match(/\.png|.gif|\.jpg|.jpeg/i)) 			// An image
-		str+="<img style='border:1px solid #666;width:100%' src='"+o.src+"'>";
+		str+="<div style='width:792px;max-height:"+h+"px;border:1px solid #999;overflow-y:auto'><img style='width:100%' src='"+o.src+"'></div>";
 	else
-		str+="<iframe frameborder='0' height='500' width='100%' style='0,border:1px solid #666;width:100%' src='"+o.src+"'/>";
+		str+="<iframe frameborder='0' height='"+h+"' width='100%' style='0,border:1px solid #666;width:100%' src='"+o.src+"'/>";
+trace(str)
 	ShowLightBox(800,"Preview",str);								// Show lightbox
 }
 
