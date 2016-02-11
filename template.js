@@ -21,7 +21,8 @@ function template()													// CONSTRUCTOR
 	t.layout.aspect="Portrait";									
 	t.layout.panes=[];													// Create panes array
 
-	t.layout.itemWid="75%";												// Item width
+	t.layout.itemWid="100%";											// Item width
+	t.layout.itemHgt="100%";											// Item height
 	t.layout.itemAlign="center";										// Item align
 	t.layout.itemBorder="1px solid #999999";							// Border 
 

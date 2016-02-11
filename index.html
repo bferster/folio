@@ -46,7 +46,7 @@
 		.sf-galleryLab  { padding:8px;border-bottom:1px solid #999;text-align:center;
 						height:40px;background-color:#f8f8f8;
 						}
-		.sf-galleryTool { text-align:left;padding-top:3px;
+		.sf-galleryTool { text-align:left;padding-top:10px;
 						}
 		.sf-galleryBut  { cursor:pointer;margin-right:46px;
 						}
@@ -65,7 +65,7 @@
 						}
 		.sf-itemPic { 	width:128px;height:64px;border:1px solid #999;cursor:pointer;overflow:hidden;
 						}
-		.sf-player { 	height:calc(100% - 42px);width:100%;color:#000;
+		.sf-player { 	height:calc(100% - 4px);width:100%;color:#000;
 						}
 		.sf-playerPane{	display:inline-block;box-sizing:border-box;background-color:#eeeeee;
 						overflow:hidden;padding:8px;
@@ -156,7 +156,6 @@ var isMobile=false;															// Is it mobile?
 var changed=false;															// Anything changed?
 var itemType="All types",itemFilter="";										// Filtering
 var curMenu="project";														// Current menu item
-var editMode=false;
 		
 $(window).resize(function() {											// ON WINDOW RESIZE
 	if (sf)																	// If loaded
@@ -340,6 +339,9 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 {
 	var i,o,n=0;labs=[];
 	var h=$("#bodyDiv").height()-60;										// Get height											
+	if (curMenu == "page")													// If page
+		h-=29; 																// Accomodate lay0ut button
+	
 	var trsty=" onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";		// Hover style
 	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
 	var title=(curMenu == "project") ? "Portfolios" : "Pages";				// Set title
@@ -374,11 +376,12 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 			}
 		}
 	str+="</div>";
-	str+="<div style='position:relative;text-align:center;margin-top:8px'></div>";
 	str+="<div class='sf-galleryTool'>";
 	str+="<img id='galleryAddBut' class='sf-galleryBut' src='img/addbut.gif' title='Add new project'>";
 	str+="<img id='galleryCopyBut' class='sf-galleryBut'src='img/copybut.gif'  title='Copy a project'>";
 	str+="<img id='galleryTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='margin-right:0px' title='Remove a project'>";
+	if (curMenu == "page")	
+		str+="<div style='height:7px'></div><button class='sf-bs' id='setLayout'>Change page's layout</button>";	// Set layout button
 	str+="</div></div>";
 	return str;																// Return gallery
 }
@@ -624,7 +627,7 @@ folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 {
 	var str="<div id='projectDiv' class='sf-projectPage' style='width:";	// Set project div
 	if ((curProject < 0) || (curPage < 0)) {								// No project, page selected
-		str+=($("#bodyDiv").height()-50)*.75+"px'>";						// Set width
+		str+=$("#bodyDiv").height()*.75+"px'>";								// Set width
 		return str+"</div>";												// Return empty page
 		}
 	var o=this.projects[curProject].pages[curPage];							// Point at page
@@ -635,12 +638,9 @@ folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 		asp=o.layout.aspect;												// Use page override
 	if (asp == "Square")			r=1;									// Square
 	else if (asp == "Landscape")	r=1.5;									// Landscape
-	str+=($("#bodyDiv").height()-50)*r+"px'>";								// Set width
-
-	str+=playerObj.Make(editMode);											// Create divs for player
-	str+="<div style='position:absolute;top:calc(100% - 45px);text-align:center'>";
-	str+="<button class='sf-bs' id='setLayout'>Change this page's layout</button>&nbsp; &nbsp;";	// Set layout button
-	str+="<input type='checkbox' id='editMode'"+(editMode ? " checked " : "")+"style='vertical-align:-3px'>Preview?";
+	str+=$("#bodyDiv").height()*r+"px'>";									// Set width
+	str+=playerObj.Make();													// Create divs for player
+	str+="<div style='position:absolute;top:calc(100% - 65px);left:-20px;>";
 	return str+"</div>";													// Return page page
 }
 
@@ -709,11 +709,6 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 		p["markUp"+id]=$(this).html();										// Copy hlml contents of pane into page
    		});
 
-	$("#editMode").on("click",function() { 									// SET PAGE LAYOUT
-		editMode=!editMode;													// Toggle
-		sf.Draw();															// Redraw
-		});
-
 }	
 
 folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
@@ -735,7 +730,7 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 			str+=StyleText(o.title,p.layout.panes[2].titleStyle); 			// Style text using middle pane setting
 		if (o.src) {														// If a source
 			str+="<br><div style='text-align:"+p.layout.itemAlign+"'>";		// Div for iframe	
-			str+="<iframe frameborder='0' width='"+p.layout.itemWid+"' ";	// Width
+			str+="<iframe frameborder='0' width='"+p.layout.itemWid+"' height='"+p.layout.itemHgt+"' ";	// Size
 			str+="style='border:"+p.layout.itemBorder+"' ";					// Border
 			str+="src='"+o.src+"'></iframe></div>";							// Src
 			}
