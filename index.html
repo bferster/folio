@@ -623,10 +623,20 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 {
 	var str="<div id='projectDiv' class='sf-projectPage' style='width:";	// Set project div
-	str+=($("#bodyDiv").height()-50)*.75+"px'>";							// Set width
-	if ((curProject < 0) || (curPage < 0))									// No project, page selected
+	if ((curProject < 0) || (curPage < 0)) {								// No project, page selected
+		str+=($("#bodyDiv").height()-50)*.75+"px'>";						// Set width
 		return str+"</div>";												// Return empty page
+		}
 	var o=this.projects[curProject].pages[curPage];							// Point at page
+
+	var r=.75;																// Portrait
+	var asp=this.projects[curProject].layout.aspect;						// Start with default
+	if (o.layout && (o.layout.aspect != undefined))							// If a layout val set
+		asp=o.layout.aspect;												// Use page override
+	if (asp == "Square")			r=1;									// Square
+	else if (asp == "Landscape")	r=1.5;									// Landscape
+	str+=($("#bodyDiv").height()-50)*r+"px'>";								// Set width
+
 	str+=playerObj.Make(editMode);											// Create divs for player
 	str+="<div style='position:absolute;top:calc(100% - 45px);text-align:center'>";
 	str+="<button class='sf-bs' id='setLayout'>Change this page's layout</button>&nbsp; &nbsp;";	// Set layout button

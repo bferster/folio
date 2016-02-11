@@ -32,13 +32,7 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	var parent=$("#playerDiv").parent();									// Point at panrent container
 	if (!page)																// If no page
 		return;																// Quit
-	if (page.layout && (page.layout.aspect != undefined))					// If a layout val set
-		asp=page.layout.aspect;												// Use page override
-	var w=$("#playerDiv").width();											// Get width of container
 	var h=$("#playerDiv").height();											// Get height of container
-	if (asp == "Square")			h=w;									// Set square size
-	else if (asp == "Landscape")	h=w/2;									// Set landscape size
-	else 							h=$("#playerDiv").height();				// Set portrait size
 
 	var v1=defLayout.topGut ? this.guts[defLayout.topGut] : 0;				// If def top gutter, use it
 	if (page.layout && (page.layout.topGut != undefined))					// If a page override set
