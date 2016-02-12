@@ -1,5 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PLAYER
+// Assumes access to curPage, page and layout structures
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -27,7 +28,7 @@ player.prototype.Make=function()										// MAKE PLAYER
 
 player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 {
-	var markUp,s,css;
+	var markUp,s,css,id;
 	var asp=defLayout.aspect;												// Start with default
 	var parent=$("#playerDiv").parent();									// Point at panrent container
 	if (!page)																// If no page
@@ -90,8 +91,19 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 		s=defLayout.panes[i].bodyStyle.split(',');							// Get pane style array (font,size,color,weight,align,height)
 		css={ "font-family":s[0],"font-size":s[1],"color":s[2],"font-weight":s[3],"text-align":s[4],"line-height":s[5] };
 		$(this.divs[i]).css(css);											// Set style
-		if (this.editable) 													// If editable
+		if (this.editable) {												// If editable
+			id="#if"+curPage+"-"+i+"-0";									// Point at ifrme
+			
+			if ($(id).width())
+				$(id).resizable({
+					containment: "parent",
+					resize: function() { trace("size") },
+					start: function() { trace("start") },
+					stop: function() { trace("stop") }
+					});		
+
 			this["ck"+this.paneNames[i]]=CKEDITOR.inline( $(this.divs[i])[0] );	// Enable rich text editor
+			}
 		}
 	this.StylePage(page,defLayout);											// Style page
 }	
@@ -108,7 +120,7 @@ player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
 		val=defLayout.panes[i].backImg ? defLayout.panes[i].backImg : "";	// If def back image, use it
 		if (page.layout && (page.layout.panes[i].backImg != undefined))		// If a page override set
 			val=page.layout.panes[i].backImg;								// Use it
-		if (val) $(this.divs[i]).css("background-image","url('"+val+"')");	// Apply value if set 
+		if (val) $(this.divs[i]).css({ "background-size":"cover","background-image":"url('"+val+"')"});	// Apply value if set 
 
 		val=defLayout.panes[i].borderSty ? defLayout.panes[i].borderSty : "";	// If def border style, use it
 		if (page.layout && (page.layout.panes[i].borderSty != undefined))		// If a page override set

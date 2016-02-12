@@ -100,7 +100,7 @@
 		.sf-itemBut  { 	cursor:pointer;margin-right:20px;vertical-align:-4px;
 						}
 		.sf-pullDownItem {	padding-bottom:6px;cursor:pointer;width:92px;padding:6px;
-						padding-left:8px;padding-right:0px;
+						padding-left:8px;padding-right:0px;color:#999;
 						}
 		.sf-pullDownItem:hover{ background-color:#bbb;color:#eee
 						}
@@ -132,7 +132,7 @@
 				S H A N T l
 				<span style="margin-left:100px"></span>
 				<span id="editMenu" class="sf-menuItem" style="margin-left:100px">Edit</span>
-				<span id="theitemMenu" class="sf-menuItem"> Items</span>
+				<span id="itemMenu" class="sf-menuItem"> Items</span>
 				<span id="projectMenu" class="sf-menuItem"> Portfolios</span>
 				<span id="pageMenu" class="sf-menuItem">Pages</span>
 				<span id="helpMenu" class="sf-menuItem">Help</span>
@@ -153,7 +153,6 @@ var playerObj=null,layoutObj=null,collectObj=null;							// Objects
 var tempObj=null,shareObj=null,itemObj=null;
 var projObj=null,pageObj=null;												// TBD
 var isMobile=false;															// Is it mobile?
-var changed=false;															// Anything changed?
 var itemType="All types",itemFilter="";										// Filtering
 var curMenu="project";														// Current menu item
 		
@@ -178,7 +177,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 		$("#mainDiv").css("opacity",1);
 		});				 
 	
-	$("#theitemMenu").on("click",function() { 
+	$("#itemMenu").on("click",function() { 
 		curMenu="item";
 		Sound("click");												
 		sf.Draw();
@@ -204,13 +203,13 @@ $(document).ready(function() {											// ON PAGE LOADED
 		$("#editMenu").css("color","#009900");										
 		$("#editDiv").remove();
 		var str="<div class='sf-pullDown' style='left:"+l+"px;top:"+t+"px' id='editDiv'>";
-		str+="<div class='sf-pullDownItem' onclick=''>Copy</div>";
+		str+="<div class='sf-pullDownItem' onclick=''> Copy</div>";
 		str+="<div class='sf-pullDownItem' onclick=''> Paste</div>";
-		str+="<div class='sf-pullDownItem' onclick=''> Undo</div>";
-		str+="<div class='sf-pullDownItem' onclick=''> Redo</div>";
+		str+="<div id='undoMenu' class='sf-pullDownItem' onclick='sf.UnDo()'> Undo</div>";
 		str+="</div>";
 		$("body").append(str);
-	
+		$("#undoMenu").css("color",sf.changed ? "#000" : "#999");			// Show active undos available
+
 		$("#editDiv").on("mouseleave",function() { 
 			$("#editDiv").remove();
 			$("#editMenu").css("color","#000");										
@@ -247,6 +246,7 @@ folio.prototype.Init=function(data)										// INIT
 	for (i=0;i<this.projects.length;++i) 									// For each project
 		this.InitProject(i);												// Init
 	curProject=Math.min(this.projects.length-1,0);							// Init on 1st project
+	this.changed=0;															// Changed counter
 }
 
 
@@ -299,7 +299,7 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 		str+=" &nbsp;|&nbsp; "+(curPage-0+1);								// Add to breadcrumb
 		}
 	else if (curMenu == "item") 											// If item
-		$("#theitemMenu").css("color","#00aa00");							// Highlight it
+		$("#itemMenu").css("color","#00aa00");								// Highlight it
 	else if (curMenu == "help") 											// If help
 		$("#helpMenu").css("color","#00aa00");								// Highlight it
 	$("#breadMenu").html(str);												// Set breadcrumb
@@ -640,7 +640,6 @@ folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 	else if (asp == "Landscape")	r=1.5;									// Landscape
 	str+=$("#bodyDiv").height()*r+"px'>";									// Set width
 	str+=playerObj.Make();													// Create divs for player
-	str+="<div style='position:absolute;top:calc(100% - 65px);left:-20px;>";
 	return str+"</div>";													// Return page page
 }
 
@@ -729,9 +728,9 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 		if (o.title) 														// If a title
 			str+=StyleText(o.title,p.layout.panes[2].titleStyle); 			// Style text using middle pane setting
 		if (o.src) {														// If a source
-			str+="<br><div style='text-align:"+p.layout.itemAlign+"'>";		// Div for iframe	
-			str+="<iframe frameborder='0' width='"+p.layout.itemWid+"' height='"+p.layout.itemHgt+"' ";	// Size
-			str+="style='border:"+p.layout.itemBorder+"' ";					// Border
+			str+="<br><div id='if"+i+"-2-0' style='text-align:"+p.layout.itemAlign+"'>";		// Div for iframe	
+			str+="<iframe frameborder='0' style='border:"+p.layout.itemBorder;	// Start style
+			str+=";width:"+p.layout.itemWid+";height:"+p.layout.itemHgt+"' ";
 			str+="src='"+o.src+"'></iframe></div>";							// Src
 			}
 		str+="<p>";															// Enclose in para
@@ -797,7 +796,6 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 		str+="<img src='"+pic+"' width='100%'></div>"+lab+"</div>";			// Add pic	
 		}
 	$("#"+div).html(str);													// Add items to div
-	
 	if ((curMenu == "project") || (curMenu == "page")) 						// If filling project items
 		for (i=0;i<n;++i) {													// For each item in project
 
@@ -846,7 +844,6 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 
 		if (showAll) {														// Showing all items
 			for (i=0;i<n;++i) {												// For each item
-				
 				$("#item-"+i).on("dblclick",function() {					// ON DOUBLE CLICK
 					itemObj.Preview($(this).prop("id").substr(5));			// Preview		
 					});
@@ -863,14 +860,40 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 }	
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// UNDO
+// UNDO / REDO
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 folio.prototype.Do=function()											// DO
 {
-	changed=true;															// Set change flag
+	if (curMenu == "page")													// If in page mode
+		return;																// Quit
+	this.changed++;															// Set change flag
+	sessionStorage.setItem("do-"+sessionStorage.length,JSON.stringify(sf));	// Add new do												
+	$("#undoMenu").css("color","#000");										// Show active undos available
 }
 	
+folio.prototype.UnDo=function()											// UNDO
+{
+	if (!this.changed)														// Nothing to undo 
+		return;																// Quit
+	if (curMenu == "page")	{												// If in page mode
+		Sound("delete");													// Delete
+		return;																// Quit
+		}
+	var id="do-"+(sessionStorage.length-1);									// Get id of last undo
+	var o=$.parseJSON(sessionStorage.getItem(id));							// Get undo from local storage
+	if (!o.items && o.projects) {											// Must be invalid
+		this.changed=0;														// No changes
+		Sound("delete");													// Delete
+		return;																// Quit
+		}
+	sf.projects=o.projects;													// Restore projects
+	sf.items=o.items;														// Restore items
+	this.Draw();															// Show page
+	Sound("ding");															// Ding
+	this.changed=Math.max(this.changed-1,0);								// One less undo
+}
+
 	
 </script>
 </body>

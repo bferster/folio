@@ -350,7 +350,7 @@ var items=[ {
 	type:"media",
 	src:"//www.kaltura.com/p/2003471/sp/0/playManifest/entryId/1_c7z7zuiv/format/url/flavorParamId/2003471/video.mp4",
 	thumb:"https://cfvod.kaltura.com/p/343772/sp/34377200/thumbnail/entry_id/1_c7z7zuiv/version/100011/acv/121",
-	title:"HipVoter.com intro video",
+	title:"HipVoter intro video",
 	desc:"A video to encourage millenial voting. To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election.<br><br>The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
 	citation:"© 2015 University of Virginia. http://www.hipvoter.com",
 	startDate:"12/12/2015",
