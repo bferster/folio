@@ -91,19 +91,8 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 		s=defLayout.panes[i].bodyStyle.split(',');							// Get pane style array (font,size,color,weight,align,height)
 		css={ "font-family":s[0],"font-size":s[1],"color":s[2],"font-weight":s[3],"text-align":s[4],"line-height":s[5] };
 		$(this.divs[i]).css(css);											// Set style
-		if (this.editable) {												// If editable
-			id="#if"+curPage+"-"+i+"-0";									// Point at ifrme
-			
-			if ($(id).width())
-				$(id).resizable({
-					containment: "parent",
-					resize: function() { trace("size") },
-					start: function() { trace("start") },
-					stop: function() { trace("stop") }
-					});		
-
+		if (this.editable) 													// If editable
 			this["ck"+this.paneNames[i]]=CKEDITOR.inline( $(this.divs[i])[0] );	// Enable rich text editor
-			}
 		}
 	this.StylePage(page,defLayout);											// Style page
 }	

@@ -664,6 +664,19 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 		
 	playerObj.Update(this.projects[curProject].pages[curPage],this.projects[curProject].layout);	// Add player obj
 	
+/*	var str="<div id='xxx' style='height:200px;width:100px'>xx</div>";
+	
+	$("body").append(str)
+				
+	$("#xxx").resizable({
+					alsoResize:"#if"+curPage+"-"+i+"-0",
+					resize: function() { trace("size") },
+					start: function() { trace("start") },
+					stop: function() { trace("stop") }
+					});		
+
+
+*/	
 	for (var i=0;i<sf.projects[curProject].pages.length;++i)				// For each page
 		$("#galleryLab"+i).on("click", function(e) {						// ON PAGE CLICK
 			curPage=e.currentTarget.id.substr(10)-0;						// Extract id
@@ -728,12 +741,21 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 		if (o.title) 														// If a title
 			str+=StyleText(o.title,p.layout.panes[2].titleStyle); 			// Style text using middle pane setting
 		if (o.src) {														// If a source
-			str+="<br><div id='if"+i+"-2-0' style='text-align:"+p.layout.itemAlign+"'>";		// Div for iframe	
-			str+="<iframe frameborder='0' style='border:"+p.layout.itemBorder;	// Start style
-			str+=";width:"+p.layout.itemWid+";height:"+p.layout.itemHgt+"' ";
-			str+="src='"+o.src+"'></iframe></div>";							// Src
+			str+="<br><div style='text-align:"+p.layout.itemAlign+"'>";		// Div for iframe	
+			if (o.src.match(/.mp4/i)) {										// HTML5 video
+				str+="<video controls id='if"+i+"-2-0' width='"+p.layout.itemWid;	// Tag
+				str+="' src='"+o.src+"'/>";									// Src
+				}
+			else if (o.src.match(/\.png|.gif|\.jpg|.jpeg/i)) 				// An image
+				str+="<img width='"+p.layout.itemWid+"' src='"+o.src+"'></div>";
+			else{
+				str+="<iframe id='if"+i+"-2-0' frameborder='0' "; 
+				str+=" style='border:"+p.layout.itemBorder;	// Start style
+				str+=";width:"+p.layout.itemWid+";height:"+p.layout.itemHgt+"' ";
+				str+="src='"+o.src+"'></iframe>";							// Src
+				}
 			}
-		str+="<p>";															// Enclose in para
+		str+="</div><p>";															// Enclose in para
 		if (o.desc) 														// If a desc
 			str+=o.desc;													// Add it
 		po.markUpMid+=str+"</p>";											// Add to markUp
