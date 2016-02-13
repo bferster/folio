@@ -13,20 +13,26 @@
 </head>
 
 <body>
-		<iframe class='editor' id='fEditor' frameborder='0'src='index.html'></iframe>
-		<br>&nbsp; Type message to send: 
-		<input type='text' class='send' type='text' id='fSend'><br>
+		<iframe class='editor' id='folio' frameborder='0'src='index.html'></iframe>
+		<br>&nbsp; Type message to send (command|params): 
+		<input type='text' class='send' type='text' id='sendToFolio'><br>
 		<div class='response' id='fResponse'></div>
 </body>	
 
 <script>
 
 	$(document).ready(function() {											// ON PAGE LOADED
-		if (window.addEventListener) 											// If supported this way
-			window.addEventListener("message",eventHandler,false);				// Add event handler
-		else																	// Use other method
+		if (window.addEventListener) 										// If supported this way
+			window.addEventListener("message",eventHandler,false);			// Add event handler
+		else																// Use other method
 			window.attachEvent("message",eventHandler);						// Add handler
-		});									
+
+	$("#sendToFolio").on("change",function() {
+		var v=$(this).val().split("|");										// Split in command and payload
+		SendMessage(v[0],v[1]);												// Send to folio
+		});
+	
+	});									
 
 	function eventHandler(e)											// ON HTML5 MESSAGE
 	{
@@ -36,6 +42,13 @@
   		$("#fResponse").html($("#fResponse").html()+e.data+"<br>");			// Show new message
  	}
  
+	function SendMessage(cmd, msg) 										// SEND HTML5 MESSAGE 
+	{
+		var str=cmd+"|Mandala";												// Add src and window						
+		if (msg)															// If more to it
+			str+="|"+msg;													// Add it
+			$("#folio")[0].contentWindow.postMessage(str,"*");				// Send data to wind
+	}
 
 </script>
 
