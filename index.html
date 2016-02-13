@@ -428,7 +428,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<img id='tempAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new termplate'>";
 	str+="<img id='tempTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a template'></td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
-	str+="<button class='sf-bs' style='width:90px' id='addPages'>Add pages</button>&nbsp; &nbsp;";		// Add pages button
+	str+="<button class='sf-bs' style='width:90px' id='addPages'>Add items</button>&nbsp; &nbsp;";		// Add items button
 	str+="<button class='sf-bs' style='width:90px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
 	str+="<button class='sf-bs' style='width:90px' id='editPages'>Edit pages</button>&nbsp; &nbsp;";	// View pages button
 	str+="<button class='sf-bs' style='width:90px' id='shareProject'>Share</button> </td></tr>";		// Share button
@@ -664,19 +664,6 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 		
 	playerObj.Update(this.projects[curProject].pages[curPage],this.projects[curProject].layout);	// Add player obj
 	
-/*	var str="<div id='xxx' style='height:200px;width:100px'>xx</div>";
-	
-	$("body").append(str)
-				
-	$("#xxx").resizable({
-					alsoResize:"#if"+curPage+"-"+i+"-0",
-					resize: function() { trace("size") },
-					start: function() { trace("start") },
-					stop: function() { trace("stop") }
-					});		
-
-
-*/	
 	for (var i=0;i<sf.projects[curProject].pages.length;++i)				// For each page
 		$("#galleryLab"+i).on("click", function(e) {						// ON PAGE CLICK
 			curPage=e.currentTarget.id.substr(10)-0;						// Extract id
@@ -708,57 +695,79 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 			});
 		});
 
-
 	$("#setLayout").on("click",function() { 								// SET PAGE LAYOUT
 		sf.Do()																// Something changed
 		layoutObj.Set(sf.projects[curProject].pages[curPage],tempObj.templates[curTemplate],sf.Draw);	// Set layout
   		});
 
 	$('[id^="playerPane"]').on("blur",function(e) { 						// EDIT PAGE PANE
-		sf.Do()																// Something changed
 		var p=sf.projects[curProject].pages[curPage];						// Point p at page
 		var id=e.currentTarget.id.substr(10);								// Extract id
 		p["markUp"+id]=$(this).html();										// Copy hlml contents of pane into page
-   		});
+    	});
 
+	$('[id^="playerPane"]').droppable({ 									// MAHE ITEMS DROPPABLE
+		 accept: ".sf-pitem",												// Accept only project items
+		 drop: function(event, ui) {										// On drop
+			sf.Do()															// Something changed
+			var p=sf.projects[curProject].pages[curPage];					// Point p at current page
+			var from=ui.draggable.prop('id').substr(6);						// Get id of dragged item
+			var to=$(event.target).prop('id').substr(10);					// Get id of receiver item
+			var str=sf.GetItemMarkup(from,2);								// Add item to page
+			$(this).html(str+$(this).html());								// Add item
+			p["markUp"+to]=$(this).html();									// Copy hlml contents of pane into page
+			}
+		 });
 }	
+
+folio.prototype.GetItemMarkup=function(num, paneNum)					// GET ITEM's MARKUP
+{
+	var str="";
+	if (curProject < 0)														// No project
+		return "";															// Return null
+	var p=this.projects[curProject];										// Point p at project
+	var o=this.items[p.items[num]];											// Point at item directy			
+	if (!o)																	// No item
+		return "";															// Return null
+	if (o.src) {															// If a source
+		str+="<br><div style='text-align:"+p.layout.itemAlign+"'>";			// Div for iframe	
+		if (o.src.match(/.mp4/i)) {											// HTML5 video
+			str+="<video controls id='if"+i+"-2-0' width='"+p.layout.itemWid;	// Tag
+			str+="' src='"+o.src+"'/>";										// Src
+			}
+		else if (o.src.match(/\.png|.gif|\.jpg|.jpeg/i)) 					// An image
+			str+="<img width='"+p.layout.itemWid+"' src='"+o.src+"'></div>";
+		else{
+			str+="<iframe id='if"+i+"-2-0' frameborder='0' "; 
+			str+=" style='border:"+p.layout.itemBorder;	// Start style
+			str+=";width:"+p.layout.itemWid+";height:"+p.layout.itemHgt+"' ";
+			str+="src='"+o.src+"'></iframe>";								// Src
+			}
+		str+="</div><br>";													// Close div											
+		}
+	if (o.title) 															// If a title
+		str+=StyleText(o.title,p.layout.panes[paneNum].titleStyle)+"<br>"; 	// Style text using middle pane setting
+	if (o.desc) 															// If a desc
+		str+=o.desc;														// Add it
+	return str;																// Return markup for item
+}
 
 folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 {
-	var i,j,o,p,po,str;
-	paneNames=["Top","Left","Mid","Right","Bot"];							// Names of the panes
+	var i,j,po,str;
+	var paneNames=["Top","Left","Mid","Right","Bot"];						// Names of the panes
 	this.Do();																// Something changed
-	p=this.projects[curProject];											// Point p at project
+	var p=this.projects[curProject];										// Point p at project
 	p.pages=[];																// Clear pages
 	for (i=0;i<p.items.length;++i) {										// For each item in project
 		str="";																// Assume nothing
-		o=this.items[p.items[i]];											// Point at item			
 		po={};																// New page object
 		for (j=0;j<5;++j) {													// For each pane
 			if (p.layout && (p.layout.panes[j].markUp != undefined))		// If a layout markup set for top
 				po["markUp"+paneNames[j]]=p.layout.panes[j].markUp;			// Use it
 			}		
-		if (o.title) 														// If a title
-			str+=StyleText(o.title,p.layout.panes[2].titleStyle); 			// Style text using middle pane setting
-		if (o.src) {														// If a source
-			str+="<br><div style='text-align:"+p.layout.itemAlign+"'>";		// Div for iframe	
-			if (o.src.match(/.mp4/i)) {										// HTML5 video
-				str+="<video controls id='if"+i+"-2-0' width='"+p.layout.itemWid;	// Tag
-				str+="' src='"+o.src+"'/>";									// Src
-				}
-			else if (o.src.match(/\.png|.gif|\.jpg|.jpeg/i)) 				// An image
-				str+="<img width='"+p.layout.itemWid+"' src='"+o.src+"'></div>";
-			else{
-				str+="<iframe id='if"+i+"-2-0' frameborder='0' "; 
-				str+=" style='border:"+p.layout.itemBorder;	// Start style
-				str+=";width:"+p.layout.itemWid+";height:"+p.layout.itemHgt+"' ";
-				str+="src='"+o.src+"'></iframe>";							// Src
-				}
-			}
-		str+="</div><p>";															// Enclose in para
-		if (o.desc) 														// If a desc
-			str+=o.desc;													// Add it
-		po.markUpMid+=str+"</p>";											// Add to markUp
+		str+=this.GetItemMarkup(i,2)										// Add item markup								
+		po.markUpMid+=str;													// Add to markUp
 		p.pages.push(po);													// Add page
 		}
 }
@@ -788,7 +797,7 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 		}
 	else if (curMenu == "page") {											// Page page
 		div="itemPickerDiv";												// Point at item picker
-		str="<p style='text-align:center'>Portfolio items to use in pages</p>";
+		str="<p style='text-align:center'>Portfolio items to use (drag to add to page)</p>";
 		}
 	for (i=0;i<n;++i) {														// For each item
 		pic=lab="";															// Clear
@@ -887,8 +896,6 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 
 folio.prototype.Do=function()											// DO
 {
-	if (curMenu == "page")													// If in page mode
-		return;																// Quit
 	this.changed++;															// Set change flag
 	sessionStorage.setItem("do-"+sessionStorage.length,JSON.stringify(sf));	// Add new do												
 	$("#undoMenu").css("color","#000");										// Show active undos available
@@ -898,10 +905,6 @@ folio.prototype.UnDo=function()											// UNDO
 {
 	if (!this.changed)														// Nothing to undo 
 		return;																// Quit
-	if (curMenu == "page")	{												// If in page mode
-		Sound("delete");													// Delete
-		return;																// Quit
-		}
 	var id="do-"+(sessionStorage.length-1);									// Get id of last undo
 	var o=$.parseJSON(sessionStorage.getItem(id));							// Get undo from local storage
 	if (!o.items && o.projects) {											// Must be invalid

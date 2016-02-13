@@ -15,8 +15,8 @@ function template()													// CONSTRUCTOR
 	t.layout.rightGut="None";
 	t.layout.botGut="None";
 	t.layout.topPct=20;													// Set default sizes
-	t.layout.leftPct=30;
-	t.layout.rightPct=20;
+	t.layout.leftPct=15;
+	t.layout.rightPct=15;
 	t.layout.botPct=10;
 	t.layout.aspect="Portrait";									
 	t.layout.panes=[];													// Create panes array
