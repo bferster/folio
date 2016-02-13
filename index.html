@@ -169,7 +169,8 @@ $(document).ready(function() {											// ON PAGE LOADED
 	layoutObj=new layout();													// Load share object
 	playerObj=new player();													// Load player object
  	sf=new folio();															// Load main object
-
+	SendMessage("ready");													// Send ready mnessage
+	
 	$("#splashDiv").animate({ opacity:0},1000, function(){					// Hide logo
 		$("#splashDiv").css("visibility","hidden");							
 		});								
@@ -899,6 +900,7 @@ folio.prototype.Do=function()											// DO
 	this.changed++;															// Set change flag
 	sessionStorage.setItem("do-"+sessionStorage.length,JSON.stringify(sf));	// Add new do												
 	$("#undoMenu").css("color","#000");										// Show active undos available
+	SendMessage("do");														// Send do mnessage
 }
 	
 folio.prototype.UnDo=function()											// UNDO
