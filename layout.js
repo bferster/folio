@@ -13,7 +13,6 @@ function layout()											// CONSTRUCTOR
 
 layout.prototype.Init=function(container, template)					// INIT LAYOUT 
 {
-trace("init")
 	container.layout={};												// Make one
 	container.layout.topPct=template.topPct;							// Set default sizes
 	container.layout.leftPct=template.leftPct;
@@ -38,7 +37,6 @@ trace("init")
 
 layout.prototype.Set=function(container, template, callback)		// SET LAYOUT 
 {
-trace("set")
 	var i,o;
 	var _this=this;														// Get context
 	this.curPane=0;														// Start with top
