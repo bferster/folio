@@ -232,26 +232,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 	
 	});									
 		
-
-	function html5MessageHandler(e)										// ON HTML5 MESSAGE
-	{
-  		if (e && e.data)													// If message
- 			if (!e.data.match(/|Mandala/))									// Not from Folio
- 				return;														// Quit
-		var o={};															// Clean object
-		var v=e.data.split("|");											// Get data
-		if (v[0].toLowerCase() == "project") {								// Get project(s)
-			o.projects=$.parseJSON(v[2]);									// Turn into object and set
-			sf.Init(o);														// Init folio
-			sf.Draw();														// Draw 
-			}
-		else if (v[0].toLowerCase() == "item") {							// Get item(s)
-			o.items=$.parseJSON(v[2]);										// Turn into object and set
-			sf.Init(o);														// Init folio
-			sf.Draw();														// Draw 
-			}
- 	}
- 		
+		 		
 function folio()														// CONSTRUCTOR
 {
 	sf=this;																// Point to folio
@@ -415,6 +396,25 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 	str+="</div></div>";
 	return str;																// Return gallery
 }
+
+	function html5MessageHandler(e)										// ON HTML5 MESSAGE
+	{
+  		if (e && e.data)													// If message
+ 			if (!e.data.match(/|Mandala/))									// Not from Folio
+ 				return;														// Quit
+		var o={};															// Clean object
+		var v=e.data.split("|");											// Get data
+		if (v[0].toLowerCase() == "set") {									// Get data
+			o=$.parseJSON(v[2]);											// Turn into object and set
+			sf.Init(o);														// Init folio
+			sf.Draw();														// Draw 
+			}
+		else if (v[0].toLowerCase() == "add") {								// Get project(s)
+			o=$.parseJSON(v[2]);											// Turn into object and set
+			sf.Init(o);														// Init folio
+			sf.Draw();														// Draw 
+			}
+ 	}
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
