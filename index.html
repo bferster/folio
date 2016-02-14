@@ -474,6 +474,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		sf.Do()																// Something changed
 		sf.projects.push({ title:"New project", cite:"", items:[] });		// Add shell					
 		curProject=sf.projects.length-1;									// Point at it
+		sf.userInfo.lastProject=curProject;									// Save last project index
 		sf.projects[curProject].id=MakeUniqueId();							// Create new id
 		sf.InitProject(curProject);											// Init project
 		Sound("add");														// Add
@@ -522,6 +523,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 	for (i=0;i<sf.projects.length;++i)										// For each project
 		$("#galleryLab"+i).on("click", function(e) {						// ON PROJECT CLICK
 			curProject=e.currentTarget.id.substr(10)-0;						// Extract id
+			sf.userInfo.lastProject=curProject;								// Save last project index
 			Sound("click");													// Click
 			sf.Draw();														// Redraw
 			});
@@ -545,6 +547,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 			sf.projects.push($.parseJSON(o));								// Add copy as object					
 			curProject=sf.projects.length-1;								// Point at it
 			sf.projects[curProject].title=s;								// Change title
+			sf.userInfo.lastProject=curProject;								// Save last project index
 			sf.projects[curProject].id=MakeUniqueId();						// Create new id
 			sf.InitProject(curProject);										// Init project
 			Sound("add");													// Add
