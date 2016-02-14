@@ -40,15 +40,19 @@
 	$("#sendInfo").on("click",function() {									// Send info
 		SendMessage("set","{"+users+"}");									// Send to folio
 		});
+
 	$("#sendProj").on("click",function() {									// Send projects
 		SendMessage("set","{"+projs+"}");									// Send to folio
 		});
+
 	$("#sendItem").on("click",function() {									// Send items
 		SendMessage("set","{"+items+"}");									// Send to folio
 		});
+
 	$("#sendAll").on("click",function() {									// Send all
 		SendMessage("set","{"+users+","+items+","+projs+"}");				// Send to folio
 		});
+
 	$("#sendClear").on("click",function() {									// Clear
 		var str='{ "projects":[],"items":[],"userInfo":{}}';				// Claar all structs
 		SendMessage("set",str);												// Send to folio

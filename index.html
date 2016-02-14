@@ -248,12 +248,17 @@ this.userInfo=userInfo
 	this.Draw();															// Draw 
 	}	
 
-folio.prototype.Init=function(data)										// INIT 
+folio.prototype.Init=function(data, mode)								// INIT 
 {
 	var i,last=-1;
-	if (data) {
+	if (data && (mode == "set")) {											// Set mode						
 		if (data.projects != undefined)	this.projects=data.projects;		// Set projects
 		if (data.items != undefined)	this.items=data.items;				// Set items
+		if (data.userInfo != undefined)	this.userInfo=data.userInfo;		// Set info
+		}
+	else if (data && (mode == "add")) {										// Add mode						
+		if (data.projects != undefined)	this.projects=this.projects.concat(data.projects);		// Add projects
+		if (data.items != undefined)	this.items=this.items.concat(data.items);				// Add items
 		if (data.userInfo != undefined)	this.userInfo=data.userInfo;		// Set info
 		}
 	for (i=0;i<this.projects.length;++i) 									// For each project
@@ -303,15 +308,17 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 	var str="<b>"+this.userInfo.firstName+" "+this.userInfo.lastName+"</b>";// Add name
 	if (curMenu == "project")	{											// If project
 		$("#projectMenu").css("color","#00aa00");							// Highlight it
-		str+=" &nbsp;|&nbsp; ";												// Add to breadcrumb
-		if ((curProject != -1) && this.projects[curProject].title)			// A valid project
+		if ((curProject != -1) && this.projects[curProject].title) {		// A valid project
+			str+=" &nbsp;|&nbsp; ";											// Add to breadcrumb
 			str+=ShortenString(this.projects[curProject].title,20);			// Add title
+			}
 		}
 	else if (curMenu == "page") {											// If page
 		$("#pageMenu").css("color","#00aa00");								// Highlight it
-		str+="&nbsp;|&nbsp; ";												// Add to breadcrumb
-		if ((curProject != -1) && this.projects[curProject].title)			// A valid project
+		if ((curProject != -1) && this.projects[curProject].title)	{		// A valid project
+			str+=" &nbsp;|&nbsp; ";											// Add to breadcrumb
 			str+=ShortenString(this.projects[curProject].title,20);			// Add title
+			}
 		str+=" &nbsp;|&nbsp; "+(curPage-0+1);								// Add to breadcrumb
 		}
 	else if (curMenu == "item") 											// If item
@@ -411,12 +418,14 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 		var v=e.data.split("|");											// Get data
 		if (v[0].toLowerCase() == "set") {									// Get data
 			o=$.parseJSON(v[2]);											// Turn into object and set
-			sf.Init(o);														// Init folio
+			sf.Init(o,"set");												// Init folio
+			SendMessage("done");											// Send done mnessage
 			sf.Draw();														// Draw 
 			}
 		else if (v[0].toLowerCase() == "add") {								// Get project(s)
 			o=$.parseJSON(v[2]);											// Turn into object and set
-			sf.Init(o);														// Init folio
+			sf.Init(o,"add");												// Init folio
+			SendMessage("done");											// Send done mnessage
 			sf.Draw();														// Draw 
 			}
  	}
