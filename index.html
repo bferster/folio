@@ -239,25 +239,30 @@ function folio()														// CONSTRUCTOR
 	this.projects=[];														// Holds project
 	this.items=[];															// Holds items
 	this.userInfo={};														// Holds user information
+
+this.projects=projects;													
+this.items=items;
+this.userInfo=userInfo
+	
 	this.Init("");															// Init folio
 	this.Draw();															// Draw 
 	}	
 
 folio.prototype.Init=function(data)										// INIT 
 {
-	var i;
-this.projects=projects;													// REPLACE!!
-this.items=items;
-this.userInfo=userInfo
-	
+	var i,last=-1;
 	if (data) {
-		if (data.projects)	this.projects=data.projects;					// Set projects
-		if (data.items)		this.items=data.items;							// Set items
-		if (data.userInfo)	this.info=data.userInfo;						// Set info
+		if (data.projects != undefined)	this.projects=data.projects;		// Set projects
+		if (data.items != undefined)	this.items=data.items;				// Set items
+		if (data.userInfo != undefined)	this.userInfo=data.userInfo;		// Set info
 		}
 	for (i=0;i<this.projects.length;++i) 									// For each project
 		this.InitProject(i);												// Init
-	curProject=Math.min(this.projects.length-1,this.userInfo.lastProject);	// Init on 1st project
+	this.userInfo.firstName=this.userInfo.firstName ? this.userInfo.firstName : "Not";	// Ensure valid first name
+	this.userInfo.lastName=this.userInfo.lastName ? this.userInfo.lastName : "Set";		// Last 
+	if (this.userInfo.lastProject != undefined)								// A valid last project stored
+		last=this.userInfo.lastProject;										// Use it
+	curProject=Math.min(this.projects.length-1,last);						// Init on last project
 	this.changed=0;															// Changed counter
 }
 
@@ -836,6 +841,8 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 		}
 	for (i=0;i<n;++i) {														// For each item
 		pic=lab="";															// Clear
+		if (!this.items[i])													// Nothing there
+			continue;														// Skip it
 		if (typ != "all types")												// If filtering by type
 			if (this.items[i].type != typ)									// Not the right one
 				continue;													// Skip it
