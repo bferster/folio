@@ -441,7 +441,7 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 	
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
-	var i;
+	var i,v=[];
 	var pTitle="",pDesc="",pCite="",pTags="",pCollab=[],pFormat="Booklet",pTemp="Full";
 	var str="<div id='projectDiv' class='sf-projectPage'>";					// Project container
 	if (curProject < 0) 													// No project selected
@@ -471,7 +471,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<tr height='28'><td>Format style</td><td>";
 	str+=MakeSelect("pFormat",false,["Booklet","Single page","Canvas","Slide show","Up/Down"],pFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
-	str+=MakeSelect("pTemp",false,["Default","Top & body","Custom"],pTemp);
+	for (i=0;i<templates.length;++i)	v.push(templates[i].name);	str+=MakeSelect("pTemp",false,v,pTemp);
 	str+="<img id='tempAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new termplate'>";
 	str+="<img id='tempTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a template'></td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
@@ -533,6 +533,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 	$("#pTemp").on("change",function() { 									// If changed
 		sf.Do()																// Something changed
 		sf.projects[curProject].temp=$("#pTemp").val();						// Set it	
+		curTemplate=$(this).prop("selectedIndex");							// Set index
 		Sound("click");														// Click
 		sf.Draw();															// Redraw
 		});
