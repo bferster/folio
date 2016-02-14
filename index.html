@@ -78,7 +78,7 @@
 						}
 		.sf-layoutPcts 	{ border:1px solid #999;border-radius:16px;padding:2px;color:#666;
 						}
-		.sf-sizerTop { 	box-sizing:border-box;overflow:hidden;;margin:1px;
+		.sf-sizerTop { 	box-sizing:border-box;overflow:hidden;margin:1px;
 						background-color:#ddd;text-align:center;
 						}
 		.sf-sizerLeft { display:inline-block;box-sizing:border-box;margin:1px;overflow:hidden;
@@ -90,7 +90,7 @@
 		.sf-sizerRight { display:inline-block;box-sizing:border-box;margin:1px;overflow:hidden;
 						background-color:#ddd;text-align:center;
 						}
-		.sf-sizerBot { 	box-sizing:border-box;overflow:hidden;;margin:1px;
+		.sf-sizerBot { 	box-sizing:border-box;overflow:hidden;margin:1px;
 						background-color:#ddd;text-align:center;
 						}
 		.sf-previewTitle { margin-top:8px;margin-bottom:-4px;color:#999;font-weight:bold;
@@ -798,6 +798,8 @@ folio.prototype.GetItemMarkup=function(num, paneNum)					// GET ITEM's MARKUP
 		str+=StyleText(o.title,p.layout.panes[paneNum].titleStyle)+"<br>"; 	// Style text using middle pane setting
 	if (o.desc) 															// If a desc
 		str+=o.desc;														// Add it
+	else																	// No desc
+		str+="<p></p>";														// Add para to make editing easier
 	return str;																// Return markup for item
 }
 

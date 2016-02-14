@@ -36,6 +36,7 @@ item.prototype.UpdatePage=function()							// UPDATE ITEM PAGE
 {
 	var i,pic="", typ="";
 	if (curItem != -1) {											// If a valid item
+		curItem=Math.min(curItem,sf.items.length-1);				// Cap at length
 		var o=sf.items[curItem];									// Point at item
 		if (o.type)  typ=o.type.toLowerCase();						// Make type lc
 		for (i=0;i<this.mediaTypeNames.length;++i) 					// For each type
@@ -421,6 +422,7 @@ item.prototype.ImportFlickr=function()								// FLICKR IMPORTER
 					o.source=$(this).attr("source");							// Get source
 					o.label=$(this).attr("label");								// Get label
 					o.title=$(this).attr("title");								// Get title
+					o.id=MakeUniqueId();										// Create new id
 					if (o.label == "Medium") 									// If medium pic
 						str="<img style='border:1px solid #666' src='"+o.source+"' height='294'>";	// Image
 					sizes.push(o);												// Add size to array
