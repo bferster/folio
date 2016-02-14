@@ -13,7 +13,7 @@
 </head>
 
 <body>
-		<iframe class='editor' id='folio' frameborder='0'src='index.html'></iframe>
+		<iframe class='editor' id='folio' frameborder='0'src='//viseyes.org/folio?dr=1'></iframe>
 		<br>&nbsp; Type message to send (command|params): 
 		<input type='text' class='send' type='text' id='sendToFolio'>
 		<button id='sendInfo'>Send user</button> 
@@ -22,7 +22,6 @@
 		<button id='sendAll'>Send all</button>
 		<button id='sendClear'>Clear</button>
 		<button id='sendSync'>Sync</button><br>
-
 		<div class='response' id='fResponse'></div>
 </body>	
 
@@ -76,7 +75,7 @@
   		$("#fResponse").html($("#fResponse").html()+e.data+"<br>");			// Show new message
  	if (eventCallback && e.data.match(/done/)) {							// Callback
  		eventCallback();													// Run cb
- 		eventCallback=null;													// Celar it
+ 		eventCallback=null;													// Claar it
  		}
  	}
  
