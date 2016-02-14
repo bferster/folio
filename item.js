@@ -165,6 +165,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 		var o={};														// Holds new item
 		o.type=$("#imType").val();										// Set type
 		o.title=$("#imTitle").val() ? $("#imTitle").val() : "New item" ;// Set title
+		o.id=MakeUniqueId();											// Create new id
 		o.desc=$("#imDesc").val();										// Set desc
 		o.cite=$("#imCite").val();										// Set cite
 		o.src=$("#imSrc").val();										// Set src
