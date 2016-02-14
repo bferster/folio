@@ -40,16 +40,10 @@ function template()													// CONSTRUCTOR
 		}
 }	
 
-template.prototype.Init=function()										// INIT
-{
-		
-}
-
 template.prototype.Set=function(project)								// template DIALOG
 {
 	var _this=this;														// Get context
 	this.project=project
-	this.Init();														// Init object
 	var str="<br><br>This will contain ways to edit template ";			 
 	Sound("click");														// Click
 	ShowLightBox(700,"Templates",str);									// Create dialog

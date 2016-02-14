@@ -14,10 +14,10 @@ function layout()											// CONSTRUCTOR
 layout.prototype.Init=function(container, template)					// INIT LAYOUT 
 {
 	container.layout={};												// Make one
-	container.layout.topPct=template.layout.topPct;						// Set default sizes
-	container.layout.leftPct=template.layout.leftPct;
-	container.layout.rightPct=template.layout.rightPct;
-	container.layout.botPct=template.layout.botPct;
+	container.layout.topPct=template.topPct;							// Set default sizes
+	container.layout.leftPct=template.leftPct;
+	container.layout.rightPct=template.rightPct;
+	container.layout.botPct=template.botPct;
 	container.layout.aspect="";									
 	container.layout.panes=[];											// Holds pane info
 	if (container.cite == undefined) {									// If called as a page override
@@ -30,7 +30,7 @@ layout.prototype.Init=function(container, template)					// INIT LAYOUT
 		container.layout.botPct=o.botPct;
 		}
 	else{																// Set default
-		var o=JSON.stringify(template.layout);							// Deep copy default layout as JSON
+		var o=JSON.stringify(template);									// Deep copy default layout as JSON
 		container.layout=$.parseJSON(o);								// Use template as inits
 		}
 }

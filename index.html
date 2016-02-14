@@ -239,10 +239,12 @@ function folio()														// CONSTRUCTOR
 	this.projects=[];														// Holds project
 	this.items=[];															// Holds items
 	this.userInfo={};														// Holds user information
+	this.templates=[];														// Holds templates
 
 this.projects=projects;													
 this.items=items;
-this.userInfo=userInfo
+this.userInfo=userInfo;
+this.templates=templates;
 	
 	this.Init("");															// Init folio
 	this.Draw();															// Draw 
@@ -252,14 +254,15 @@ folio.prototype.Init=function(data, mode)								// INIT
 {
 	var i,last=-1;
 	if (data && (mode == "set")) {											// Set mode						
-		if (data.projects != undefined)	this.projects=data.projects;		// Set projects
-		if (data.items != undefined)	this.items=data.items;				// Set items
-		if (data.userInfo != undefined)	this.userInfo=data.userInfo;		// Set info
+		if (data.projects != undefined)	 this.projects=data.projects;		// Set projects
+		if (data.items != undefined)	 this.items=data.items;				// Set items
+		if (data.userInfo != undefined)	 this.userInfo=data.userInfo;		// Set info
+		if (data.templates != undefined) this.templates=data.templates;		// Set templates
 		}
 	else if (data && (mode == "add")) {										// Add mode						
-		if (data.projects != undefined)	this.projects=this.projects.concat(data.projects);		// Add projects
-		if (data.items != undefined)	this.items=this.items.concat(data.items);				// Add items
-		if (data.userInfo != undefined)	this.userInfo=data.userInfo;		// Set info
+		if (data.projects != undefined)	 this.projects=this.projects.concat(data.projects);	// Add projects
+		if (data.items != undefined)	 this.items=this.items.concat(data.items);			// Add items
+		if (data.templates != undefined) this.templates=data.templates;						// Add templates
 		}
 	for (i=0;i<this.projects.length;++i) 									// For each project
 		this.InitProject(i);												// Init
@@ -273,7 +276,7 @@ folio.prototype.Init=function(data, mode)								// INIT
 
 folio.prototype.InitProject=function(num)									// INIT PROJECT
 {
-	layoutObj.Init(this.projects[num],tempObj.templates[curTemplate]);			// Init project's layout object
+	layoutObj.Init(this.projects[num],this.templates[curTemplate]);			// Init project's layout object
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -658,7 +661,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 
 	$("#setLayout").on("click",function() { 								// SET LAYOUT
 		sf.Do()																// Something changed
-		layoutObj.Set(sf.projects[curProject],tempObj.templates[curTemplate]);	// Set layout
+		layoutObj.Set(sf.projects[curProject],sf.templates[curTemplate]);	// Set layout
 		});
 
 	$("#shareProject").on("click",function() { 								// SHARE
@@ -746,7 +749,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 
 	$("#setLayout").on("click",function() { 								// SET PAGE LAYOUT
 		sf.Do()																// Something changed
-		layoutObj.Set(sf.projects[curProject].pages[curPage],tempObj.templates[curTemplate],sf.Draw);	// Set layout
+		layoutObj.Set(sf.projects[curProject].pages[curPage],sf.templates[curTemplate],sf.Draw);	// Set layout
   		});
 
 	$('[id^="playerPane"]').on("blur",function(e) { 						// EDIT PAGE PANE

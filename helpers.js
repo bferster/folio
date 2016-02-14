@@ -490,4 +490,49 @@ var userInfo={
 	lastProject:0
 	}
 
+var templates=[
+	{
+	name:"Default",
+	topGut:"None",												
+	leftGut:"None",
+	rightGut:"None",
+	botGut:"None",
+	topPct:20,													
+	leftPct:15,
+	rightPct:15,
+	botPct:10,
+	aspect:"Portrait",									
+	itemWid:"100%",									
+	itemHgt:"30vh",										
+	itemAlign:"center",									
+	itemBorder:"2px solid #999999",					
+	panes:[{
+		borderCol:"#999999", borderSty:"None", borderWid:"1",							
+		backCol:"#eeeeee", backImg:"", markUp:"",
+		bodyStyle:"sans-serif,13px,#66666,normal,left,100%",		
+		titleStyle:"sans-serif,18px,#cc6600,bold,center,100%"
+		},{
+		borderCol:"#999999", borderSty:"None", borderWid:"1",							
+		backCol:"#eeeeee", backImg:"", markUp:"",
+		bodyStyle:"sans-serif,13px,#66666,normal,left,100%",		
+		titleStyle:"sans-serif,18px,#cc6600,bold,center,100%"
+		},{
+		borderCol:"#999999", borderSty:"None", borderWid:"1",							
+		backCol:"#eeeeee", backImg:"", markUp:"",
+		bodyStyle:"sans-serif,13px,#66666,normal,left,100%",		
+		titleStyle:"sans-serif,18px,#cc6600,bold,center,100%"
+		},{
+		borderCol:"#999999", borderSty:"None", borderWid:"1",							
+		backCol:"#eeeeee", backImg:"", markUp:"",
+		bodyStyle:"sans-serif,13px,#66666,normal,left,100%",		
+		titleStyle:"sans-serif,18px,#cc6600,bold,center,100%"
+		},{
+		borderCol:"#999999", borderSty:"None", borderWid:"1",							
+		backCol:"#eeeeee", backImg:"", markUp:"",
+		bodyStyle:"sans-serif,13px,#66666,normal,left,100%",		
+		titleStyle:"sans-serif,18px,#cc6600,bold,center,100%"
+		}]
+	}]
 	
+
+		
