@@ -487,12 +487,14 @@ var userInfo={
 	firstName:"Teresa",
 	lastName:"Sullivan",
 	id:145545606991450544564,
-	lastProject:0
+	lastProject:0,
+	curTemplate:0
 	}
 
 var templates=[
 	{
 	name:"Default",
+	id:185545606991490464522,
 	topGut:"None",												
 	leftGut:"None",
 	rightGut:"None",
@@ -534,6 +536,7 @@ var templates=[
 		}]
 	},{
 	name:"Full + side",
+	id:225545606991490464654,
 	topGut:"None",												
 	leftGut:"None",
 	rightGut:"None",
@@ -549,8 +552,8 @@ var templates=[
 	itemBorder:"2px solid #999999",					
 	panes:[{
 		borderCol:"#999999", borderSty:"None", borderWid:"1",							
-		backCol:"#eeeeee", backImg:"art/sky.jpg", markUp:"<br>My work",
-		bodyStyle:"sans-serif,60px,#000,bold,right,100%",		
+		backCol:"#eeeeee", backImg:"art/sky.jpg", markUp:"<br>My work...&nbsp;",
+		bodyStyle:"sans-serif,60px,#ffffff,bold,right,100%",		
 		titleStyle:"sans-serif,18px,#cc6600,bold,center,100%"
 		},{
 		borderCol:"#999999", borderSty:"None", borderWid:"1",							

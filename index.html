@@ -431,6 +431,14 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 			SendMessage("done");											// Send done mnessage
 			sf.Draw();														// Draw 
 			}
+		else if (v[0].toLowerCase() == "get") {								/// Get data
+			if (v[2] == "project")			o=sf.projects;					// Get project(s)			
+			else if (v[2] == "item")		o=sf.items;						// Get items(s)			
+			else if (v[2] == "userinfo")	o=sf.userInfo;					// Get userinfo			
+			else if (v[2] == "template")	o=sf.templates;					// Get templates(s)			
+			else							o=sf;							// Whole thing
+			SendMessage("data",JSON.stringify(o));							// Return data
+			}
  	}
 
 
@@ -531,11 +539,14 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		});
 	
 	$("#pTemp").on("change",function() { 									// If changed
-		sf.Do()																// Something changed
-		sf.projects[curProject].temp=$("#pTemp").val();						// Set it	
-		curTemplate=$(this).prop("selectedIndex");							// Set index
-		Sound("click");														// Click
-		sf.Draw();															// Redraw
+		ConfirmBox("This will remove any changes you have made to the layout, and replace them with the defaults from the template named <b>"+$(this).val()+".</b>", function() {
+			sf.Do()															// Something changed
+			sf.userInfo.curTemplate=curTemplate=$("#pTemp").prop("selectedIndex");	 // Get index
+			trace(curTemplate,sf.templates[curTemplate])
+			layoutObj.Init(sf.projects[curProject],sf.templates[curTemplate]); 	// Init project's layout object
+			Sound("ding");													// Click
+			sf.Draw();														// Redraw
+			});
 		});
 
 	for (i=0;i<sf.projects.length;++i)										// For each project
