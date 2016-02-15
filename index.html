@@ -157,6 +157,8 @@ var isMobile=false;															// Is it mobile?
 var itemType="All types",itemFilter="";										// Filtering
 var curMenu="project";														// Current menu item
 var curShow=853,curJson;													// Use for Qmedia save/load
+var drupalMan=false;														// Flag for drupal manager	
+
 		
 $(window).resize(function() {											// ON WINDOW RESIZE
 	if (sf)																	// If loaded
@@ -177,7 +179,12 @@ $(document).ready(function() {											// ON PAGE LOADED
 		window.addEventListener("message",html5MessageHandler,false);		// Add event handler
 	else																	// Use other method
 		window.attachEvent("message",html5MessageHandler);					// Add handler
-
+	
+	var url=window.location.search.substring(1);							// Get query string
+	drupalMan=(""+url).match(/dm=1/);										// If called from Drupal manager
+		
+//		url="//qmediaplayer.com/loadshow.php?id="+url;						// Get from db
+//		$.ajax({ url: url, dataType:'jsonp' });								// Get jsonp and call LoadShow() from it
 	
 	$("#splashDiv").animate({ opacity:0},1000, function(){					// Hide logo
 		$("#splashDiv").css("visibility","hidden");							
@@ -206,6 +213,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 		Sound("click");												
 		sf.Draw();
 		});
+	
 	$("#editMenu").on("click",function(e) { 
 		var l=$(this).position().left+92;
 		var t=$(this).position().top+23;
