@@ -16,7 +16,7 @@
 	<script src="player.js"></script>
 	<script src="data.js"></script>
 	<script src="item.js"></script>
-	<script src="//www.qmediaplayer.com/qfile.js"></script>
+	<script src="//www.qmediaplayer.com/qfilelite.js"></script>
 
 	<style type="text/css">
 		body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
@@ -279,8 +279,11 @@ folio.prototype.Init=function(data, mode)								// INIT
 		if (data.items != undefined)	 this.items=this.items.concat(data.items);			// Add items
 		if (data.templates != undefined) this.templates=data.templates;						// Add templates
 		}
+	if (this.userInfo.curTemplate != undefined)								// If a template set
+		curTemplate=this.userInfo.curTemplate;								// Use it
 	for (i=0;i<this.projects.length;++i) 									// For each project
 		this.InitProject(i);												// Init
+	
 	this.userInfo.firstName=this.userInfo.firstName ? this.userInfo.firstName : "Not";	// Ensure valid first name
 	this.userInfo.lastName=this.userInfo.lastName ? this.userInfo.lastName : "Set";		// Last 
 	if (this.userInfo.lastProject != undefined)								// A valid last project stored
