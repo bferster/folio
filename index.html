@@ -14,8 +14,9 @@
 	<script src="share.js"></script>
 	<script src="collect.js"></script>
 	<script src="player.js"></script>
-	<script src="template.js"></script>
+	<script src="data.js"></script>
 	<script src="item.js"></script>
+	<script src="//www.qmediaplayer.com/qfile.js"></script>
 
 	<style type="text/css">
 		body { 			font-family:Verdana,Geneva,sans-serif;font-size:12px;
@@ -150,11 +151,12 @@
 var sf=null;																// Holds main folio object	
 var curProject=-1,curPage=-1,curItem=-1,curTemplate=0;						// Keeps tabs on current places	
 var playerObj=null,layoutObj=null,collectObj=null;							// Objects							
-var tempObj=null,shareObj=null,itemObj=null;
+var dataObj=null,shareObj=null,itemObj=null;
 var projObj=null,pageObj=null;												// TBD
 var isMobile=false;															// Is it mobile?
 var itemType="All types",itemFilter="";										// Filtering
 var curMenu="project";														// Current menu item
+var curShow=853,curJson;													// Use for Qmedia save/load
 		
 $(window).resize(function() {											// ON WINDOW RESIZE
 	if (sf)																	// If loaded
@@ -164,11 +166,11 @@ $(window).resize(function() {											// ON WINDOW RESIZE
 $(document).ready(function() {											// ON PAGE LOADED
 	isMobile=navigator.userAgent.match(/(ipad|iphone|ipod|android)/i) ? true : false; // Set mobile flag
 	itemObj=new item();														// Load item object
- 	tempObj=new template();													// Load template object
+ 	dataObj=new data();														// Load data object
 	shareObj=new share();													// Load layout object
 	layoutObj=new layout();													// Load share object
 	playerObj=new player();													// Load player object
- 	sf=new folio();															// Load main object
+  	sf=new folio();															// Load main object
 	SendMessage("ready");													// Send ready mnessage
 	
 	if (window.addEventListener) 											// If supported this way
@@ -210,8 +212,9 @@ $(document).ready(function() {											// ON PAGE LOADED
 		$("#editMenu").css("color","#009900");										
 		$("#editDiv").remove();
 		var str="<div class='sf-pullDown' style='left:"+l+"px;top:"+t+"px' id='editDiv'>";
-		str+="<div class='sf-pullDownItem' onclick=''> Copy</div>";
-		str+="<div class='sf-pullDownItem' onclick=''> Paste</div>";
+		str+="<div class='sf-pullDownItem' style='color:#000' onclick='dataObj.Save()'> Save </div>";
+		str+="<div class='sf-pullDownItem' onclick='dataObj.Save()'> Copy (TBD) </div>";
+		str+="<div class='sf-pullDownItem' onclick=''dataObj.Load()'> Paste (TBD) </div>";
 		str+="<div id='undoMenu' class='sf-pullDownItem' onclick='sf.UnDo()'> Undo</div>";
 		str+="</div>";
 		$("body").append(str);
@@ -232,6 +235,9 @@ $(document).ready(function() {											// ON PAGE LOADED
 	
 	});									
 		
+function Draw() 														// STUB FOR QMEDIA
+{	
+}														
 		 		
 function folio()														// CONSTRUCTOR
 {
@@ -274,7 +280,7 @@ folio.prototype.Init=function(data, mode)								// INIT
 	this.changed=0;															// Changed counter
 }
 
-folio.prototype.InitProject=function(num)									// INIT PROJECT
+folio.prototype.InitProject=function(num)								// INIT PROJECT
 {
 	layoutObj.Init(this.projects[num],this.templates[curTemplate]);			// Init project's layout object
 }
