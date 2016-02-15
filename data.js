@@ -10,7 +10,12 @@ function data()															// CONSTRUCTOR
 data.prototype.Save=function(		)									// SAVE
 {
 	curJson=sf;																// Copy json to global
-	this.qmf.Save(0);														// Save 
+	this.qmf.Save(0);
+}
+
+data.prototype.Load=function()											// LOAD 
+{
+	this.qmf.Load();														// Load portfolio
 }
 
 function LoadShow(data)													// LOAD A SHOW
@@ -26,5 +31,6 @@ function LoadShow(data)													// LOAD A SHOW
 	if (qmf.curFile)														// If a good file
 		curShow=qmf.curFile;												// Set curshow
 	sf.Init(data,"set");													// Init folio
+ 	Sound("add");															// Add sound
  	sf.Draw();																// Redraw
 }

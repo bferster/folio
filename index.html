@@ -156,7 +156,7 @@ var projObj=null,pageObj=null;												// TBD
 var isMobile=false;															// Is it mobile?
 var itemType="All types",itemFilter="";										// Filtering
 var curMenu="project";														// Current menu item
-var curShow=853,curJson;													// Use for Qmedia save/load
+var curShow="",curJson;														// Use for Qmedia save/load
 var drupalMan=false;														// Flag for drupal manager	
 
 		
@@ -221,6 +221,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 		$("#editDiv").remove();
 		var str="<div class='sf-pullDown' style='left:"+l+"px;top:"+t+"px' id='editDiv'>";
 		str+="<div class='sf-pullDownItem' style='color:#000' onclick='dataObj.Save()'> Save </div>";
+		str+="<div class='sf-pullDownItem' style='color:#000' onclick='dataObj.Load()'> Load </div>";
 		str+="<div class='sf-pullDownItem' onclick='dataObj.Save()'> Copy (TBD) </div>";
 		str+="<div class='sf-pullDownItem' onclick=''dataObj.Load()'> Paste (TBD) </div>";
 		str+="<div id='undoMenu' class='sf-pullDownItem' onclick='sf.UnDo()'> Undo</div>";
