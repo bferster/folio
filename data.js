@@ -21,7 +21,7 @@ data.prototype.Load=function()											// LOAD
 function LoadShow(data)													// LOAD A SHOW
 {
 	if (data.qmfmsg == "error") {											// If an error
-		AlertBox("Sorry, but there was an error loading this project");		// Show
+		AlertBox("Sorry, but there was an error loading this portfolio");	// Show
 		return;																// Quit
 		}
 	if (qmf.curFile) curShow=qmf.curFile;									// If a good file, set curshow
