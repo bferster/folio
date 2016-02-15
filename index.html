@@ -478,7 +478,6 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<tr height='28'><td>Format style</td><td>";
 	str+=MakeSelect("pFormat",false,["Booklet","Single page","Canvas","Slide show","Up/Down"],pFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
-	trace(pTemp)
 	for (i=0;i<templates.length;++i)	v.push(templates[i].name);	
 	str+=MakeSelect("pTemp",false,v,v[curTemplate]);
 	str+="<img id='tempAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new termplate'>";
@@ -623,22 +622,46 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		});
 
 	$("#tempAddBut").on("click",function() { 								// ADD NEW TEMPLATE
-		GetTextBox("Type a short name of the new template", "This will create a new project template, based on the current one. [TBD]", "", function(s) {		// Ask for name
+		GetTextBox("Type new template name", "Type a short name of the new template. This will create a new template, based on the current one.", "", function(s) {		// Ask for name
 			sf.Do()															// Something changed
+			var o=(JSON.stringify(sf.projects[curProject].layout));			// Deep copy current layout as JSON
+			sf.templates.push($.parseJSON(o));								// Add copy as object					
+			sf.templates[sf.templates.length-1].name=s;						// Set new name
 			Sound("add");													// Add
 			sf.Draw();														// Redraw
 			});
-	});
+		});
+
+	$("#galleryCopyBut").on("click",function() { 							// COPY A PROJECT
+		if (curProject < 0)													// If not a valid project										
+			return;															// Quit
+		GetTextBox("Type project name", "This is the name of the new project made from the current one", "", function(s) {	// Ask for name
+			var o=JSON.stringify(sf.projects[curProject]);					// Deep copy current project as JSON
+			sf.Do()															// Something changed
+			sf.projects.push($.parseJSON(o));								// Add copy as object					
+			curProject=sf.projects.length-1;								// Point at it
+			sf.projects[curProject].title=s;								// Change title
+			sf.userInfo.lastProject=curProject;								// Save last project index
+			sf.projects[curProject].id=MakeUniqueId();						// Create new id
+			sf.InitProject(curProject);										// Init project
+			Sound("add");													// Add
+			sf.Draw();														// Redraw
+			});
+		});
+
 
 	$("#tempTrashBut").on("click",function() { 								// DELETE TEMPLATE
 			var s=$("#pTemp").val();										// Get current val
 			if (!s)															// Nothing selected
 				return;														// Quit
-		ConfirmBox("This will delete the template named <b>"+s+" </b>from the project. [TBD]", function() {
-			sf.Do()															// Something changed
-			Sound("delete");												// Delete
-			sf.Draw();														// Redraw
-			});
+			if (curTemplate)												// Can't remove default
+				ConfirmBox("This will delete the template named <b>"+s+" </b>from the project.", function() {
+					sf.Do()													// Something changed
+					sf.templates.splice(curTemplate,1);						// Remove it
+					curTemplate=0;											// Set to default template
+					Sound("delete");										// Delete
+					sf.Draw();												// Redraw
+					});
 		});
 
 	$("#projectDiv").droppable({
