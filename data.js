@@ -18,12 +18,12 @@ data.prototype.Save=function()											// SAVE
 	var str="<br><br>"
 	str+="Type your email address and a password to protect it.<br>"
 	str+="<br/><blockquote><table cellspacing=0 cellpadding=0 style='font-size:11px'>";
-	str+="<tr><td><b>Email</b><span style='color:#990000'> *</span></td><td><input"+this.butsty+"type='text' id='email' size='20' value='"+this.email+"'/></td></tr>";
-	str+="<tr><td><b>Password</b><span style='color:#990000'> *</span>&nbsp;&nbsp;</b></td><td><input"+this.butsty+"type='password' id='password' size='20' value='"+this.password+"'/></td></tr>";
+	str+="<tr><td><b>Email</b></td><td><input class='sf-is' type='text' id='email' size='20' value='"+this.email+"'/></td></tr>";
+	str+="<tr><td><b>Password</b>&nbsp;&nbsp;</b></td><td><input class='sf-is' type='password' id='password' size='20' value='"+this.password+"'/></td></tr>";
 	str+="</table></blockquote><div style='font-size:12px;text-align:right'><br>";	
-	str+="<button"+this.butsty+"id='saveBut'>Save</button> &nbsp;";	
-	str+="<button"+this.butsty+"id='cancelBut'>Cancel</button></div>";	
-	ShowLightBox(500,"Save portfolio",str);
+	str+="<button class='sf-bs' style='height:30px' id='saveBut'>Save</button> &nbsp;";	
+	str+="<button class='sf-bs' style='height:30px' id='cancelBut'>Cancel</button></div>";	
+	ShowLightBox(350,"Save portfolio",str);
 	var _this=this;															// Save context
 	
 	$("#saveBut").button().click(function() {								// SAVE BUTTON
@@ -76,15 +76,15 @@ data.prototype.Save=function()											// SAVE
 
 data.prototype.Load=function()											// LOAD 
 {
-	var str="<br/>"
+	var str="<br><br>"
 	str+="Type your email address and password.<br>"
 	str+="<br/><blockquote><table cellspacing=0 cellpadding=0 style='font-size:11px'>";
-	str+="<tr><td><b>Email</b></td><td><input"+this.butsty+"type='text' id='email' size='20' value='"+this.email+"'/></td></tr>";
-	str+="<tr><td><b>Password&nbsp;&nbsp;</b></td><td><input"+this.butsty+"type='password' id='password' size='20' value='"+this.password+"'/></td></tr>";
+	str+="<tr><td><b>Email</b></td><td><input class='sf-is' type='text' id='email' size='20' value='"+this.email+"'/></td></tr>";
+	str+="<tr><td><b>Password&nbsp;&nbsp;</b></td><td><input class='sf-is'type='password' id='password' size='20' value='"+this.password+"'/></td></tr>";
 	str+="</table></blockquote><div style='font-size:12px;text-align:right'><br>";	
-	str+="<button"+this.butsty+"id='logBut'>Login</button> &nbsp;";	
-	str+="<button"+this.butsty+"id='cancelBut'>Cancel</button></div>";	
-	ShowLightBox(500,"Login",str);
+	str+="<button class='sf-bs' style='height:30px' id='logBut'>Login</button> &nbsp;";	
+	str+="<button class='sf-bs' style='height:30px' id='cancelBut'>Cancel</button></div>";	
+	ShowLightBox(350,"Login",str);
 	var _this=this;															// Save context
 	
 	$("#cancelBut").button().click(function() {								// CANCEL BUTTON
@@ -117,7 +117,7 @@ data.prototype.LightBoxAlert=function(msg) 								//	SHOW LIGHTBOX ALERT
 }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// JSONP CALLBACKS
+// JSON-P CALLBACKS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	function LoadShow(data)													// LOAD A SHOW

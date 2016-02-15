@@ -180,7 +180,6 @@ $(document).ready(function() {											// ON PAGE LOADED
 		window.addEventListener("message",html5MessageHandler,false);		// Add event handler
 	else																	// Use other method
 		window.attachEvent("message",html5MessageHandler);					// Add handler
-	
 
 	$("#splashDiv").animate({ opacity:0},1000, function(){					// Hide logo
 		$("#splashDiv").css("visibility","hidden");							
@@ -218,10 +217,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 		$("#editMenu").css("color","#009900");										
 		$("#editDiv").remove();
 		var str="<div class='sf-pullDown' style='left:"+l+"px;top:"+t+"px' id='editDiv'>";
-		if (!drupalMan)	{														// Not from drupal
-			str+="<div class='sf-pullDownItem' style='color:#000' onclick='dataObj.Save()'> Save </div>";
-			str+="<div class='sf-pullDownItem' style='color:#000' onclick='dataObj.Load()'> Load </div>";
-			}
+		str+="<div class='sf-pullDownItem' style='color:#000' onclick='dataObj.Save()'> Save </div>";
 		str+="<div class='sf-pullDownItem' onclick='dataObj.Save()'> Copy (TBD) </div>";
 		str+="<div class='sf-pullDownItem' onclick=''dataObj.Load()'> Paste (TBD) </div>";
 		str+="<div id='undoMenu' class='sf-pullDownItem' onclick='sf.UnDo()'> Undo</div>";
