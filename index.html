@@ -450,7 +450,7 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
 	var i,v=[];
-	var pTitle="",pDesc="",pCite="",pTags="",pCollab=[],pFormat="Booklet",pTemp="Full";
+	var pTitle="",pDesc="",pCite="",pTags="",pCollab=[],pFormat="Booklet",pTemp="";
 	var str="<div id='projectDiv' class='sf-projectPage'>";					// Project container
 	if (curProject < 0) 													// No project selected
 		return str+"</div>";												// Return empty page
@@ -459,7 +459,6 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	if (this.projects[curProject].cite)   	pCite=this.projects[curProject].cite;
 	if (this.projects[curProject].tags)   	pTags=this.projects[curProject].tags;
 	if (this.projects[curProject].format)   pFormat=this.projects[curProject].format;
-	if (this.projects[curProject].temp)  	pTemp=this.projects[curProject].temp;
 	if (this.projects[curProject].collab) 	pCollab=this.projects[curProject].collab.split(",");
 	str+="<table style='width:100%;font-weight:bold;text-align:left'>";
 	str+="<tr height='32'><td width='1%'>Title</td>";
@@ -479,7 +478,9 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<tr height='28'><td>Format style</td><td>";
 	str+=MakeSelect("pFormat",false,["Booklet","Single page","Canvas","Slide show","Up/Down"],pFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
-	for (i=0;i<templates.length;++i)	v.push(templates[i].name);	str+=MakeSelect("pTemp",false,v,pTemp);
+	trace(pTemp)
+	for (i=0;i<templates.length;++i)	v.push(templates[i].name);	
+	str+=MakeSelect("pTemp",false,v,v[curTemplate]);
 	str+="<img id='tempAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new termplate'>";
 	str+="<img id='tempTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a template'></td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
@@ -525,7 +526,6 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		sf.Do()																// Something changed
 		sf.projects[curProject].cite=Escape($("#pCite").val(),true);		// Set it	
 		});
-	
 	$("#pTags").on("change",function() { 									// If changed
 		sf.Do()																// Something changed
 		sf.projects[curProject].tags=Escape($("#pTags").val(),true);		// Set it	
@@ -542,7 +542,6 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		ConfirmBox("This will remove any changes you have made to the layout, and replace them with the defaults from the template named <b>"+$(this).val()+".</b>", function() {
 			sf.Do()															// Something changed
 			sf.userInfo.curTemplate=curTemplate=$("#pTemp").prop("selectedIndex");	 // Get index
-			trace(curTemplate,sf.templates[curTemplate])
 			layoutObj.Init(sf.projects[curProject],sf.templates[curTemplate]); 	// Init project's layout object
 			Sound("ding");													// Click
 			sf.Draw();														// Redraw
