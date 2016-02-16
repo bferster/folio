@@ -515,7 +515,7 @@ var templates=[
 		titleStyle:"sans-serif,18px,#cc6600,bold,center,100%"
 		},{
 		borderCol:"#999999", borderSty:"None", borderWid:"1",							
-		backCol:"#eeeeee", backImg:"", markUp:"",\,margin:8,
+		backCol:"#eeeeee", backImg:"", markUp:"",margin:8,
 		bodyStyle:"sans-serif,13px,#66666,normal,left,100%",		
 		titleStyle:"sans-serif,18px,#cc6600,bold,center,100%"
 		},{

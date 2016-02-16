@@ -86,6 +86,9 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 	$("#lbgimg").on("blur", function(e) {								// BACK IMG HANDLER
 			_this.plo.panes[_this.curPane].backImg=$(this).val();		// Set back img
 			}); 
+	$("#lmar").on("change", function(e) {								// MARGIN HANDLER
+			_this.plo.panes[_this.curPane].margin=$(this).val();		// Set margin
+			}); 
 	$("#tgut").on("change", function(e) {								// TOP GUTTER HANDLER
 			_this.plo.topGut=$(this).val();								// Set back img
 			}); 
@@ -235,6 +238,7 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	$("#lbfont").val(o.bodyStyle);										// Set body font style
 	$("#ltfont").val(o.titleStyle);										// Set title font style
 	$("#lbgimg").val(o.panes[this.curPane].backImg);					// Set back image
+	$("#lmar").val(o.panes[this.curPane].margin);						// Set margin
 	$("#lbs").val(o.panes[this.curPane].borderSty);						// Set border style
 	$("#lbw").val(o.panes[this.curPane].borderWid);						// Set border width
 	$("#lmark").html(o.panes[this.curPane].markUp);						// Set markup
@@ -258,8 +262,10 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 	str+=MakeSelect("lbs",false,["None","Solid","Dashed","Double","Groove","Ridge","Inset","Outset"])+"</td></tr>";
 	str+="<tr height='28'><td>Border width</td><td>";						// Border width
 	str+=MakeSelect("lbw",false,[1,2,3,4,5])+"</td></tr>";
-	str+="<tr height='28'><td>Border color &nbsp;</td>";					// Back col
+	str+="<tr height='28'><td>Border color &nbsp;</td>";					// Border col
 	str+="<td><input class='sf-is' id='lbcol' style='width:50px' type='text'></td></tr>";
+	str+="<tr height='28'><td>Margins</td>";								// Margin
+	str+="<td>"+MakeSelect("lmar",false,["0","2","4","8","16","32"])+"</td></tr>";
 	str+="<tr height='28'><td>Top / bot gutter</td>";						// Gutter
 	str+="<td>"+MakeSelect("tgut",false,["None","Thin","Medium","Wide"])+" &nbsp;:&nbsp; ";
 	str+=MakeSelect("bgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";
