@@ -146,6 +146,6 @@ player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
 	if (page.layout && (page.layout.rightGut != undefined))					// If a page override set
 		val=this.guts[page.layout.rightGut];								// Use it
 	if (val) $(this.divs[3]).css("margin-left",val);						// Apply value if set 
-
 }
+
 
