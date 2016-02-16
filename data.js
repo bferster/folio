@@ -8,13 +8,11 @@ function data()															// CONSTRUCTOR
 	this.version=5;															// Get version
 	this.email=GetCookie("email");											// Get email from cookie
 	this.password=GetCookie("password");									// Password
-	this.butsty=" style='border-radius:10px;color#666;padding-left:6px;padding-right:6px' ";	// Button styling
-	this.curFile="";
+	this.curShow="";														// Holds currently loaded project
 }	
 
 data.prototype.Save=function()											// SAVE
 {
-	curJson=sf;																// Copy json to global
 	var str="<br><br>"
 	str+="Type your email address and a password to protect it.<br>"
 	str+="<br/><blockquote><table cellspacing=0 cellpadding=0 style='font-size:11px'>";
@@ -39,17 +37,15 @@ data.prototype.Save=function()											// SAVE
 		else if (!_this.email) 												// Missing email
 			 return _this.LightBoxAlert("Need email");						// Quit with alert
 
-		SetCookie("password",_this.password,7);						// Save cookie
-		SetCookie("email",_this.email,7);								// Save cookie
+		SetCookie("password",_this.password,7);								// Save cookie
+		SetCookie("email",_this.email,7);									// Save cookie
 		$("#lightBoxDiv").remove();											// Close
 		var url=_this.host+"saveshow.php";									// Base file
-		dat["id"]=curShow;													// Add id
+		dat["id"]=_this.curShow;											// Add id
 		dat["email"]=_this.email;											// Add email
 		dat["password"]=_this.password;										// Add password
 		dat["ver"]=_this.version;											// Add version
-		dat["script"]="LoadShow("+JSON.stringify(curJson,null,'\t')+")";	// Add jsonp-wrapped script
-		if (curJson.title)													// If a title	
-			dat["title"]=AddEscapes(curJson.title);							// Add title
+		dat["script"]="LoadShow("+JSON.stringify(sf,null,'\t')+")";	// Add jsonp-wrapped script
 		$.ajax({ url:url,dataType:'text',type:"POST",crossDomain:true,data:dat,  // Post data
 			success:function(d) { 			
 				if (d == -1) 												// Error
@@ -61,7 +57,7 @@ data.prototype.Save=function()											// SAVE
 			 	else if (d == -4) 											// Error
 			 		AlertBox("Error","Sorry, there was an error updating . (4)");		
 			 	else if (!isNaN(d)){										// Success if a number
-			 		curShow=this.curFile=d;									// Set current file
+			 		dataObj.curShow=d-0;									// Set current file
 					Sound("add");											// Add sound
 					}
 				},
@@ -126,7 +122,6 @@ data.prototype.LightBoxAlert=function(msg) 								//	SHOW LIGHTBOX ALERT
 			AlertBox("Sorry, but there was an error loading this portfolio");	// Show
 			return;																// Quit
 			}
-		if (dataObj.curFile) 	curShow=dataObj.curFile;						// If a good file, set curshow
 		sf.Init(data,"set");													// Init folio
 	 	sf.Draw();																// Redraw
 	}
@@ -145,7 +140,7 @@ data.prototype.LightBoxAlert=function(msg) 								//	SHOW LIGHTBOX ALERT
 		url+="?id="+files[0].id;												// Add id
 		if (dataObj.password)													// If a password spec'd
 			url+="&password="+dataObj.password;									// Add to query line
-		dataObj.curFile=files[0].id;											// Set as current file
+		dataObj.curShow=files[0].id;											// Set as current file
 		$.ajax({ url:url, dataType:'jsonp'});									// Get data and pass to LoadProject() in Edit
 	}
 

@@ -76,7 +76,7 @@ item.prototype.MakePage=function()								// PREVIEW ITEM
 	str+="<tr><td height='28'>Title</td><td>";
 	str+="<input type='text' class='sf-is' id='imTitle'></td></tr>";
 	str+="<tr><td height='28'>Description</td><td>";
-	str+="<textarea class='sf-is' id='imDesc'></textarea></td></tr>";		
+	str+="<textarea class='sf-is' style='font-family:sans-serif' id='imDesc'></textarea></td></tr>";		
 	str+="<tr><td height='28'>Citation</td><td>";
 	str+="<input type='text' class='sf-is' id='imCite'></td></tr>";
 	str+="<tr><td height='28'>Source</td><td>";
@@ -164,12 +164,10 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 		sf.Do()															// Something changed
 		Sound("add");													// Add sound
 		var o={};														// Holds new item
-		o.type=$("#imType").val();										// Set type
-		o.title=$("#imTitle").val() ? $("#imTitle").val() : "New item" ;// Set title
+		o.type="Web";													// Set type to web
+		o.title="New item"; 											// Set title
 		o.id=MakeUniqueId();											// Create new id
-		o.desc=$("#imDesc").val();										// Set desc
-		o.cite=$("#imCite").val();										// Set cite
-		o.src=$("#imSrc").val();										// Set src
+		o.desc=o.src="";												// Clear src and desc
 		o.tags=$("#imTags").val();										// Set tags
 		o.thumb=$("#imThumb").val();									// Set thumb
 		sf.items.push(o)
