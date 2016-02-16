@@ -32,6 +32,8 @@
 		.sf-body {		width:100%;min-height:300px;color:#666;border:2px solid #ddd;	
 						background-color:#fff;opacity:inherit;box-sizing:border-box;
 						}
+		.sf-show {		width:100%;height:100vh;
+						}
 		.sf-menuItem {	margin-left:50px;cursor:pointer;color:#000;
 						}
 		.sf-breadItem {	text-align:left;float:right;margin-right:12px;margin-top:8px;
@@ -51,7 +53,7 @@
 		.sf-galleryBut  { cursor:pointer;margin-right:46px;
 						}
 		.sf-projectPage { display:inline-block;overflow-x:hidden;overflow-y:auto;
-						width:430px;color:#999;border-right:1px solid #ccc;
+						width:430px;color:#999;border-right:1px solid #ccc;height:calc(100vh - 82px);
 						padding-right:16px;margin:16px;vertical-align:top;
 						}
 		.sf-projectItems { width:440px;text-align:center;color:#aaa;margin-top:-16px;
@@ -154,7 +156,7 @@ var dataObj=null,shareObj=null,itemObj=null;
 var isMobile=false;															// Is it mobile?
 var itemType="All types",itemFilter="";										// Filtering
 var curMenu="project";														// Current menu item
-var drupalMan=false;														// Flag for drupal manager	
+var drupalMan=false;														// Flag for drupal manager
 
 		
 $(window).resize(function() {											// ON WINDOW RESIZE
@@ -173,6 +175,17 @@ $(document).ready(function() {											// ON PAGE LOADED
 	playerObj=new player();													// Load player object
   	sf=new folio();															// Load main object
 	SendMessage("ready");													// Send ready mnessage
+
+	if (drupalMan)	url="";													// If drupal, kill url
+	if (url) {																// If a url spec'd
+		if (url && !isNaN(url)) {											// If a number
+			url="//qmediaplayer.com/loadshow.php?id="+url;					// Get from db
+			}	
+		else if ((url) && (!url.match(/\./)))								// No file extension
+			url+=".json";													// Add txt
+		curMenu="show";														// Show mode
+		$.ajax({ url: url, dataType:'jsonp' });								// Get jsonp and call LoadShow() from it
+		}
 	
 	if (window.addEventListener) 											// If supported this way
 		window.addEventListener("message",html5MessageHandler,false);		// Add event handler
@@ -182,12 +195,19 @@ $(document).ready(function() {											// ON PAGE LOADED
 	$("#splashDiv").animate({ opacity:0},1000, function(){					// Hide logo
 		$("#splashDiv").css("visibility","hidden");							
 		});								
-	$("#mainDiv").animate({ opacity:1},2000, function() {					// Animate in content		
-		$("#mainDiv").css("opacity",1);
-		if (!drupalMan)														// Not from drupal
-			dataObj.Load();													// Log in
-		});				 
-	
+	if (curMenu == "show") { 												// Showing
+		$("body").css({ "margin":"0px","padding":"0px" });					// No margins or padding
+		curPage=0;
+		var str="<div id='showDiv' class='sf-show'></div>";					// Set container div
+		$("body").html(str);												// Add to body
+		}				 
+	else{																	// Editing
+		$("#mainDiv").animate({ opacity:1},2000, function() {				// Animate in content		
+			$("#mainDiv").css("opacity",1);									// Force full
+			if (!drupalMan)													// Not from drupal, or not just showing
+				dataObj.Load();												// Log in
+			});
+		}
 	$("#itemMenu").on("click",function() { 
 		curMenu="item";
 		Sound("click");												
@@ -297,11 +317,24 @@ folio.prototype.Draw=function()											// DRAW PAGE
 {
 	var h=window.innerHeight;												// Get height
 	var w=window.innerWidth;												// Get width
+	if (curMenu == "show")	{												// If showibg only
+		var o=this.projects[curProject].pages[curPage];						// Point at page
+		var r=.75;															// Portrait
+		var asp=sf.projects[curProject].layout.aspect;						// Start with default
+		if (o.layout && (o.layout.aspect != undefined))						// If a layout val set
+			asp=o.layout.aspect;											// Use page override
+		if (asp == "Square")			r=1;								// Square
+		else if (asp == "Landscape")	r=1.5;								// Landscape
+		$("#showDiv").width(r*h);											// Set width		
+		$("#showDiv").html(playerObj.Make(true));							// Create divs for player
+		playerObj.Update(this.projects[curProject].pages[curPage],this.projects[curProject].layout);	// Update player obj
+		return;
+		}
+	
 	$("#bodyDiv").height(h-54);												// Set body height
 	sf.DrawMenu();															// Set menu
 	sf.DrawBody();															// Draw body
 	sf.AddProjectItems();													// Add project items
-	$("#projectDiv").height(h-78);											// Set project height
 	$("#itemPickerDiv").height(h-90);										// Set picker height
 	$("#itemPickerDiv").width(w-$("#projectDiv").width()-$("#galleryDiv").width()-92);					// Set picker width 
 	$("#itemPickerDiv").css("left",$("#projectDiv").width()+$("#projectDiv").offset().left+16+"px");	// Set picker left 
@@ -718,7 +751,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
+folio.prototype.MakePagePage=function(showOnly)							// MAKE PAGE PAGE
 {
 	var str="<div id='projectDiv' class='sf-projectPage' style='width:";	// Set project div
 	if ((curProject < 0) || (curPage < 0)) {								// No project, page selected
@@ -734,7 +767,7 @@ folio.prototype.MakePagePage=function()									// MAKE PAGE PAGE
 	if (asp == "Square")			r=1;									// Square
 	else if (asp == "Landscape")	r=1.5;									// Landscape
 	str+=$("#bodyDiv").height()*r+"px'>";									// Set width
-	str+=playerObj.Make();													// Create divs for player
+	str+=playerObj.Make(showOnly);											// Create divs for player
 	return str+"</div>";													// Return page page
 }
 

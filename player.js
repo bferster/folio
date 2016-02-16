@@ -4,18 +4,19 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-function player(showOnly)													// CONSTRUCTOR
+function player()													// CONSTRUCTOR
 {
 	this.divs=["#playerPaneTop","#playerPaneLeft","#playerPaneMid","#playerPaneRight","#playerPaneBot"]; // Array of div names
 	this.paneNames=["Top","Left","Mid","Right","Bot"];						// Name of all the panes
 	this.guts=[];															// Gutter sizes
 	this.guts["None"]=0;  this.guts["Thin"]=2;  this.guts["Medium"]=8; this.guts["Wide"]=16;	
 	this.ckTop=this.ckMid=this.ckLeft=this.chRight=this.ckBot=null;			// Holds CKEditor instances
-	this.editable=!showOnly;												// Editable mode?
+	this.editable=false;
 }	
 
-player.prototype.Make=function()										// MAKE PLAYER
+player.prototype.Make=function(showOnly)								// MAKE PLAYER
 {
+	this.editable=!showOnly;												// Editable mode
 	var s=this.editable ? " contenteditable='true'" : "";					// Editable flag for CKEditor if editing
 	var str="<div id='playerDiv'  class='sf-player'>";						// Player container
 	str+="<div id='playerPaneTop'  class='sf-playerPane'"+s+" style='margin-bottom:-3px'></div>"; // Top			
@@ -33,9 +34,8 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	var parent=$("#playerDiv").parent();									// Point at panrent container
 	if (!page)																// If no page
 		return;																// Quit
-	var w=$("#playerDiv").width();											// Get width of container
-	var h=$("#playerDiv").height();											// Get height of container
-
+	var w=$(parent).width();												// Get width of parent
+	var h=$(parent).height()-2;												// Get height 
 	var v1=defLayout.topGut ? this.guts[defLayout.topGut] : 0;				// If def top gutter, use it
 	if (page.layout && (page.layout.topGut != undefined))					// If a page override set
 		v1=this.guts[page.layout.topGut];									// Use it
