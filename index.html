@@ -178,6 +178,11 @@ $(document).ready(function() {											// ON PAGE LOADED
 
 	if (drupalMan)	url="";													// If drupal, kill url
 	if (url) {																// If a url spec'd
+		curPage=0;															// Assume 1st page
+		if (url.split("|")[1]) {											// If a page set
+			curPage=url.split("|")[1]-1;									// Extract it
+			url=url.split("|")[0];											// Just use id
+			}
 		if (url && !isNaN(url)) {											// If a number
 			url="//qmediaplayer.com/loadshow.php?id="+url;					// Get from db
 			}	
@@ -192,16 +197,16 @@ $(document).ready(function() {											// ON PAGE LOADED
 	else																	// Use other method
 		window.attachEvent("message",html5MessageHandler);					// Add handler
 
-	$("#splashDiv").animate({ opacity:0},1000, function(){					// Hide logo
-		$("#splashDiv").css("visibility","hidden");							
-		});								
 	if (curMenu == "show") { 												// Showing
 		$("body").css({ "margin":"0px","padding":"0px" });					// No margins or padding
-		curPage=0;
 		var str="<div id='showDiv' class='sf-show'></div>";					// Set container div
 		$("body").html(str);												// Add to body
 		}				 
 	else{																	// Editing
+		$("#splashDiv").animate({ opacity:0},1000, function(){				// Hide logo
+			$("#splashDiv").css("visibility","hidden");							
+			});		
+									
 		$("#mainDiv").animate({ opacity:1},2000, function() {				// Animate in content		
 			$("#mainDiv").css("opacity",1);									// Force full
 			if (!drupalMan)													// Not from drupal, or not just showing
@@ -319,6 +324,8 @@ folio.prototype.Draw=function()											// DRAW PAGE
 	var w=window.innerWidth;												// Get width
 	if (curMenu == "show")	{												// If showibg only
 		var o=this.projects[curProject].pages[curPage];						// Point at page
+		if (!o)																// No page
+			return;															// Quit
 		var r=.75;															// Portrait
 		var asp=sf.projects[curProject].layout.aspect;						// Start with default
 		if (o.layout && (o.layout.aspect != undefined))						// If a layout val set
