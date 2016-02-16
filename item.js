@@ -7,7 +7,7 @@
 function item()													// CONSTRUCTOR
 {
 	this.lastClick=0;												// Helps mediate single/double clicking
-	this.mediaTypeNames=["Web","Image","Map","Media","WordPress","Mandala","SHIVA","Qmedia","VisualEyes"];
+	this.mediaTypeNames=["Web","Image","Map","Media","WordPress","PDF","Mandala","SHIVA","Qmedia","VisualEyes"];
 }	
 
 item.prototype.item=function()									// DRAW

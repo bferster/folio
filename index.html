@@ -198,6 +198,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 		window.attachEvent("message",html5MessageHandler);					// Add handler
 
 	if (curMenu == "show") { 												// Showing
+		$("#splashDiv").css("visibility","hidden");							// Hided splash				
 		$("body").css({ "margin":"0px","padding":"0px" });					// No margins or padding
 		var str="<div id='showDiv' class='sf-show'></div>";					// Set container div
 		$("body").html(str);												// Add to body
@@ -527,7 +528,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<tr height='28'><td>Format style</td><td>";
 	str+=MakeSelect("pFormat",false,["Booklet","Single page","Canvas","Slide show","Up/Down"],pFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
-	for (i=0;i<templates.length;++i)	v.push(templates[i].name);	
+	for (i=0;i<this.templates.length;++i)	v.push(this.templates[i].name);	
 	str+=MakeSelect("pTemp",false,v,v[curTemplate]);
 	str+="<img id='tempAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new termplate'>";
 	str+="<img id='tempTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a template'></td></tr>";
@@ -769,7 +770,7 @@ folio.prototype.MakePagePage=function(showOnly)							// MAKE PAGE PAGE
 
 	var r=.75;																// Portrait
 	var asp=this.projects[curProject].layout.aspect;						// Start with default
-	if (o.layout && (o.layout.aspect != undefined))							// If a layout val set
+	if (o && o.layout && (o.layout.aspect != undefined))					// If a layout val set
 		asp=o.layout.aspect;												// Use page override
 	if (asp == "Square")			r=1;									// Square
 	else if (asp == "Landscape")	r=1.5;									// Landscape
