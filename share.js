@@ -9,11 +9,7 @@ function share()													// CONSTRUCTOR
 
 share.prototype.Init=function()										// INIT
 {
-//	if (!this.project.share)											// If no share object yet
-//		this.project.share={};											// Create share object in project
 }
-
-
 
 share.prototype.Set=function(project)								// SHARE DIALOG
 {

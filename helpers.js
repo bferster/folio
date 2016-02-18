@@ -468,6 +468,7 @@ var projects=[
 	id:145545606991496544515,
 	tags:"Politics, MDST 3703",
 	collab:"Mike, James, Hanna, Michelle",
+	template:0,
 	items:[0,1],
 	pages:[{title:"Page one"}, {title:"Page two"}]
 	},
@@ -478,31 +479,24 @@ var projects=[
 	id:145545606991409404599,
 	tags:"Entertainment, MDST 3703",
 	collab:"Imani, Ashlyn, Liz",
+	template:0,
 	items:[0],
 	pages:[{title:"Page one"}]
 	}
 ];
 
-var userInfo={
-	firstName:"Teresa",
-	lastName:"Sullivan",
-	id:145545606991450544564,
-	lastProject:0,
-	curTemplate:0
-	}
-
-var templates=[
+var defTemplates=[
 	{
 	name:"Default",
-	id:185545606991490464522,
+	id:"0",
 	topGut:"None",												
 	leftGut:"None",
 	rightGut:"None",
 	botGut:"None",
-	topPct:20,													
-	leftPct:15,
-	rightPct:15,
-	botPct:10,
+	topPct:"20",													
+	leftPct:"15",
+	rightPct:"15",
+	botPct:"10",
 	aspect:"Portrait",									
 	itemWid:"100%",									
 	itemHgt:"30vh",										
@@ -536,15 +530,15 @@ var templates=[
 		}]
 	},{
 	name:"Full + side",
-	id:225545606991490464654,
+	id:"225545606991490464654",
 	topGut:"None",												
 	leftGut:"None",
 	rightGut:"None",
 	botGut:"None",
-	topPct:20,													
-	leftPct:30,
-	rightPct:0,
-	botPct:0,
+	topPct:"20",													
+	leftPct:"30",
+	rightPct:"0",
+	botPct:"0",
 	aspect:"Portrait",									
 	itemWid:"100%",									
 	itemHgt:"30vh",										
@@ -578,5 +572,3 @@ var templates=[
 		}]
 	}]
 	
-
-		

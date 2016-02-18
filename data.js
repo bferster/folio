@@ -45,9 +45,11 @@ data.prototype.Save=function()											// SAVE
 		dat["email"]=_this.email;											// Add email
 		dat["password"]=_this.password;										// Add password
 		dat["ver"]=_this.version;											// Add version
-		dat["script"]="LoadShow("+JSON.stringify(sf,null,'\t')+")";	// Add jsonp-wrapped script
+		dat["script"]="LoadShow("+JSON.stringify(sf,null,'\t')+")";			// Add jsonp-wrapped script
+		LoadingIcon(true,32);												// Show loading icon
 		$.ajax({ url:url,dataType:'text',type:"POST",crossDomain:true,data:dat,  // Post data
 			success:function(d) { 			
+				LoadingIcon(false);											// Clear loading icon
 				if (d == -1) 												// Error
 			 		AlertBox("Error","Sorry, there was an error saving.(1)");		
 				else if (d == -2) 											// Error
@@ -61,7 +63,7 @@ data.prototype.Save=function()											// SAVE
 					Sound("add");											// Add sound
 					}
 				},
-			error:function(xhr,status,error) { trace(error) },				// Show error
+			error:function(xhr,status,error) { trace(error); LoadingIcon(false);},		// Show error
 			});		
 		});
 
@@ -84,10 +86,12 @@ data.prototype.Load=function()											// LOAD
 	var _this=this;															// Save context
 	
 	$("#cancelBut").button().click(function() {								// CANCEL BUTTON
-		$("#lightBoxDiv").remove();											// Close
+			LoadingIcon(false);													// Clear loading icon
+			$("#lightBoxDiv").remove();											// Close
 		});
 
 	$("#logBut").button().click(function() {								// LOGIN BUTTON
+		LoadingIcon(true,32);												// Show loading icon
 		_this.ListFiles();													// Get list of files
 		});
 }
@@ -112,12 +116,26 @@ data.prototype.LightBoxAlert=function(msg) 								//	SHOW LIGHTBOX ALERT
 	$("#lightBoxTitle").html("<span style='color:#990000'>"+msg+"</span>");	// Put new
 }
 
+data.prototype.FindFromID=function(arr,id) 								//	GET INDEX FROM ID
+{
+	var i;
+	if (!arr)																// No object
+		return -1;															// Return nothing found
+	for (i=0;i<arr.length;++i)												// If each member
+		if (id == arr[i].id)												// A match
+			return i;														// Return index
+	return -1;																// Return nothing found
+}
+
+
+
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // JSON-P CALLBACKS
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	function LoadShow(data)													// LOAD A SHOW
 	{
+		LoadingIcon(false);														// Clear loading icon
 		if (data.qmfmsg == "error") {											// If an error
 			AlertBox("Sorry, but there was an error loading this portfolio");	// Show
 			return;																// Quit

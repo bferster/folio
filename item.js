@@ -90,7 +90,7 @@ item.prototype.MakePage=function()								// PREVIEW ITEM
 	str+="<p style='text-align:center'>Click item  from the right to edit an existing item, or click on the + button below to add a new item to your collection.</p>";
 	str+="<div style='text-align:center;'><img id='imAddBut' class='sf-itemBut' src='img/addbut.gif' title='Add new item'>";
 	str+="<img id='imDeleteBut' class='sf-itemBut' src='img/trashbut.gif'  title='Delete an item'>";
-	str+=MakeSelect("imImport",false,["Import items","Flickr","Delicious","Diigo","Mandala","Hard drive"])+"</div>";
+	str+=MakeSelect("imImport",false,["Import items","Flickr","Google Driv","Mandala","Hard drive"])+"</div>";
 	str+="</div><div id='itemPickerDiv' class='sf-itemsPicker'></div>";	// Item picker container
 	return str;															// Return page
 }

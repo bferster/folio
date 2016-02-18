@@ -150,7 +150,7 @@
 /////////////////////////////////////////////////////////////////////////////////////////////////
 
 var sf=null;																// Holds main folio object	
-var curProject=-1,curPage=-1,curItem=-1,curTemplate=0;						// Keeps tabs on current places	
+var curProject=-1,curPage=-1,curItem=-1;									// Keeps tabs on current places	
 var playerObj=null,layoutObj=null,collectObj=null;							// Objects							
 var dataObj=null,shareObj=null,itemObj=null;
 var isMobile=false;															// Is it mobile?
@@ -270,13 +270,11 @@ function folio()														// CONSTRUCTOR
 	sf=this;																// Point to folio
 	this.projects=[];														// Holds project
 	this.items=[];															// Holds items
-	this.userInfo={};														// Holds user information
-	this.templates=[];														// Holds templates
+	this.userInfo={ firstName:"Not", lastName:"logged in"};					// Holds user information
+	this.templates=defTemplates;											// Holds templates, fill with default
 
-this.projects=projects;													
+this.projects=projects;							////////////// REPLACE !!!!												
 this.items=items;
-this.userInfo=userInfo;
-this.templates=templates;
 	
 	this.Init("");															// Init folio
 	this.Draw();															// Draw 
@@ -286,6 +284,8 @@ folio.prototype.Init=function(data, mode)								// INIT
 {
 	var i,last=-1;
 	if (data && (mode == "set")) {											// Set mode						
+		this.projects=[];  	this.items=[];		this.userInfo={};			// Start fresh
+		this.templates=defTemplates;										// Load default templates
 		if (data.projects != undefined)	 this.projects=data.projects;		// Set projects
 		if (data.items != undefined)	 this.items=data.items;				// Set items
 		if (data.userInfo != undefined)	 this.userInfo=data.userInfo;		// Set info
@@ -297,12 +297,11 @@ folio.prototype.Init=function(data, mode)								// INIT
 		if (data.templates != undefined) this.templates=data.templates;						// Add templates
 		}
 	if (this.userInfo.curTemplate != undefined)								// If a template set
-		curTemplate=this.userInfo.curTemplate;								// Use it
+		this.userInfo.curTemplate=Math.min(this.userInfo.curTemplate,this.templates.length-1);	// Use it
+	
 	for (i=0;i<this.projects.length;++i) 									// For each project
 		this.InitProject(i);												// Init
 	
-	this.userInfo.firstName=this.userInfo.firstName ? this.userInfo.firstName : "Not";	// Ensure valid first name
-	this.userInfo.lastName=this.userInfo.lastName ? this.userInfo.lastName : "Set";		// Last 
 	if (this.userInfo.lastProject != undefined)								// A valid last project stored
 		last=this.userInfo.lastProject;										// Use it
 	curProject=Math.min(this.projects.length-1,last);						// Init on last project
@@ -311,8 +310,10 @@ folio.prototype.Init=function(data, mode)								// INIT
 
 folio.prototype.InitProject=function(num)								// INIT PROJECT
 {
-	layoutObj.Init(this.projects[num],this.templates[curTemplate]);			// Init project's layout object
+	var t=dataObj.FindFromID(this.templates,this.projects[num].template);	// Get template from project
+	layoutObj.Init(this.projects[num],this.templates[Math.max(t,0)]);		// Init project's layout object (use def template if bad)
 }
+
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DRAW
@@ -529,7 +530,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+=MakeSelect("pFormat",false,["Booklet","Single page","Canvas","Slide show","Up/Down"],pFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
 	for (i=0;i<this.templates.length;++i)	v.push(this.templates[i].name);	
-	str+=MakeSelect("pTemp",false,v,v[curTemplate]);
+	str+=MakeSelect("pTemp",false,v,v[this.userInfo.curTemplate]);
 	str+="<img id='tempAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new termplate'>";
 	str+="<img id='tempTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a template'></td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
@@ -590,8 +591,10 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 	$("#pTemp").on("change",function() { 									// If changed
 		ConfirmBox("This will remove any changes you have made to the layout, and replace them with the defaults from the template named <b>"+$(this).val()+".</b>", function() {
 			sf.Do()															// Something changed
-			sf.userInfo.curTemplate=curTemplate=$("#pTemp").prop("selectedIndex");	 // Get index
-			layoutObj.Init(sf.projects[curProject],sf.templates[curTemplate]); 	// Init project's layout object
+			sf.userInfo.curTemplate=$("#pTemp").prop("selectedIndex");		// Get index
+			var t=sf.projects[curProject].template=sf.templates[sf.userInfo.curTemplate].id;	// Get id of template and set in project	
+			t=Math.max(dataObj.FindFromID(sf.templates,t),0);				// Get index (use def template if bad)
+			layoutObj.Init(sf.projects[curProject],sf.templates[t]);		// Init project's layout object 
 			Sound("ding");													// Click
 			sf.Draw();														// Redraw
 			});
@@ -672,11 +675,20 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		});
 
 	$("#tempAddBut").on("click",function() { 								// ADD NEW TEMPLATE
-		GetTextBox("Type new template name", "Type a short name of the new template. This will create a new template, based on the current one.", "", function(s) {		// Ask for name
+		GetTextBox("Type new template name", "Type a short name of the new template. This will create a new template, based on the current one.<br><br>To simply update the current template, don't put in a new name and leave this box blank.", "", function(s) {		// Ask for name
 			sf.Do()															// Something changed
 			var o=(JSON.stringify(sf.projects[curProject].layout));			// Deep copy current layout as JSON
-			sf.templates.push($.parseJSON(o));								// Add copy as object					
-			sf.templates[sf.templates.length-1].name=s;						// Set new name
+			if (s) {														// A new template to be made
+				sf.templates.push($.parseJSON(o));							// Add copy as object					
+				sf.templates[sf.templates.length-1].name=s;					// Set new name
+				sf.templates[sf.templates.length-1].id=MakeUniqueId();		// Set new id
+				sf.userInfo.curTemplate=sf.templates.length-1;				// Set index
+				}			
+			else	
+				sf.templates[sf.userInfo.curTemplate]=($.parseJSON(o));		// Set copy as object					
+			var t=sf.projects[curProject].template=sf.templates[sf.userInfo.curTemplate].id;	// Get id of template and set in project	
+			t=Math.max(dataObj.FindFromID(sf.templates,t),0);				// Get index (use def template if bad)
+			layoutObj.Init(sf.projects[curProject],sf.templates[t]);		// Init project's layout object 
 			Sound("add");													// Add
 			sf.Draw();														// Redraw
 			});
@@ -704,11 +716,16 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 			var s=$("#pTemp").val();										// Get current val
 			if (!s)															// Nothing selected
 				return;														// Quit
-			if (curTemplate)												// Can't remove default
+			if (sf.userInfo.curTemplate)									// Can't remove default
 				ConfirmBox("This will delete the template named <b>"+s+" </b>from the project.", function() {
+					var i;
 					sf.Do()													// Something changed
-					sf.templates.splice(curTemplate,1);						// Remove it
-					curTemplate=0;											// Set to default template
+					var tid=sf.templates[sf.userInfo.curTemplate].id;		// Get leaving template's id
+					for (i=0;i<sf.projects.length;i++)						// For each project
+						if (sf.projects[i].template == tid)					// Uses this one
+							sf.projects[i].template=0;						// Use default	
+					sf.templates.splice(sf.userInfo.curTemplate,1);			// Remove it
+					sf.userInfo.curTemplate=0;								// Set to default template
 					Sound("delete");										// Delete
 					sf.Draw();												// Redraw
 					});
@@ -745,7 +762,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 
 	$("#setLayout").on("click",function() { 								// SET LAYOUT
 		sf.Do()																// Something changed
-		layoutObj.Set(sf.projects[curProject],sf.templates[curTemplate]);	// Set layout
+		layoutObj.Set(sf.projects[curProject],sf.templates[sf.userInfo.curTemplate]);	// Set layout
 		});
 
 	$("#shareProject").on("click",function() { 								// SHARE
@@ -833,7 +850,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 
 	$("#setLayout").on("click",function() { 								// SET PAGE LAYOUT
 		sf.Do()																// Something changed
-		layoutObj.Set(sf.projects[curProject].pages[curPage],sf.templates[curTemplate],sf.Draw);	// Set layout
+		layoutObj.Set(sf.projects[curProject].pages[curPage],sf.templates[sf.userInfo.curTemplate],sf.Draw);	// Set layout
   		});
 
 	$('[id^="playerPane"]').on("blur",function(e) { 						// EDIT PAGE PANE
