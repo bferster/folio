@@ -6,11 +6,8 @@
 <script>
    	
    	LoadGoogleDrive(true, function(url) {
-   		console.log(url)				// name, desc, url, type, id, [ embedUrl ]	
-   										// type = [ photo, files, doc, document ]
-    	
-    	
-    	});
+   		console.log(url)				
+      	});
    	
 	function LoadGoogleDrive(allFiles, callback)				// LOAD PICKER FOR GOOGLE DRIVE
 	{
@@ -53,6 +50,8 @@
 		function pickerCallback(data) {
 	        if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
          		var doc=data[google.picker.Response.DOCUMENTS][0];
+	      		// name, desc, url, type, id, [ embedUrl ]	
+   				// 		type = [ photo, files, doc, document ]
 	      		callback(doc)
 	       		}
 			}
