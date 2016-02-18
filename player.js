@@ -35,7 +35,7 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	if (!page)																// If no page
 		return;																// Quit
 	var w=$(parent).width();												// Get width of parent
-	var h=$(parent).height()-2;												// Get height 
+	var h=$(parent).height()-3;												// Get height 
 	var v1=defLayout.topGut ? this.guts[defLayout.topGut] : 0;				// If def top gutter, use it
 	if (page.layout && (page.layout.topGut != undefined))					// If a page override set
 		v1=this.guts[page.layout.topGut];									// Use it
