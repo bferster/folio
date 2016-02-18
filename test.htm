@@ -30,15 +30,7 @@ function LoadGoogleDrive()
     	   	}
 		});
 
-     
-      function handleAuthResult(authResult) {
-        if (authResult && !authResult.error) {
-          oauthToken = authResult.access_token;
-          createPicker();
-        }
-      }
-
-       function createPicker() {
+	function createPicker() {
         if (pickerApiLoaded && oauthToken) {
           var picker = new google.picker.PickerBuilder().
               addView(google.picker.ViewId.DOCS).
