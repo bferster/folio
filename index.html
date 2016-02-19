@@ -414,11 +414,11 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 		}
 	else if (curMenu == "splash") {											// If splash
 		str="<div style='width:100%;text-align:center'><br><br><br>";
-		str+="<div class='sf-doButs'><img src='img/addSplash.gif' onclick='curMenu=\"item\";sf.Draw()'>";
+		str+="<div class='sf-doButs'><img src='img/addSplash.gif' style='width:25vw' onclick='curMenu=\"item\";sf.Draw(); Sound(\"click\");'>";
 		str+="<p style='color:#990000'>Add</p></div>";
-		str+="<div class='sf-doButs'><img src='img/editSplash.gif' onclick='curMenu=\"project\";sf.Draw()'>";
+		str+="<div class='sf-doButs'><img src='img/editSplash.gif' style='width:25vw' onclick='curMenu=\"project\";sf.Draw(); Sound(\"click\");'>";
 		str+="<p style='color:#009900'>Make</p></div>";
-		str+="<div class='sf-doButs'><img src='img/shareSplash.gif' onclick='curMenu=\"project\";sf.Draw()'>";
+		str+="<div class='sf-doButs'><img src='img/shareSplash.gif' style='width:25vw' onclick='curMenu=\"project\";sf.Draw(); Sound(\"click\");'>";
 		str+="<p style='color:#000099'>Share</p></div></div>";
 		}
 	else if (curMenu == "item") 											// If item
