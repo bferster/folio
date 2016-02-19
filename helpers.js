@@ -490,8 +490,6 @@ var items=[ {
 	citation:"© 2015 Craig Benzin/PBS http://youtube.com/pbsdigitalstudios"
 	}];
 
-
-
 var projects=[ 
 	{
 	title:"Hip voting ",

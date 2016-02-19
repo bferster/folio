@@ -49,6 +49,7 @@ data.prototype.Save=function()											// SAVE
 		dat["title"]="Portfolio";											// Add title
 		dat["script"]="LoadShow("+JSON.stringify(sf,null,'\t')+")";			// Add jsonp-wrapped script
 		LoadingIcon(true,32);												// Show loading icon
+		trace(dat)
 		$.ajax({ url:url,dataType:'text',type:"POST",crossDomain:true,data:dat,  // Post data
 			success:function(d) { 			
 				LoadingIcon(false);											// Clear loading icon
@@ -74,6 +75,78 @@ data.prototype.Save=function()											// SAVE
 			});
 }
 
+data.prototype.Register=function()										// REGISTER
+{
+	$("#lightBoxDiv").remove();												// Close old one
+	var str="<br><br>"
+	str+="Type your email address and password.<br>"
+	str+="<br/><blockquote><table cellspacing=0 cellpadding=0 style='font-size:11px'>";
+	str+="<tr><td><b>First name&nbsp;&nbsp;</b></td><td><input class='sf-is' type='text' id='firstName' size='20'/></td></tr>";
+	str+="<tr><td><b>Last name&nbsp;&nbsp;</b></td><td><input class='sf-is' type='text' id='lastName' size='20'/></td></tr>";
+	str+="<tr><td><b>Email</b></td><td><input class='sf-is' type='text' id='email' size='20'/></td></tr>";
+	str+="<tr><td><b>Password&nbsp;&nbsp;</b></td><td><input class='sf-is'type='password' id='password' size='20''/></td></tr>";
+	str+="</table></blockquote><div style='font-size:12px;text-align:right'><br>";	
+	str+="<button class='sf-bs' style='height:30px' id='regBut'>Register</button> &nbsp;";	
+	str+="<button class='sf-bs' style='height:30px' id='cancelBut'>Cancel</button></div>";	
+	ShowLightBox(350,"Register",str);
+
+	$("#cancelBut").button().click(function() {								// CANCEL BUTTON
+		LoadingIcon(false);													// Clear loading icon
+		$("#lightBoxDiv").remove();											// Close
+	});
+
+	$("#regBut").button().click(function() {								// LOGIN BUTTON
+		dataObj.HandleRegister();											// Register
+		});
+}
+
+data.prototype.HandleRegister=function()								// REGISTER HANDLER
+{
+	var dat={},o={ userInfo:{} };
+	if (!$("#password").val() || !$("#email").val()) 						// Missing pw or email
+		 return this.LightBoxAlert("Need email and password");				// Quit with alert
+	if (!$("#firstName").val() || !$("#lastName").val()) 					// Missing names
+		 return this.LightBoxAlert("Need both names");						// Quit with alert
+	this.password=$("#password").val();										// Get current password
+	this.email=$("#email").val();											// Get current email
+	o.userInfo.firstName=$("#firstName").val();								// Get first name
+	o.userInfo.lastName=$("#lastName").val();								// Get last name
+	o.userInfo.id=MakeUniqueId();											// Get unique id
+	if (this.password)														// If a password
+		this.password=this.password.replace(/#/g,"@");						// #'s are a no-no, replace with @'s	
+	SetCookie("password",this.password,7);									// Save cookie
+	SetCookie("email",this.email,7);										// Save cookie
+	$("#lightBoxDiv").remove();												// Close
+	var url=this.host+"register.php";										// Base file
+	dat["id"]="";															// No shiow
+	dat["email"]=this.email;												// Add email
+	dat["password"]=this.password;											// Add password
+	dat["private"]=1;														// Make it private
+	dat["title"]="Portfolio";												// Add title
+	dat["script"]="LoadShow("+JSON.stringify(o,null,'\t')+")";				// Add jsonp-wrapped script
+	LoadingIcon(true,32);													// Show loading icon
+	$.ajax({ url:url,dataType:'text',type:"POST",crossDomain:true,data:dat,  // Post data
+		success:function(d) { 			
+			LoadingIcon(false);												// Clear loading icon
+			if (d == -1) 													// Error
+		 		AlertBox("Error","Sorry, there was an error saving.(1)");		
+			else if (d == -2) 												// Error
+		 		AlertBox("Error","Sorry, there was an error saving. (2)");		
+			else if (d == -3) 											// Error
+		 		AlertBox("Already registered","Sorry, but that email is already registered. Please try a new one.",dataObj.Register);	
+		 	else if (d == -4) 												// Error
+		 		AlertBox("Error","Sorry, there was an error updating . (4)");		
+		 	else if (!isNaN(d)){											// Success if a number
+		 		dataObj.curShow=d-0;										// Set current file
+				Sound("add");												// Add sound
+				dataObj.Load();												// Go onto load
+				}
+			},
+		error:function(xhr,status,error) { trace(error); LoadingIcon(false);},		// Show error
+		});		
+}
+
+
 data.prototype.Load=function()											// LOAD 
 {
 	var str="<br><br>"
@@ -82,11 +155,12 @@ data.prototype.Load=function()											// LOAD
 	str+="<tr><td><b>Email</b></td><td><input class='sf-is' type='text' id='email' size='20' value='"+this.email+"'/></td></tr>";
 	str+="<tr><td><b>Password&nbsp;&nbsp;</b></td><td><input class='sf-is'type='password' id='password' size='20' value='"+this.password+"'/></td></tr>";
 	str+="</table></blockquote><div style='font-size:12px;text-align:right'><br>";	
+	str+="<span id='registerBut' style='color:#000099;cursor:pointer;margin-right:130px;'><u>Register</u></span>"
 	str+="<button class='sf-bs' style='height:30px' id='logBut'>Login</button> &nbsp;";	
 	str+="<button class='sf-bs' style='height:30px' id='cancelBut'>Cancel</button></div>";	
 	ShowLightBox(350,"Login",str);
 	var _this=this;															// Save context
-	
+		
 	$("#cancelBut").button().click(function() {								// CANCEL BUTTON
 			LoadingIcon(false);												// Clear loading icon
 			$("#lightBoxDiv").remove();										// Close
@@ -96,6 +170,11 @@ data.prototype.Load=function()											// LOAD
 		LoadingIcon(true,32);												// Show loading icon
 		dataObj.ListFiles();												// Get list of files
 		});
+
+	$("#registerBut").click(function() {									// REGISTER 
+		dataObj.Register();													// Register
+		});
+
 }
 	
 data.prototype.ListFiles=function() 									//	LIST PROJECTS IN DB
@@ -155,6 +234,9 @@ data.prototype.FindFromID=function(arr, id) 							//	GET INDEX FROM ID
 
 	function qmfListFiles(files)											// CALLBACK TO List()
 	{
+		LoadingIcon(false);														// Clear loading icon
+		if (!files || (!files.length))											// No record found
+			 return dataObj.LightBoxAlert("User not found");					// Quit with alert
 		dataObj.password=$("#password").val();									// Get current password
 		dataObj.email=$("#email").val();										// Get current email
 		if (dataObj.password)													// If a password
