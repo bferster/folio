@@ -100,6 +100,9 @@
 						}
 		.sf-pullDown {	position:absolute;background-color:#ddd;width:100px; 
 						}
+		.sf-doButs {  	text-align:center;cursor:pointer;vertical-align:middle;
+						display:inline-block;text-align:center;padding:10px;font-size:14px;
+						}
 		.sf-itemBut  { 	cursor:pointer;margin-right:20px;vertical-align:-4px;
 						}
 		.sf-pullDownItem {	padding-bottom:6px;cursor:pointer;width:92px;padding:6px;
@@ -156,7 +159,7 @@ var playerObj=null,layoutObj=null,collectObj=null;							// Objects
 var dataObj=null,shareObj=null,itemObj=null;
 var isMobile=false;															// Is it mobile?
 var itemType="All types",itemFilter="";										// Filtering
-var curMenu="project";														// Current menu item
+var curMenu="splash";														// Current menu item
 var drupalMan=false;														// Flag for drupal manager
 
 		
@@ -325,7 +328,7 @@ folio.prototype.Draw=function()											// DRAW PAGE
 {
 	var h=window.innerHeight;												// Get height
 	var w=window.innerWidth;												// Get width
-	if (curMenu == "show")	{												// If showibg only
+	if (curMenu == "show")	{												// If showing only
 		var o=this.projects[curProject].pages[curPage];						// Point at page
 		if (!o)																// No page
 			return;															// Quit
@@ -340,10 +343,11 @@ folio.prototype.Draw=function()											// DRAW PAGE
 		playerObj.Update(this.projects[curProject].pages[curPage],this.projects[curProject].layout);	// Update player obj
 		return;
 		}
-	
 	$("#bodyDiv").height(h-54);												// Set body height
 	sf.DrawMenu();															// Set menu
 	sf.DrawBody();															// Draw body
+	if (curMenu == "splash")												// If splash
+		return;																// Quit
 	sf.AddProjectItems();													// Add project items
 	$("#itemPickerDiv").height(h-90);										// Set picker height
 	$("#itemPickerDiv").width(w-$("#projectDiv").width()-$("#galleryDiv").width()-92);					// Set picker width 
@@ -407,6 +411,15 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 		}
 	else if (curMenu == "edit") {											// If edit
 		str+="<div id='projectDiv' class='sf-projectPage' style='left:0px;width:50%;min-width:500px'>";	// Project container
+		}
+	else if (curMenu == "splash") {											// If splash
+		str="<div style='width:100%;text-align:center'><br><br><br>";
+		str+="<div class='sf-doButs'><img src='img/addSplash.gif' onclick='curMenu=\"item\";sf.Draw()'>";
+		str+="<p style='color:#990000'>Add</p></div>";
+		str+="<div class='sf-doButs'><img src='img/editSplash.gif' onclick='curMenu=\"project\";sf.Draw()'>";
+		str+="<p style='color:#009900'>Make</p></div>";
+		str+="<div class='sf-doButs'><img src='img/shareSplash.gif' onclick='curMenu=\"project\";sf.Draw()'>";
+		str+="<p style='color:#000099'>Share</p></div></div>";
 		}
 	else if (curMenu == "item") 											// If item
 		str+=itemObj.MakePage();											// Add item page
