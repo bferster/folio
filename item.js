@@ -90,7 +90,7 @@ item.prototype.MakePage=function()								// PREVIEW ITEM
 	str+="<p style='text-align:center'>Click item  from the right to edit an existing item, or click on the + button below to add a new item to your collection.</p>";
 	str+="<div style='text-align:center;'><img id='imAddBut' class='sf-itemBut' src='img/addbut.gif' title='Add new item'>";
 	str+="<img id='imDeleteBut' class='sf-itemBut' src='img/trashbut.gif'  title='Delete an item'>";
-	str+=MakeSelect("imImport",false,["Import items","Flickr","Google Driv","Mandala","Hard drive"])+"</div>";
+	str+=MakeSelect("imImport",false,["Import items","Flickr","Google drive","Mandala","Hard drive"])+"</div>";
 	str+="</div><div id='itemPickerDiv' class='sf-itemsPicker'></div>";	// Item picker container
 	return str;															// Return page
 }
@@ -189,7 +189,9 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 	$("#imImport").on("change",function() { 							// IMPORT
 		if ($(this).val() == "Flickr")									// If Flickr
 			_this.ImportFlickr();										// Run importer
-		$(this).prop("selectedIndex",0);								// Set select to top
+		else if ($(this).val() == "Google drive")						// If Google
+		  	_this.ImportGoogle(true);									
+  		$(this).prop("selectedIndex",0);								// Set select to top
 		_this.UpdatePage();												// Update page
 		});
 
@@ -217,6 +219,10 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 		});
 
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// FLICKR
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 item.prototype.ImportFlickr=function()								// FLICKR IMPORTER
 {
@@ -442,3 +448,81 @@ item.prototype.ImportFlickr=function()								// FLICKR IMPORTER
 	  	}
 	}																			// End closure function
 }
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// GOOGLE
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+item.prototype.ImportGoogle=function(allFiles, callback)						// FLICKR IMPORTER
+{
+	var _this=this;																	// Save context
+ 	
+	LoadGoogleDrive( true, function(s) {
+		var o={ type:"Web" };														// Holds new item
+	    if (s.embedUrl)																// If Google native
+	    	o.src=s.embedUrl;														// Use embed
+	    else																		// Non-google
+	    	o.src="//drive.google.com/uc?export=download&id="+s.id;					// Construct 'direct' link
+    	if (s.name)																	// If title
+	    	o.title=s.name;															// Use it
+	   	if (s.desc)																	// If desc
+	    	o.desc=s.desc;															// Use it
+		if (s.type == "photo") {													// If photo    
+			o.type="Image"															// Set type
+  			o.src+="#.jpg";															// Force as image
+  			}
+  		sf.items.push(o);															// Add item
+		curItem=sf.items.length-1;													// Point to this one
+		_this.UpdatePage();															// Update page
+		});
+	
+ 	function LoadGoogleDrive(allFiles, callback)								// LOAD PICKER FOR GOOGLE DRIVE
+	{
+	  	var pickerApiLoaded=false;
+		var oauthToken;
+		gapi.load('auth', { 'callback': function() {
+				window.gapi.auth.authorize( {
+	              	'client_id': "81792849751-1c76v0vunqu0ev9fgqsfgg9t2sehcvn2.apps.googleusercontent.com",
+	             	'scope': ['https://www.googleapis.com/auth/drive.readonly'],
+	              	'immediate': false }, function(authResult) {
+							if (authResult && !authResult.error) {
+	          					oauthToken=authResult.access_token;
+	          					createPicker();
+	          					}
+	          				});
+				}
+			});
+		
+		gapi.load('picker', {'callback': function() {
+				pickerApiLoaded=true;
+		        createPicker();
+	    	   	}
+			});
+	
+		function createPicker() {
+	        if (pickerApiLoaded && oauthToken) {
+	           	var view=new google.picker.DocsView().
+	           		setOwnedByMe(allFiles).
+					setIncludeFolders(true);
+	          	var picker=new google.picker.PickerBuilder().
+	          		addView(view).
+					setOAuthToken(oauthToken).
+					setDeveloperKey("AIzaSyAVjuoRt0060MnK_5_C-xenBkgUaxVBEug").
+					setCallback(pickerCallback).
+					build();
+				picker.setVisible(true);
+	       		}
+	    	}
+	
+		function pickerCallback(data) {
+	        if (data[google.picker.Response.ACTION] == google.picker.Action.PICKED) {
+         		var doc=data[google.picker.Response.DOCUMENTS][0];
+	      		// name, desc, url, type, id, [ embedUrl ]	
+   				// 		type = [ photo, files, doc, document ]
+	      		callback(doc)
+	       		}
+			}
+	   
+	}	// End closure
+ }
+ 
