@@ -735,7 +735,9 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		 drop: function(event, ui) {										// On drop
 			if (ui.draggable.prop("id").substr(0,5)== "item-") {			// From items corpus
 				sf.Do()													   	// Something changed
-		 		sf.projects[curProject].items.push(ui.draggable.prop("id").substr(5));	// Add to items
+		 		var id=ui.draggable.prop("id").substr(5);					// Point at item's index
+		 		id=items[id].id;											// Get item's uniques id
+		 		sf.projects[curProject].items.push(id);						// Add to items
 				Sound("add");											 	// Add
 				sf.AddProjectItems();								 	 	// Add project items
 				}
@@ -866,6 +868,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 			var p=sf.projects[curProject].pages[curPage];					// Point p at current page
 			var from=ui.draggable.prop('id').substr(6);						// Get id of dragged item
 			var to=$(event.target).prop('id').substr(10);					// Get id of receiver item
+			from=dataObj.FindFromID(sf.items,sf.items[from].id);			// Get item index from item id
 			var str=sf.GetItemMarkup(from,2);								// Add item to page
 			$(this).html(str+$(this).html());								// Add item
 			p["markUp"+to]=$(this).html();									// Copy hlml contents of pane into page
@@ -876,10 +879,10 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 folio.prototype.GetItemMarkup=function(num, paneNum)					// GET ITEM's MARKUP
 {
 	var str="";
-	if (curProject < 0)														// No project
+	if ((curProject < 0) || (num < 0))										// No project or item
 		return "";															// Return null
 	var p=this.projects[curProject];										// Point p at project
-	var o=this.items[p.items[num]];											// Point at item directy			
+	var o=items[num];														// Point at item directy
 	if (!o)																	// No item
 		return "";															// Return null
 	if (o.src) {															// If a source
@@ -921,7 +924,9 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 			if (p.layout && (p.layout.panes[j].markUp != undefined))		// If a layout markup set for top
 				po["markUp"+paneNames[j]]=p.layout.panes[j].markUp;			// Use it
 			}		
-		str+=this.GetItemMarkup(i,2)										// Add item markup								
+		
+		j=dataObj.FindFromID(sf.items,sf.items[i].id);						// Get item index from item id
+		str+=this.GetItemMarkup(j,2)										// Add item markup								
 		po.markUpMid+=str;													// Add to markUp
 		p.pages.push(po);													// Add page
 		}
@@ -971,7 +976,10 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 			str+="<div id='item-"+i+"' class='sf-item'>";					// Add item container for items
 			}
 		else{																// Show only project items
-			o=this.items[this.projects[curProject].items[i]];				// Point at item via project
+			o=dataObj.FindFromID(this.items,this.projects[curProject].items[i]);	// Get item index fron item id
+			if (o < 0)														// Invalid
+				continue;													// Skip it
+			o=this.items[o];												// Point at item directly
 			str+="<div id='pitem-"+i+"' class='sf-pitem'>";					// Add item container for pitems
 			}
 		if (o.title)														// If a title

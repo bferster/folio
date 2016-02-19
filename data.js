@@ -45,6 +45,8 @@ data.prototype.Save=function()											// SAVE
 		dat["email"]=_this.email;											// Add email
 		dat["password"]=_this.password;										// Add password
 		dat["ver"]=_this.version;											// Add version
+		dat["private"]=1;													// Make it private
+		dat["title"]="Portfolio";											// Add title
 		dat["script"]="LoadShow("+JSON.stringify(sf,null,'\t')+")";			// Add jsonp-wrapped script
 		LoadingIcon(true,32);												// Show loading icon
 		$.ajax({ url:url,dataType:'text',type:"POST",crossDomain:true,data:dat,  // Post data
@@ -86,13 +88,13 @@ data.prototype.Load=function()											// LOAD
 	var _this=this;															// Save context
 	
 	$("#cancelBut").button().click(function() {								// CANCEL BUTTON
-			LoadingIcon(false);													// Clear loading icon
-			$("#lightBoxDiv").remove();											// Close
+			LoadingIcon(false);												// Clear loading icon
+			$("#lightBoxDiv").remove();										// Close
 		});
 
 	$("#logBut").button().click(function() {								// LOGIN BUTTON
 		LoadingIcon(true,32);												// Show loading icon
-		_this.ListFiles();													// Get list of files
+		dataObj.ListFiles();												// Get list of files
 		});
 }
 	
@@ -116,12 +118,13 @@ data.prototype.LightBoxAlert=function(msg) 								//	SHOW LIGHTBOX ALERT
 	$("#lightBoxTitle").html("<span style='color:#990000'>"+msg+"</span>");	// Put new
 }
 
-data.prototype.FindFromID=function(arr,id) 								//	GET INDEX FROM ID
+data.prototype.FindFromID=function(arr, id) 							//	GET INDEX FROM ID
 {
 	var i;
 	if (!arr)																// No object
 		return -1;															// Return nothing found
-	for (i=0;i<arr.length;++i)												// If each member
+	var n=arr.length;														// Length of array
+	for (i=0;i<n;++i)														// If each member
 		if (id == arr[i].id)												// A match
 			return i;														// Return index
 	return -1;																// Return nothing found
@@ -138,6 +141,12 @@ data.prototype.FindFromID=function(arr,id) 								//	GET INDEX FROM ID
 		LoadingIcon(false);														// Clear loading icon
 		if (data.qmfmsg == "error") {											// If an error
 			AlertBox("Sorry, but there was an error loading this portfolio");	// Show
+			return;																// Quit
+			}
+		if (data.qmfmsg == "private") {											// If passwords don't match
+	 		var str="Sorry, the password does not match the one you supplied when setting up your account.<br><br>";
+	 		str+="Please try again or click <a href='//www.qmediaplayer.com/getshows.php?pass=5&email="+dataObj.email+"' target='blank'>here</a> to have it mailed to your email address."
+	 		AlertBox("Wrong password",str,dataObj.Load);						// Show and retry
 			return;																// Quit
 			}
 		sf.Init(data,"set");													// Init folio

@@ -146,7 +146,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 	$("#imSrc").on("blur",function() { 									// EDIT SOURCE
 		if (curItem != -1) {											// If an existing item	
 			sf.Do();													// something changed
-			sf.items[curItem].src=$(this).val();						// Set value
+			sf.items[curItem].src=ExtractFromEmbed($(this).val());		// Extract url from embed code and set value
 			sf.AddProjectItems(true);									// Redraw items
 			}								
 		_this.UpdatePage();												// Update page

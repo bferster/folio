@@ -303,7 +303,7 @@
 			index=Math.floor(Math.random()*n);									// Get index
 			id+=parts[index];													// Add to id 
 			}
-		return id;																// Return unique id														
+		return ""+id;															// Return unique id	as string													
 	}
 	
 	function trace(msg, p1, p2, p3, p4)										// CONSOLE 
@@ -343,7 +343,39 @@
 		return pic;																// Return icon url
 	}
 
-	function LoadingIcon(mode, size, container)							// SHOW/HIDE LOADING ICON		
+	function ExtractFromEmbed(embed)										// CONVERT EMBED CODE TO LINK
+	{
+		var v;
+		var str=embed;															// Start with embed code
+		if (!embed)																// Nothing there
+			return "";															// Return null
+		if (str.match(/youtube|vimeo\.com/i)) {									// YouTube and vimeo
+			v=str.match(/src="https:(.*?)"/i);									// Extract src
+			if (v && v[1]) 	str= v[1];											// Construct new url								
+			}
+		else if (str.match(/kaltura_player/i)) {								// Kaltura
+			var mid=0;															// Media id
+			var pid=2003471;													// Collab partner id
+			var flv=301971;														// Collab video flavor
+			if (str.match(/<object/i)) {										// Object-style embed code
+				mid=str.match(/kaltura_player_([^"]+)/i)[1];					// Get media id
+				str="//www.kaltura.com/p/"+pid+"/sp/0/playManifest/entryId/"+mid+"/format/url/flavorParamId/"+pid+"/video.mp4"
+				}
+			else if (str.match(/<iframe/i)) {									// Iframe-style embed code
+				pid=str.match(/partner_id\/(\d+)/i)[1];							// Get partner id
+				mid=str.match(/entry_id=([^&]+)/)[1];							// Get media id
+				flv="0_ithj599o";												// MP4 used by mediabase
+				str="//cfvod.kaltura.com/pd/p/"+pid+"/sp/"+pid+"00/serveFlavor/entryId/"+mid+"/v/2/flavorId/"+flv+"/name/a.mp4";
+				}
+			}
+		return str;																// Return url
+	}
+
+
+
+
+
+	function LoadingIcon(mode, size, container)								// SHOW/HIDE LOADING ICON		
 	{
 		container=container ? "#"+containern: "body";							// If no container spec'd, use body
 		if (!mode) {															// If hiding
@@ -372,7 +404,7 @@
 var items=[ {
 	type:"media",
 	src:"//www.kaltura.com/p/2003471/sp/0/playManifest/entryId/1_c7z7zuiv/format/url/flavorParamId/2003471/video.mp4",
-	id:145545606991354595506,
+	id:"145545606991354595506",
 	thumb:"https://cfvod.kaltura.com/p/343772/sp/34377200/thumbnail/entry_id/1_c7z7zuiv/version/100011/acv/121",
 	title:"HipVoter intro video",
 	desc:"A video to encourage millenial voting. To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election.<br><br>The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
@@ -387,7 +419,7 @@ var items=[ {
 	},{
 	type:"web",
 	src:"//www.barackobama.com",
-	id:145545606991354531536,
+	id:"145545606991354531536",
 	title:"Barack Obama website",
 	citation:"© 2016 Organizing for Action. All Rights Reserved.",
 	desc:"With more than 250 local chapters around the country, OFA volunteers are building this organization from the ground up, community by community, one conversation at a time—whether that\’s on a front porch or on Facebook.<br><br>We’re committed to finding and training the next generation of great progressive organizers, because at the end of the day, we aren\’t the first to fight for progressive change, and we won\’t be the last.",
@@ -395,65 +427,65 @@ var items=[ {
 	},{
 	type:"visualeyes",
 	src:"//viseyes.org/visualeyes?712",
-	id:145545606991365039904,
+	id:"145545606991365039904",
 	title:"A tale of two tours",
 	desc:"Welcome to our Tale of Two Tours where we will lead you through a digital experience of Paul McCartney\'s 1989 World Tour and his 2009 Summer Tour. Here you will find setlist information, tour member biographies, and individual concert facts. Hope you enjoy!",
 	citation:"© 2015 Imani Nichols, Ashlyn Royer and Liz Carter",
 	},{
 	type:"pdf",
 	src:"//anthropos-lab.net/wp/wp-content/uploads/2011/12/Weber-Politics-as-a-Vocation.pdf",
-	id:145545606991316194501,
+	id:"145545606991316194501",
 	title:"Politics as a Vocation by Max Weber",
 	citation:"Weber, M. (1965). Politics as a Vocation. Philadelphia, PA: Fortress Press.",
 	desc:"\"Politics as a Vocation\" is an essay by German economist and sociologist Max Weber. It originated in the second lecture of a series he gave in Munich to the \"Free Students Union\" of Bavaria on 28 January 1919.",
 	},{
 	type:"qmedia",
 	src:"//qmediaplayer.com?1",
-	id:145545606991396659954,
+	id:"145545606991396659954",
 	title:"Clinton's TED talk",
 	desc:"Accepting the 2007 TED Prize, Bill Clinton asks for help in bringing health care to Rwanda — and the rest of the world.<br<br>Through his William J. Clinton Foundation, former US President Bill Clinton has become a vital and innovative force for world change. He works in four critical areas: health, economic empowerment, citizen service, and reconciliation.",
 	citation:"© 2013 Bill Ferster",
 	},{
 	type:"map",
 	src:"https://www.google.com/maps/embed?pb=!1m14!1m12!1m3!1d11746813.386643479!2d-94.15516106249316!3d44.04465067207314!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!5e0!3m2!1sen!2sus!4v1453647957378",
-	id:145545606991414446411,
+	id:"145545606991414446411",
 	title:"Map of the US",
 	citation:"© 2016 Google INEGI",
 	},{
 	type:"media",
 	src:"//player.vimeo.com/video/80413179",
-	id:145545606991495441415,
+	id:"145545606991495441415",
 	title:"NBC Politics Nation promo",
 	citation:"© 2013 Arturo Echeverria / NBC",
 	},{
 	type:"image",
 	src:"//www.viseyes.org/shiva/qmedia/clinton01.jpg",
-	id:145545606991465441444,
+	id:"145545606991465441444",
 	title:"Bill Clinton at TED",
 	citation:"© 2007 TED conference",
 	desc:"Accepting the 2007 TED Prize, Bill Clinton asks for help in bringing health care to Rwanda — and the rest of the world.<br<br>Through his William J. Clinton Foundation, former US President Bill Clinton has become a vital and innovative force for world change. He works in four critical areas: health, economic empowerment, citizen service, and reconciliation.",
 	},{
 	type:"shiva",
 	src:"//www.viseyes.org/shiva/go.htm?e=1121",
-	id:145545606991494614459,
+	id:"145545606991494614459",
 	title:"Clinton network visualization",
 	citation:"© 2013 Bill Ferster",
 	},{
 	type:"mandala",
 	src:"//http://texts.drupal-dev.shanti.virginia.edu/book_pubreader/9623",
-	id:145545606991449464991,
+	id:"145545606991449464991",
 	title:"An introduction to Lhasa",
 	citation:"© 2009 David Germano",
 	},{
 	type:"wordpress",
 	src:"//wordpress.com/themes/",
-	id:145545606991490464565,
+	id:"145545606991490464565",
 	title:"Available themes",
 	citation:"© 2016 Matt Mullenweg / Automattic LLC"
 	},{
 	type:"media",
 	src:"//www.youtube.com/embed/lrk4oY7UxpQ",
-	id:145545606991494101669,
+	id:"145545606991494101669",
 	title:"Crash course in US politics video",
 	citation:"© 2015 Craig Benzin/PBS http://youtube.com/pbsdigitalstudios"
 	}];
@@ -465,22 +497,22 @@ var projects=[
 	title:"Hip voting ",
 	desc:"To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election. The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
 	cite:"(c) 2016 University of Virginia www.hipvoter.com",
-	id:145545606991496544515,
+	id:"145545606991496544515",
 	tags:"Politics, MDST 3703",
 	collab:"Mike, James, Hanna, Michelle",
 	template:0,
-	items:[0,1],
+	items:["145545606991354595506","145545606991354531536"],
 	pages:[{title:"Page one"}, {title:"Page two"}]
 	},
 	{
 	title:"A tale of two tours",
 	desc:"Welcome to our Tale of Two Tours where we will lead you through a digital experience of Paul McCartney's 1989 World Tour and his 2009 Summer Tour. Here you will find setlist information, tour member biographies, and individual concert facts.",
 	cite:"(c) 2016 University of Virginia",
-	id:145545606991409404599,
+	id:"145545606991409404599",
 	tags:"Entertainment, MDST 3703",
 	collab:"Imani, Ashlyn, Liz",
 	template:0,
-	items:[0],
+	items:["145545606991354595506"],
 	pages:[{title:"Page one"}]
 	}
 ];
@@ -554,7 +586,7 @@ var defTemplates=[
 		backCol:"#ffffff", backImg:"", markUp:"",margin:8,
 		bodyStyle:"sans-serif,13px,#66666,normal,left,100%",		
 		titleStyle:"sans-serif,16px,#000099,bold,center,100%"
-			},{
+		},{
 		borderCol:"#999999", borderSty:"None", borderWid:"1",							
 		backCol:"#ffffff", backImg:"", markUp:"",margin:8,
 		bodyStyle:"sans-serif,13px,#66666,normal,left,100%",		
