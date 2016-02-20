@@ -277,8 +277,8 @@ function folio()														// CONSTRUCTOR
 	this.userInfo={ firstName:"Not", lastName:"logged in"};					// Holds user information
 	this.templates=defTemplates;											// Holds templates, fill with default
 
-this.projects=projects;							////////////// REPLACE !!!!												
-this.items=items;
+this.projects=projects;	 projects=undefined;						////////////// REPLACE !!!!												
+this.items=items; items=undefined;
 	
 	this.Init("");															// Init folio
 	this.Draw();															// Draw 
@@ -750,7 +750,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 			if (ui.draggable.prop("id").substr(0,5)== "item-") {			// From items corpus
 				sf.Do()													   	// Something changed
 		 		var id=ui.draggable.prop("id").substr(5);					// Point at item's index
-		 		id=items[id].id;											// Get item's uniques id
+		 		id=sf.items[id].id;											// Get item's unique id
 		 		sf.projects[curProject].items.push(id);						// Add to items
 				Sound("add");											 	// Add
 				sf.AddProjectItems();								 	 	// Add project items
@@ -900,7 +900,7 @@ folio.prototype.GetItemMarkup=function(id, paneNum)					// GET ITEM's MARKUP
 	if (o < 0)																// Not found
 		return "";															// Return null
 	
-	o=items[o];																// Point at item directy
+	o=sf.items[o];															// Point at item directy
 	if (!o)																	// No item
 		return "";															// Return null
 	if (o.src) {															// If a source
