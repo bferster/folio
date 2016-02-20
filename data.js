@@ -19,12 +19,12 @@ data.prototype.Save=function()											// SAVE
 	str+="<tr><td><b>Email</b></td><td><input class='sf-is' type='text' id='email' size='20' value='"+this.email+"'/></td></tr>";
 	str+="<tr><td><b>Password</b>&nbsp;&nbsp;</b></td><td><input class='sf-is' type='password' id='password' size='20' value='"+this.password+"'/></td></tr>";
 	str+="</table></blockquote><div style='font-size:12px;text-align:right'><br>";	
-	str+="<button class='sf-bs' style='height:30px' id='saveBut'>Save</button> &nbsp;";	
-	str+="<button class='sf-bs' style='height:30px' id='cancelBut'>Cancel</button></div>";	
-	ShowLightBox(350,"Save portfolio",str);
+	str+="<button class='sf-bs' id='saveBut'>Save</button>&nbsp;&nbsp;&nbsp;";	
+	str+="<button class='sf-bs' id='cancelBut'>Cancel</button></div>";	
+	ShowLightBox(350,"Save portfolio",str,null,true);
 	var _this=this;															// Save context
 	
-	$("#saveBut").button().click(function() {								// SAVE BUTTON
+	$("#saveBut").click(function() {									// SAVE BUTTON
 		var dat={};
 		_this.password=$("#password").val();								// Get current password
 		if (_this.password)													// If a password
@@ -49,7 +49,6 @@ data.prototype.Save=function()											// SAVE
 		dat["title"]="Portfolio";											// Add title
 		dat["script"]="LoadShow("+JSON.stringify(sf,null,'\t')+")";			// Add jsonp-wrapped script
 		LoadingIcon(true,32);												// Show loading icon
-		trace(dat)
 		$.ajax({ url:url,dataType:'text',type:"POST",crossDomain:true,data:dat,  // Post data
 			success:function(d) { 			
 				LoadingIcon(false);											// Clear loading icon
@@ -70,7 +69,7 @@ data.prototype.Save=function()											// SAVE
 			});		
 		});
 
-	$("#cancelBut").button().click(function() {								// CANCEL BUTTON
+	$("#cancelBut").click(function() {								// CANCEL BUTTON
 		$("#lightBoxDiv").remove();											// Close
 			});
 }
@@ -86,16 +85,16 @@ data.prototype.Register=function()										// REGISTER
 	str+="<tr><td><b>Email</b></td><td><input class='sf-is' type='text' id='email' size='20'/></td></tr>";
 	str+="<tr><td><b>Password&nbsp;&nbsp;</b></td><td><input class='sf-is'type='password' id='password' size='20''/></td></tr>";
 	str+="</table></blockquote><div style='font-size:12px;text-align:right'><br>";	
-	str+="<button class='sf-bs' style='height:30px' id='regBut'>Register</button> &nbsp;";	
-	str+="<button class='sf-bs' style='height:30px' id='cancelBut'>Cancel</button></div>";	
-	ShowLightBox(350,"Register",str);
+	str+="<button class='sf-bs' id='regBut'>Register</button>&nbsp;&nbsp;&nbsp;";	
+	str+="<button class='sf-bs' id='cancelBut'>Cancel</button></div>";	
+	ShowLightBox(350,"Register",str,null,true);
 
-	$("#cancelBut").button().click(function() {								// CANCEL BUTTON
+	$("#cancelBut").click(function() {										// CANCEL BUTTON
 		LoadingIcon(false);													// Clear loading icon
 		$("#lightBoxDiv").remove();											// Close
 	});
 
-	$("#regBut").button().click(function() {								// LOGIN BUTTON
+	$("#regBut").click(function() {											// LOGIN BUTTON
 		dataObj.HandleRegister();											// Register
 		});
 }
@@ -155,18 +154,18 @@ data.prototype.Load=function()											// LOAD
 	str+="<tr><td><b>Email</b></td><td><input class='sf-is' type='text' id='email' size='20' value='"+this.email+"'/></td></tr>";
 	str+="<tr><td><b>Password&nbsp;&nbsp;</b></td><td><input class='sf-is'type='password' id='password' size='20' value='"+this.password+"'/></td></tr>";
 	str+="</table></blockquote><div style='font-size:12px;text-align:right'><br>";	
-	str+="<span id='registerBut' style='color:#000099;cursor:pointer;margin-right:130px;'><u>Register</u></span>"
-	str+="<button class='sf-bs' style='height:30px' id='logBut'>Login</button> &nbsp;";	
-	str+="<button class='sf-bs' style='height:30px' id='cancelBut'>Cancel</button></div>";	
-	ShowLightBox(350,"Login",str);
+	str+="<span id='registerBut' style='color:#000099;cursor:pointer;margin-right:150px;'>Register</span>"
+	str+="<button class='sf-bs' id='logBut'>Login</button>&nbsp;&nbsp;&nbsp;";	
+	str+="<button class='sf-bs' id='cancelBut'>Cancel</button></div>";	
+	ShowLightBox(350,"Login",str,null,true);
 	var _this=this;															// Save context
 		
-	$("#cancelBut").button().click(function() {								// CANCEL BUTTON
-			LoadingIcon(false);												// Clear loading icon
-			$("#lightBoxDiv").remove();										// Close
+	$("#cancelBut").click(function() {										// CANCEL BUTTON
+		LoadingIcon(false);													// Clear loading icon
+		$("#lightBoxDiv").remove();											// Close
 		});
 
-	$("#logBut").button().click(function() {								// LOGIN BUTTON
+	$("#logBut").click(function() {											// LOGIN BUTTON
 		LoadingIcon(true,32);												// Show loading icon
 		dataObj.ListFiles();												// Get list of files
 		});

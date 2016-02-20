@@ -23,7 +23,10 @@ item.prototype.Set=function(project)							// DIALOG
 item.prototype.Preview=function(id)								// PREVIEW ITEM
 {
 	var h=window.innerHeight-200-75;								// Get height
-	var o=sf.items[id];												// Point at item
+	var o=dataObj.FindFromID(sf.items,id);							// Get index from real id
+	if (o < 0)														// If invalid
+		return;														// Quit
+	o=sf.items[o];													// Point at item
 	var str="<div class='sf-previewTitle'>"+o.title+"</div><br>";	// Add title
 	if (o.src && o.src.match(/\.png|.gif|\.jpg|.jpeg/i)) 			// An image
 		str+="<div style='width:798px;max-height:"+h+"px;border:1px solid #999;overflow-y:auto'><img style='width:100%' src='"+o.src+"'></div>";
@@ -90,7 +93,7 @@ item.prototype.MakePage=function()								// PREVIEW ITEM
 	str+="<p style='text-align:center'>Click item  from the right to edit an existing item, or click on the + button below to add a new item to your collection.</p>";
 	str+="<div style='text-align:center;'><img id='imAddBut' class='sf-itemBut' src='img/addbut.gif' title='Add new item'>";
 	str+="<img id='imDeleteBut' class='sf-itemBut' src='img/trashbut.gif'  title='Delete an item'>";
-	str+=MakeSelect("imImport",false,["Import items","Flickr","Google drive","Mandala","Hard drive"])+"</div>";
+	str+=MakeSelect("imImport",false,["Import items","Flickr","Google drive","Mandala"])+"</div>";
 	str+="</div><div id='itemPickerDiv' class='sf-itemsPicker'></div>";	// Item picker container
 	return str;															// Return page
 }
@@ -210,12 +213,13 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 		_this.UpdatePage();												// Update page
 		Sound("click");													// Click
 		if (e.timeStamp-_this.lastClick < 400)							// A double click		
-			itemObj.Preview($(this).prop("id").substr(5));				// Preview		
-		_this.lastClick=e.timeStamp
+			itemObj.Preview(sf.items[curItem].id);						// Get real id and preview 
+		_this.lastClick=e.timeStamp;									// Then is now
 		});
 		
 	$('[id^="item-"]').on("doubletap",function() {						// ON DOUBLE TAP MOBILE
-		itemObj.Preview($(this).prop("id").substr(5));					// Preview		
+		var id=$(this).prop("id").substr(5);							// Get current item
+		itemObj.Preview(sf.items[id]);									// Get real id and preview 
 		});
 
 }
@@ -234,6 +238,7 @@ item.prototype.ImportFlickr=function()								// FLICKR IMPORTER
 		o.type="Image"													// Set type
 		o.src=s.split("|")[0];											// Set src
 		o.title=s.split("|")[1];										// Set title
+		o.id=MakeUniqueId();											// Create new id
 		sf.items.push(o);												// Add ite,
 		curItem=sf.items.length-1;										// Point to this one
 		_this.UpdatePage();												// Update page
@@ -426,7 +431,6 @@ item.prototype.ImportFlickr=function()								// FLICKR IMPORTER
 					o.source=$(this).attr("source");							// Get source
 					o.label=$(this).attr("label");								// Get label
 					o.title=$(this).attr("title");								// Get title
-					o.id=MakeUniqueId();										// Create new id
 					if (o.label == "Medium") 									// If medium pic
 						str="<img style='border:1px solid #666' src='"+o.source+"' height='294'>";	// Image
 					sizes.push(o);												// Add size to array
@@ -471,7 +475,8 @@ item.prototype.ImportGoogle=function(allFiles, callback)						// FLICKR IMPORTER
 			o.type="Image"															// Set type
   			o.src+="#.jpg";															// Force as image
   			}
-  		sf.items.push(o);															// Add item
+ 		o.id=MakeUniqueId();														// Create new id
+ 		sf.items.push(o);															// Add item
 		curItem=sf.items.length-1;													// Point to this one
 		_this.UpdatePage();															// Update page
 		});

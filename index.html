@@ -164,7 +164,7 @@ var drupalMan=false;														// Flag for drupal manager
 
 		
 $(window).resize(function() {											// ON WINDOW RESIZE
-	if (sf)																	// If loaded
+	if (sf && !isMobile)													// If loaded and not mobile
 		sf.Draw();															// Redraw to adjust responsivivly
 	});
 			
@@ -879,24 +879,28 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 		 accept: ".sf-pitem",												// Accept only project items
 		 drop: function(event, ui) {										// On drop
 			sf.Do()															// Something changed
-			var p=sf.projects[curProject].pages[curPage];					// Point p at current page
+			var p=sf.projects[curProject];									// Point p at current project
 			var from=ui.draggable.prop('id').substr(6);						// Get id of dragged item
 			var to=$(event.target).prop('id').substr(10);					// Get id of receiver item
-			from=dataObj.FindFromID(sf.items,sf.items[from].id);			// Get item index from item id
+			from=p.items[from];												// Get real item index from id
 			var str=sf.GetItemMarkup(from,2);								// Add item to page
 			$(this).html(str+$(this).html());								// Add item
-			p["markUp"+to]=$(this).html();									// Copy hlml contents of pane into page
+			p.pages[curPage]["markUp"+to]=$(this).html();					// Copy html contents of pane into page
 			}
 		 });
 }	
 
-folio.prototype.GetItemMarkup=function(num, paneNum)					// GET ITEM's MARKUP
+folio.prototype.GetItemMarkup=function(id, paneNum)					// GET ITEM's MARKUP
 {
 	var str="";
-	if ((curProject < 0) || (num < 0))										// No project or item
+	if (curProject < 0)														// No project 
 		return "";															// Return null
 	var p=this.projects[curProject];										// Point p at project
-	var o=items[num];														// Point at item directy
+	var o=dataObj.FindFromID(this.items,id);								// Get index from real id
+	if (o < 0)																// Not found
+		return "";															// Return null
+	
+	o=items[o];																// Point at item directy
 	if (!o)																	// No item
 		return "";															// Return null
 	if (o.src) {															// If a source
@@ -938,9 +942,7 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 			if (p.layout && (p.layout.panes[j].markUp != undefined))		// If a layout markup set for top
 				po["markUp"+paneNames[j]]=p.layout.panes[j].markUp;			// Use it
 			}		
-		
-		j=dataObj.FindFromID(sf.items,sf.items[i].id);						// Get item index from item id
-		str+=this.GetItemMarkup(j,2)										// Add item markup								
+		str+=this.GetItemMarkup(p.items[i],2)								// Add item markup								
 		po.markUpMid+=str;													// Add to markUp
 		p.pages.push(po);													// Add page
 		}
@@ -1043,22 +1045,28 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 
 			$("#pitem-"+i).on("dblclick",function() {						// ON DOUBLE CLICK
 				var id=$(this).prop("id").substr(6);						// Get id of project item
-					itemObj.Preview(sf.projects[curProject].items[id]);		// Preview		
+				id=sf.projects[curProject].items[id];						// Get real id
+				itemObj.Preview(id);										// Preview		
 				});
 
 			$("#pitem-"+i).on("doubletap",function() {						// ON DOUBLE CLICK MOBILE
 				var id=$(this).prop("id").substr(6);						// Get id of project item
-					itemObj.Preview(sf.projects[curProject].items[id]);		// Preview		
+				id=sf.projects[curProject].items[id];						// Get real id
+				itemObj.Preview(id);										// Preview		
 				});
 			}
 
 		if (showAll) {														// Showing all items
 			for (i=0;i<n;++i) {												// For each item
+	
 				$("#item-"+i).on("dblclick",function() {					// ON DOUBLE CLICK
-					itemObj.Preview($(this).prop("id").substr(5));			// Preview		
+					var id=$(this).prop("id").substr(5);					// Get id
+					itemObj.Preview(sf.items[id].id);						// Preview with real id	
 					});
+
 				$("#item-"+i).on("doubletap",function() {					// ON DOUBLE CLICK MOBILE
-					itemObj.Preview($(this).prop("id").substr(5));			// Preview		
+					var id=$(this).prop("id").substr(5);					// Get id
+					itemObj.Preview(sf.items[id].id);						// Preview with real id	
 					});
 				
 				$("#item-"+i).draggable({ 									// Make item draggable
