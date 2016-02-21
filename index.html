@@ -314,6 +314,8 @@ folio.prototype.Init=function(data, mode)								// INIT
 
 folio.prototype.InitProject=function(num)								// INIT PROJECT
 {
+	if (!this.projects[num].pages)											// If no pages yets
+		this.projects[num].pages=[];										// Allocate array
 	var t=dataObj.FindFromID(this.templates,this.projects[num].template);	// Get template from project
 	layoutObj.Init(this.projects[num],this.templates[Math.max(t,0)]);		// Init project's layout object (use def template if bad)
 }
@@ -328,6 +330,8 @@ folio.prototype.Draw=function()											// DRAW PAGE
 {
 	var h=window.innerHeight;												// Get height
 	var w=window.innerWidth;												// Get width
+	if ((curProject != -1) && this.projects[curProject])					// A valid project
+		curPage=Math.min(this.projects[curProject].pages.length-1,curPage);	// Cap at maxpages
 	if (curMenu == "show")	{												// If showing only
 		var o=this.projects[curProject].pages[curPage];						// Point at page
 		if (!o)																// No page
