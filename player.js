@@ -102,7 +102,7 @@ player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
 	var val,val2,val3;
 	for (i=0;i<this.divs.length;++i) {										// For each pane
 		val=defLayout.panes[i].backCol ? defLayout.panes[i].backCol : "";	// If def back col, use it
-		if (page.layout && (page.layout.panes[i].backCol != undefined))		// If a page override set
+		if (page.layout && page.layout.panes && (page.layout.panes[i].backCol != undefined))		// If a page override set
 			val=page.layout.panes[i].backCol;								// Use it
 		if (val) $(this.divs[i]).css("background-color",val);				// Apply value if set 
 

@@ -326,14 +326,14 @@ folio.prototype.InitProject=function(num)								// INIT PROJECT
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-folio.prototype.Draw=function()											// DRAW PAGE
+folio.prototype.Draw=function()											// DRAW PAGE (Use sf instead of this!)
 {
 	var h=window.innerHeight;												// Get height
 	var w=window.innerWidth;												// Get width
-	if ((curProject != -1) && this.projects[curProject])					// A valid project
-		curPage=Math.min(this.projects[curProject].pages.length-1,curPage);	// Cap at maxpages
+	if ((curProject != -1) && sf.projects[curProject])						// A valid project
+		curPage=Math.min(sf.projects[curProject].pages.length-1,curPage);	// Cap at maxpages
 	if (curMenu == "show")	{												// If showing only
-		var o=this.projects[curProject].pages[curPage];						// Point at page
+		var o=sf.projects[curProject].pages[curPage];						// Point at page
 		if (!o)																// No page
 			return;															// Quit
 		var r=.75;															// Portrait
@@ -344,7 +344,7 @@ folio.prototype.Draw=function()											// DRAW PAGE
 		else if (asp == "Landscape")	r=1.5;								// Landscape
 		$("#showDiv").width(r*h);											// Set width		
 		$("#showDiv").html(playerObj.Make(true));							// Create divs for player
-		playerObj.Update(this.projects[curProject].pages[curPage],this.projects[curProject].layout);	// Update player obj
+		playerObj.Update(sf.projects[curProject].pages[curPage],sf.projects[curProject].layout);	// Update player obj
 		return;
 		}
 	$("#bodyDiv").height(h-54);												// Set body height
@@ -476,7 +476,7 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 	str+="<img id='galleryCopyBut' class='sf-galleryBut'src='img/copybut.gif'  title='Copy a project'>";
 	str+="<img id='galleryTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='margin-right:0px' title='Remove a project'>";
 	if (curMenu == "page")	
-		str+="<div style='height:7px'></div><button class='sf-bs' id='setLayout'>Change page's layout</button>";	// Set layout button
+		str+="<div style='height:7px'></div>&nbsp;<button class='sf-bs' id='setLayout'>Change page's layout</button>";	// Set layout button
 	str+="</div></div>";
 	return str;																// Return gallery
 }
@@ -540,11 +540,11 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="type='text' value='"+pCite+"'></td></tr>";
 	str+="<tr height='28'><td>Tags</td>";
 	str+="<td><input class='sf-is' id='pTags' type='text' value='"+pTags+"'></td></tr>";
-	str+="<tr height='28'><td>Collaborators&nbsp;&nbsp;&nbsp;</td>";
+	str+="<tr height='28'><td>Collaborators</td>";
 	str+="<td>"+MakeSelect("pCollab",false,pCollab);
 	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new collaborator'>";
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
-	str+="<tr height='28'><td>Format style</td><td>";
+	str+="<tr height='28'><td>Presention&nbsp;format&nbsp;&nbsp</td><td>";
 	str+=MakeSelect("pFormat",false,["Booklet","Single page","Canvas","Slide show","Up/Down"],pFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
 	for (i=0;i<this.templates.length;++i)	v.push(this.templates[i].name);	
@@ -916,7 +916,7 @@ folio.prototype.GetItemMarkup=function(id, paneNum)					// GET ITEM's MARKUP
 		else if (o.src.match(/\.png|.gif|\.jpg|.jpeg/i)) 					// An image
 			str+="<img width='"+p.layout.itemWid+"' src='"+o.src+"'></div>";
 		else{
-			str+="<iframe id='if"+i+"-2-0' frameborder='0' "; 
+			str+="<iframe id='if"+i+"-2-0' frameborder='0' allowfullscreen "; 
 			str+=" style='border:"+p.layout.itemBorder;	// Start style
 			str+=";width:"+p.layout.itemWid+";height:"+p.layout.itemHgt+"' ";
 			str+="src='"+o.src+"'></iframe>";								// Src

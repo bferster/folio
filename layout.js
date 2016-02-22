@@ -50,7 +50,7 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 	if (this.ckMark)	this.ckMark.destroy();							// Kill old instance						
 	this.ckMark=CKEDITOR.inline($("#lmark")[0]);						// Enable rich text editor
 
-	$('[id^="sizer"]').on("click", function(e) {						// CLICK ON ANY DIV STARRING WITH 'SIZER'
+	$('[id^="sizer"]').on("click", function(e) {						// CLICK ON ANY DIV STARTING WITH 'SIZER'
 		$('[class^="sf-sizer"]').css("border", "1px none");				// Clear all
 		$(this).css("border", "1px solid #009900")						// Add border 
 		var s=e.target.id.substr(5).replace(/Div/,"");					// Extract pane name

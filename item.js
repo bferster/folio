@@ -31,7 +31,7 @@ item.prototype.Preview=function(id)								// PREVIEW ITEM
 	if (o.src && o.src.match(/\.png|.gif|\.jpg|.jpeg/i)) 			// An image
 		str+="<div style='width:798px;max-height:"+h+"px;border:1px solid #999;overflow-y:auto'><img style='width:100%' src='"+o.src+"'></div>";
 	else
-		str+="<iframe frameborder='0' height='"+h+"' width='100%' style='0,border:1px solid #666;width:100%' src='"+o.src+"'/>";
+		str+="<iframe frameborder='0' allowfullscreen height='"+h+"' width='100%' style='0,border:1px solid #666;width:100%' src='"+o.src+"'/>";
 	ShowLightBox(800,"Preview",str);								// Show lightbox
 }
 
@@ -90,10 +90,10 @@ item.prototype.MakePage=function()								// PREVIEW ITEM
 	str+="<input type='text' class='sf-is' id='imTags'></td></tr>";
 	str+="<tr><td>Icon</td><td><div class='sf-itemPic'><img width='100%' id='iPic'><div></td></tr>";				
 	str+="</table>";
-	str+="<p style='text-align:center'>Click item  from the right to edit an existing item, or click on the + button below to add a new item to your collection.</p>";
-	str+="<div style='text-align:center;'><img id='imAddBut' class='sf-itemBut' src='img/addbut.gif' title='Add new item'>";
-	str+="<img id='imDeleteBut' class='sf-itemBut' src='img/trashbut.gif'  title='Delete an item'>";
-	str+=MakeSelect("imImport",false,["Import items","Flickr","Google drive","Mandala"])+"</div>";
+	str+="<p style='text-align:center'>Click item  from the right to edit an existing item, or click on the 'Add new item' pulldown below to add a new item to your collection.</p>";
+	str+="<div style='text-align:center;'>";
+	str+=MakeSelect("imImport",false,["Add new item","Manually","Flickr","Google drive","Mandala"]);
+	str+="&nbsp;&nbsp;<img id='imDeleteBut' class='sf-itemBut' src='img/trashbut.gif'  title='Delete an item'></div>";
 	str+="</div><div id='itemPickerDiv' class='sf-itemsPicker'></div>";	// Item picker container
 	return str;															// Return page
 }
@@ -150,9 +150,10 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 		if (curItem != -1) {											// If an existing item	
 			sf.Do();													// something changed
 			sf.items[curItem].src=ExtractFromEmbed($(this).val());		// Extract url from embed code and set value
+			if (sf.items[curItem].src && sf.items[curItem].src.match(/youtube|video|kaltura|mp4/i))			// If media
+				sf.items[curItem].type="Media";							// Set type
 			sf.AddProjectItems(true);									// Redraw items
 			}								
-		_this.UpdatePage();												// Update page
 		});
 	$("#imTags").on("blur",function() { 								// EDIT TAGS
 		if (curItem != -1) {											// If an existing item	
@@ -162,22 +163,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			}								
 		_this.UpdatePage();												// Update page
 		});
-		
-	$("#imAddBut").on("click",function() { 								// ADD NEW ITEM
-		sf.Do()															// Something changed
-		Sound("add");													// Add sound
-		var o={};														// Holds new item
-		o.type="Web";													// Set type to web
-		o.title="New item"; 											// Set title
-		o.id=MakeUniqueId();											// Create new id
-		o.desc=o.src="";												// Clear src and desc
-		o.tags=$("#imTags").val();										// Set tags
-		o.thumb=$("#imThumb").val();									// Set thumb
-		sf.items.push(o)
-		curItem=sf.items.length-1;										// Point to this one
-		_this.UpdatePage();												// Update page
-		});
-	
+			
 	$("#imDeleteBut").on("click",function() { 							// ADD NEW ITEM
 		if (curItem != -1)
 			ConfirmBox("This will delete the item titled:<br><br><b><i>"+sf.items[curItem].title+"</b></i>", function() {
@@ -193,8 +179,22 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 		if ($(this).val() == "Flickr")									// If Flickr
 			_this.ImportFlickr();										// Run importer
 		else if ($(this).val() == "Google drive")						// If Google
-		  	_this.ImportGoogle(true);									
-  		$(this).prop("selectedIndex",0);								// Set select to top
+		  	_this.ImportGoogle(true);									// Run importer
+  		else if ($(this).val() == "Manually") {							// By hand	
+  			sf.Do()														// Something changed
+			Sound("add");												// Add sound
+			var o={};													// Holds new item
+			o.type="Web";												// Set type to web
+			o.title="New item"; 										// Set title
+			o.id=MakeUniqueId();										// Create new id
+			o.desc=o.src="";											// Clear src and desc
+			o.tags=$("#imTags").val();									// Set tags
+			o.thumb=$("#imThumb").val();								// Set thumb
+			sf.items.push(o);											// Add to items
+			curItem=sf.items.length-1;									// Point to this one
+			_this.UpdatePage();											// Update page
+			}
+   		$(this).prop("selectedIndex",0);								// Set select to top
 		_this.UpdatePage();												// Update page
 		});
 
