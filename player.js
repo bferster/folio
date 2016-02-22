@@ -10,7 +10,7 @@ function player()													// CONSTRUCTOR
 	this.paneNames=["Top","Left","Mid","Right","Bot"];						// Name of all the panes
 	this.guts=[];															// Gutter sizes
 	this.guts["None"]=0;  this.guts["Thin"]=2;  this.guts["Medium"]=8; this.guts["Wide"]=16;	
-	this.ckTop=this.ckMid=this.ckLeft=this.chRight=this.ckBot=null;			// Holds CKEditor instances
+	this.ckTop=this.ckMid=this.ckLeft=this.ckRight=this.ckBot=null;			// Holds CKEditor instances
 	this.editable=false;
 }	
 
@@ -94,7 +94,18 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 		if (this.editable) 													// If editable
 			this["ck"+this.paneNames[i]]=CKEDITOR.inline( $(this.divs[i])[0] );	// Enable rich text editor
 		}
-	this.StylePage(page,defLayout);											// Style page
+
+/*	if (this.editable) 														// If editable
+		CKEDITOR.on('instanceReady', function(ev) {							// When instance is ready
+	    	ev.editor.editable().attachListener(ev.editor.document, "click", function(e) {	// Attach new click handler
+	    		var id=$(e.data.getTarget()).attr("id");					// Get id
+				if (id && id.match(/sfItem-/)) {							// Click on item
+		    	trace(id)
+	    			ev.cancel();											// Stop multiple hits
+		    		}
+	    		})	
+			});
+*/
 }	
 
 player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE

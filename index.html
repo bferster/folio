@@ -910,13 +910,13 @@ folio.prototype.GetItemMarkup=function(id, paneNum)					// GET ITEM's MARKUP
 	if (o.src) {															// If a source
 		str+="<br><div style='text-align:"+p.layout.itemAlign+"'>";			// Div for iframe	
 		if (o.src.match(/.mp4/i)) {											// HTML5 video
-			str+="<video controls id='if"+i+"-2-0' width='"+p.layout.itemWid;	// Tag
+			str+="<video controls id='sfItem-"+i+"-2-0' width='"+p.layout.itemWid;	// Tag
 			str+="' src='"+o.src+"'/>";										// Src
 			}
 		else if (o.src.match(/\.png|.gif|\.jpg|.jpeg/i)) 					// An image
-			str+="<img width='"+p.layout.itemWid+"' src='"+o.src+"'></div>";
+			str+="<img id='sfItem-"+i+"-2-0' width='"+p.layout.itemWid+"' src='"+o.src+"'></div>";
 		else{
-			str+="<iframe id='if"+i+"-2-0' frameborder='0' allowfullscreen "; 
+			str+="<iframe id='sfItem-"+i+"-2-0' frameborder='0' allowfullscreen "; 
 			str+=" style='border:"+p.layout.itemBorder;	// Start style
 			str+=";width:"+p.layout.itemWid+";height:"+p.layout.itemHgt+"' ";
 			str+="src='"+o.src+"'></iframe>";								// Src
