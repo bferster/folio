@@ -110,6 +110,8 @@
 						}
 		.sf-pullDownItem:hover{ background-color:#bbb;color:#eee
 						}
+		.sf-citation	{ text-align:right;cursor:pointer;font-style:italic;
+						}
 		.sf-lightBox	{ position:absolute;padding:16px;border-radius:6px;z-index:2500;
 						background-color:#f8f8f8;font-size:12px;
 						}
@@ -188,7 +190,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 			url=url.split("|")[0];											// Just use id
 			}
 		if (url && !isNaN(url)) {											// If a number
-			url="//qmediaplayer.com/loadshow.php?id="+url;					// Get from db
+			url="//qmediaplayer.com/loadshow.php?password=*&id="+url;		// Get from db
 			}	
 		else if ((url) && (!url.match(/\./)))								// No file extension
 			url+=".json";													// Add txt
@@ -887,14 +889,14 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 			var from=ui.draggable.prop('id').substr(6);						// Get id of dragged item
 			var to=$(event.target).prop('id').substr(10);					// Get id of receiver item
 			from=p.items[from];												// Get real item index from id
-			var str=sf.GetItemMarkup(from,2);								// Add item to page
+			var str=sf.GetItemMarkup(from);									// Add item to page
 			$(this).html(str+$(this).html());								// Add item
 			p.pages[curPage]["markUp"+to]=$(this).html();					// Copy html contents of pane into page
 			}
 		 });
 }	
 
-folio.prototype.GetItemMarkup=function(id, paneNum)					// GET ITEM's MARKUP
+folio.prototype.GetItemMarkup=function(id)								// GET ITEM's MARKUP
 {
 	var str="";
 	if (curProject < 0)														// No project 
@@ -910,24 +912,29 @@ folio.prototype.GetItemMarkup=function(id, paneNum)					// GET ITEM's MARKUP
 	if (o.src) {															// If a source
 		str+="<br><div style='text-align:"+p.layout.itemAlign+"'>";			// Div for iframe	
 		if (o.src.match(/.mp4/i)) {											// HTML5 video
-			str+="<video controls id='sfItem-"+i+"-2-0' width='"+p.layout.itemWid;	// Tag
+			str+="<video controls id='sfItem-"+MakeUniqueId()+"' width='"+p.layout.itemWid;	// Tag
 			str+="' src='"+o.src+"'/>";										// Src
 			}
 		else if (o.src.match(/\.png|.gif|\.jpg|.jpeg/i)) 					// An image
-			str+="<img id='sfItem-"+i+"-2-0' width='"+p.layout.itemWid+"' src='"+o.src+"'></div>";
+			str+="<img id='sfItem-"+MakeUniqueId()+"' width='"+p.layout.itemWid+"' src='"+o.src+"'></div>";
 		else{
-			str+="<iframe id='sfItem-"+i+"-2-0' frameborder='0' allowfullscreen "; 
-			str+=" style='border:"+p.layout.itemBorder;	// Start style
+			str+="<iframe id='sfItem-"+MakeUniqueId()+"' frameborder='0' allowfullscreen "; 
+			str+=" style='border:"+p.layout.itemBorder;						// Start style
 			str+=";width:"+p.layout.itemWid+";height:"+p.layout.itemHgt+"' ";
 			str+="src='"+o.src+"'></iframe>";								// Src
 			}
 		str+="</div><br>";													// Close div											
 		}
 	if (o.title) 															// If a title
-		str+=StyleText(o.title,p.layout.panes[paneNum].titleStyle)+"<br>"; 	// Style text using middle pane setting
+		str+=StyleText(o.title,p.layout.panes[2].titleStyle)+"<br>"; 		// Style text using middle pane setting
 	if (o.desc) 															// If a desc
 		str+=o.desc;														// Add it
-	else																	// No desc
+	if (o.citation) {														// If a citation
+		id="sfCite"+MakeUniqueId();											// Make id
+		str+="<div class='sf-citation'><br><a onclick='$(\"#"+id+"\").fadeToggle()'>";
+		str+="Citation<br><span style='display:none' id='"+id+"'>"+o.citation+"</span></div>";
+		}
+	if (!o.desc)															// No desc
 		str+="<p></p>";														// Add para to make editing easier
 	return str;																// Return markup for item
 }

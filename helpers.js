@@ -409,7 +409,7 @@ var items=[ {
 	thumb:"https://cfvod.kaltura.com/p/343772/sp/34377200/thumbnail/entry_id/1_c7z7zuiv/version/100011/acv/121",
 	title:"HipVoter intro video",
 	desc:"A video to encourage millenial voting. To educate and empower Millennials on the American political system in preparation for the 2016 Presidential Election.<br><br>The goal is educate about the political structure of the US, the voting process, and prevalent issues in the US today in order to drive young individuals to vote.",
-	citation:"© 2015 University of Virginia. http://www.hipvoter.com",
+	citation:"© 2015 University of Virginia.<br>http://www.hipvoter.com",
 	startDate:"12/12/2015",
 	placeName:"Charlottesville, VA",
 	permissions:"r",
@@ -422,7 +422,7 @@ var items=[ {
 	src:"//www.barackobama.com",
 	id:"145545606991354531536",
 	title:"Barack Obama website",
-	citation:"© 2016 Organizing for Action. All Rights Reserved.",
+	citation:"© 2016 Organizing for Action.<br>All Rights Reserved.",
 	desc:"With more than 250 local chapters around the country, OFA volunteers are building this organization from the ground up, community by community, one conversation at a time—whether that\’s on a front porch or on Facebook.<br><br>We’re committed to finding and training the next generation of great progressive organizers, because at the end of the day, we aren\’t the first to fight for progressive change, and we won\’t be the last.",
 	thumb:"//www.logodesignlove.com/images/monograms/obama-08-logo-15.jpg"
 	},{

@@ -49,7 +49,7 @@ item.prototype.UpdatePage=function()							// UPDATE ITEM PAGE
 				}
 		$("#imTitle").val(o.title ? o.title: "") 					// Set title
 		$("#imDesc").val(o.desc   ? o.desc: "");					// Set desc
-		$("#imCite").val(o.cite   ? o.cite: "");					// Set cite
+		$("#imCite").val(o.citation   ? o.citation: "");			// Set citation
 		$("#imSrc").val(o.src     ? o.src: "");						// Set src
 		$("#imTags").val(o.tags   ? o.tags: "");					// Set tags
 		$("#imThumb").val(o.thumb ? o.thumb: "");					// Set thumb
@@ -133,7 +133,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 	$("#imCite").on("blur",function() { 								// EDIT CITE
 		if (curItem != -1) {											// If an existing item	
 			sf.Do();													// something changed
-			sf.items[curItem].cite=$(this).val();						// Set value
+			sf.items[curItem].citation=$(this).val();						// Set value
 			sf.AddProjectItems(true);									// Redraw items
 			}								
 		_this.UpdatePage();												// Update page

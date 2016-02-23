@@ -99,13 +99,15 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 		CKEDITOR.on('instanceReady', function(ev) {							// When instance is ready
 	    	ev.editor.editable().attachListener(ev.editor.document, "click", function(e) {	// Attach new click handler
 	    		var id=$(e.data.getTarget()).attr("id");					// Get id
-				if (id && id.match(/sfItem-/)) {							// Click on item
+				if (id && id.match(/sfItem/)) {							// Click on item
 		    	trace(id)
 	    			ev.cancel();											// Stop multiple hits
 		    		}
 	    		})	
 			});
 */
+	this.StylePage(page,defLayout);											// Style page
+
 }	
 
 player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
