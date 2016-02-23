@@ -112,6 +112,10 @@
 						}
 		.sf-citation	{ text-align:right;cursor:pointer;font-style:italic;
 						}
+		.sf-navigation  { position:absolute;padding:16px;font-style:italic;
+						}
+		.sf-navButs  	{ position:absolute;cursor:pointer;
+						}
 		.sf-lightBox	{ position:absolute;padding:16px;border-radius:6px;z-index:2500;
 						background-color:#f8f8f8;font-size:12px;
 						}
@@ -332,6 +336,7 @@ folio.prototype.Draw=function()											// DRAW PAGE (Use sf instead of this!)
 {
 	var h=window.innerHeight;												// Get height
 	var w=window.innerWidth;												// Get width
+	$("#sfNavigationBar").remove();											// Remove any previous nav
 	if ((curProject != -1) && sf.projects[curProject])						// A valid project
 		curPage=Math.min(sf.projects[curProject].pages.length-1,curPage);	// Cap at maxpages
 	if (curMenu == "show")	{												// If showing only
@@ -839,12 +844,34 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 		
 	playerObj.Update(this.projects[curProject].pages[curPage],this.projects[curProject].layout);	// Add player obj
 	
-	for (var i=0;i<sf.projects[curProject].pages.length;++i)				// For each page
+	for (var i=0;i<sf.projects[curProject].pages.length;++i) {				// For each page
+		
 		$("#galleryLab"+i).on("click", function(e) {						// ON PAGE CLICK
 			curPage=e.currentTarget.id.substr(10)-0;						// Extract id
 			Sound("click");													// Click
 			sf.Draw();														// Redraw
 			});
+
+		$("#galleryLab"+i).draggable( {	zIndex:100 });						// MAKE PAGE LABELS DRAGGABLE
+		 	
+		$("#galleryLab"+i).droppable({ 										// MAKE PAGES DROPPABLE
+			 accept: ".sf-galleryLab",										// Accept only pages
+			 drop: function(event, ui) {									// On drop
+				sf.Do()														// Something changed
+				var p=sf.projects[curProject].pages;						// Point p at current project pages
+				var from=ui.draggable.prop('id').substr(10);				// Get id of dragged page
+				var to=$(event.target).prop('id').substr(10);				// Get id of receiver page
+				var t=p[to];												// Save to item
+				p[to]=p[from];												// Copy from -> to
+				p[from]=t;													// Reset to
+				Sound("add");												// Add
+				sf.Draw();													// Redraw
+				}
+			 });
+
+
+
+	}
 
 	$("#galleryCopyBut").on("click",function() { 							// COPY A PAGE
 		if ((curPage < 0) || (curProject < 0))								// If not a valid project/page										
@@ -984,7 +1011,7 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 		}
 	else if (curMenu == "page") {											// Page page
 		div="itemPickerDiv";												// Point at item picker
-		str="<p style='text-align:center'>Portfolio items to use (drag to add to page)</p>";
+		str="<div style='text-align:center'>Portfolio items to use (drag to add to page)</div><br>";
 		}
 	for (i=0;i<n;++i) {														// For each item
 		pic=lab="";															// Clear

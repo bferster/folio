@@ -107,7 +107,8 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 			});
 */
 	this.StylePage(page,defLayout);											// Style page
-
+	if (!this.editable) 													// If not editable
+		this.AddNavigation();												// Add navigation
 }	
 
 player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
@@ -159,12 +160,31 @@ player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
 	if (page.layout && (page.layout.rightGut != undefined))					// If a page override set
 		val=this.guts[page.layout.rightGut];								// Use it
 	if (val) $(this.divs[3]).css("margin-left",val);						// Apply value if set 
-
-	$('[id^="sfItemCite"]').on("click",function(e) { 						// CLICJK ON CITATION
-		trace(e.currentTarget.id);						// Extract id
-
-	   	});
-
 }
 
-
+player.prototype.AddNavigation=function(page, defLayout)				// ADD NAVIGATION
+{
+	var maxPages=sf.projects[curProject].pages.length-1;					// Max page
+	$("#sfNavigationBar").remove();											// Remove any previous nav
+	var str="<div class='sf-navigation' id='sfNavigationBar'>";				// Enclosing div
+	str+="<img class='sf-navButs' id='sfPrevPage' src='img/revbut.gif' title='Previous page'>'";
+	str+="<span class='sf-navButs' id='sfPageCtr'>"+(curPage+1)+" of "+(maxPages+1)+" </span>";
+	str+="<img class='sf-navButs' id='sfNextPage' src='img/playbut.gif' title='Next page'></div>"
+	$("body").append(str);
+	$("#sfNavigationBar").css("top",$("#playerDiv").height()-45+"px")
+	$("#sfNavigationBar").width($("#playerDiv").width())
+	$("#sfNextPage").css("left",$("#playerDiv").width()-30+"px")
+	$("#sfPageCtr").css("left",$("#playerDiv").width()/2-15+"px")
+	
+	$("#sfNextPage").on("click",function() {								// NEXT PAGE
+		curPage=Math.min(curPage+1,maxPages);								// Advance and cap at max
+		Sound("click");														// Click
+		sf.Draw();															// Redraw
+		});
+	$("#sfPrevPage").on("click",function() {								// BACK A PAGE
+		curPage=Math.max(curPage-1,0);										// Go back and cap at 0
+		Sound("click");														// Click
+		sf.Draw();															// Redraw
+		});
+	
+}
