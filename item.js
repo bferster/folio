@@ -488,7 +488,7 @@ item.prototype.ImportGoogle=function(allFiles, callback)						// FLICKR IMPORTER
 		gapi.load('auth', { 'callback': function() {
 				window.gapi.auth.authorize( {
 	              	'client_id': "81792849751-1c76v0vunqu0ev9fgqsfgg9t2sehcvn2.apps.googleusercontent.com",
-	             	'scope': ['https://www.googleapis.com/auth/drive.readonly'],
+	             	'scope': ['https://www.googleapis.com/auth/drive'],
 	              	'immediate': false }, function(authResult) {
 							if (authResult && !authResult.error) {
 	          					oauthToken=authResult.access_token;
@@ -506,11 +506,13 @@ item.prototype.ImportGoogle=function(allFiles, callback)						// FLICKR IMPORTER
 	
 		function createPicker() {
 	        if (pickerApiLoaded && oauthToken) {
+	           	var upview=new google.picker.DocsUploadView();
 	           	var view=new google.picker.DocsView().
 	           		setOwnedByMe(allFiles).
 					setIncludeFolders(true);
 	          	var picker=new google.picker.PickerBuilder().
 	          		addView(view).
+	          		addView(upview).
 					setOAuthToken(oauthToken).
 					setDeveloperKey("AIzaSyAVjuoRt0060MnK_5_C-xenBkgUaxVBEug").
 					setCallback(pickerCallback).
@@ -531,3 +533,4 @@ item.prototype.ImportGoogle=function(allFiles, callback)						// FLICKR IMPORTER
 	}	// End closure
  }
  
+
