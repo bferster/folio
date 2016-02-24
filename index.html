@@ -3,7 +3,7 @@
 <head>
 	<meta charset="UTF-8" />
 	<link REL="SHORTCUT ICON" HREF="shanti.ico">
-	<title>SHANTI folio</title>
+	<title>SHANTI Folio</title>
 	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
 	<link rel="stylesheet" href="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/themes/smoothness/jquery-ui.css" />
 	<script src="//ajax.googleapis.com/ajax/libs/jqueryui/1.10.4/jquery-ui.min.js"></script>
@@ -47,11 +47,13 @@
 						border:1px solid #bbb;
 						}
 		.sf-galleryLab  { padding:8px;border-bottom:1px solid #999;text-align:center;
-						height:40px;background-color:#f8f8f8;
+						min-height:40px;background-color:#f8f8f8;
 						}
 		.sf-galleryTool { text-align:left;padding-top:10px;
 						}
 		.sf-galleryBut  { cursor:pointer;margin-right:46px;
+						}
+		.sf-galleryPage { cursor:pointer;
 						}
 		.sf-projectPage { display:inline-block;overflow-x:hidden;overflow-y:auto;
 						width:430px;color:#999;border-right:1px solid #ccc;height:calc(100vh - 82px);
@@ -146,7 +148,6 @@
 				<span id="editMenu" class="sf-menuItem" style="margin-left:100px">Edit</span>
 				<span id="itemMenu" class="sf-menuItem"> Items</span>
 				<span id="projectMenu" class="sf-menuItem"> Portfolios</span>
-				<span id="pageMenu" class="sf-menuItem">Pages</span>
 				<span id="shareMenu" class="sf-menuItem">Share</span>
 				<span id="helpMenu" class="sf-menuItem">Help</span>
 				<div id="breadMenu" class="sf-breadItem"><b>Portfolio:</b></div>
@@ -232,11 +233,6 @@ $(document).ready(function() {											// ON PAGE LOADED
 		});
 	$("#projectMenu").on("click",function() { 
 		curMenu="project";
-		Sound("click");												
-		sf.Draw();
-		});
-	$("#pageMenu").on("click",function() { 
-		curMenu="page";
 		Sound("click");												
 		sf.Draw();
 		});
@@ -381,22 +377,13 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 	$('[id$="Menu"]').css("color","#000");									// Reset
 	$("#editDiv").remove();													// Kill edit menu if left open
 	var str="<b>"+this.userInfo.firstName+" "+this.userInfo.lastName+"</b>";// Add name
-	if (curMenu == "project")	{											// If project
-		$("#projectMenu").css("color","#00aa00");							// Highlight it
-		if ((curProject != -1) && this.projects[curProject].title) {		// A valid project
-			str+=" &nbsp;|&nbsp; ";											// Add to breadcrumb
-			str+=ShortenString(this.projects[curProject].title,20);			// Add title
-			}
+	$("#pageMenu").css("color","#00aa00");									// Highlight it
+	if ((curProject != -1) && this.projects[curProject].title)	{			// A valid project
+		str+=" &nbsp;|&nbsp; ";												// Add to breadcrumb
+		str+=ShortenString(this.projects[curProject].title,20);				// Add title
 		}
-	else if (curMenu == "page") {											// If page
-		$("#pageMenu").css("color","#00aa00");								// Highlight it
-		if ((curProject != -1) && this.projects[curProject].title)	{		// A valid project
-			str+=" &nbsp;|&nbsp; ";											// Add to breadcrumb
-			str+=ShortenString(this.projects[curProject].title,20);			// Add title
-			}
-		str+=" &nbsp;|&nbsp; "+(curPage-0+1);								// Add to breadcrumb
-		}
-	else if (curMenu == "item") 											// If item
+	str+=" &nbsp;|&nbsp; "+(curPage-0+1);									// Add to breadcrumb
+	if (curMenu == "item") 													// If item
 		$("#itemMenu").css("color","#00aa00");								// Highlight it
 	else if (curMenu == "help") 											// If help
 		$("#helpMenu").css("color","#00aa00");								// Highlight it
@@ -444,7 +431,7 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 	
 folio.prototype.MakeGallery=function()									// MAKE GALLERY 
 {
-	var i,o,n=0;labs=[];
+	var i,j,o,n=0;labs=[];
 	var h=$("#bodyDiv").height()-60;										// Get height											
 	if (curMenu == "page")													// If page
 		h-=29; 																// Accomodate lay0ut button
@@ -455,32 +442,27 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 	var str="<div id='galleryDiv' class='sf-gallery'><p><b>"+title+"</b></p>";	// Make gallery div
 	str+="<div class='sf-galleryContent' style='height:"+(h-20)+"px'>";		// Scrollable container
 
-	if (curMenu == "project") {												// Project gallery
-		if (!this.projects.length)											// No projects yet
-			str+="<br>Add a new portfolio by clicking on the + icon below";	// Say so
-		for (i=0;i<this.projects.length;++i) {								// For each project
-			labs[i]=this.projects[i].title;									// Set label
-			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
-			if (i == curProject)											// If the current project
-				str+=" style='color:#009900'"								// Color it
+	if (!this.projects.length)												// No projects yet
+		str+="<br>Add a new portfolio by clicking on the + icon below";		// Say so
+	for (i=0;i<this.projects.length;++i) {									// For each project
+		labs[i]=this.projects[i].title;										// Set label
+		str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
+		if (i == curProject) {												// If the current project
+			str+=" style='color:#009900'>"+labs[i]+"</span><br><br>"		// Color it
+			o=this.projects[curProject].pages;								// Point at pages
+			for (j=0;j<o.length;++j) {										// For each page
+				str+="<div class='sf-galleryPage' id='galleryPage"+j+"' ";	// Page start
+				str+="onMouseOver='this.style.color=\"#009900\"' ";			// Mouse over
+				str+="onMouseOut='this.style.color=\"#999\"'>";				// Mouse out
+				if (curPage == j)	
+					str+="<span style='color:#009900;font-weight:bold'> Page "+(j+1)+" </span></div>";	// Show page
+				else
+					str+="Page "+(j+1)+"</div>";							// Show page
+				}
+			str+="</div>";													// Close portfolio div
+			}
+		else																// Non-curret project
 			str+=">"+labs[i]+"</span></div>";								// Close
-			}
-		}
-	else if (curMenu == "page") {											// Page gallery
-		if (curProject == -1) {												// No project selected yet
-			str+="<br><br>Sorry, there is no portfolio selected yet.";		// Warn
-			str+="<br><br>Go back to portfolios<br>and add one.";						
-			return str+"</div>";											// Quit
-			}
-		o=this.projects[curProject].pages;									// Point at pages
-		if (o)
-			n=o.length;
-		for (i=0;i<n;++i) {													// For each page
-			str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
-			if (i == curPage)												// If the current project
-				str+=" style='color:#009900'"								// Color it
-			str+=">Page "+(i+1)+"</span></div>";							// Close
-			}
 		}
 	str+="</div>";
 	str+="<div class='sf-galleryTool'>";
@@ -592,6 +574,23 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 	
 	this.AddProjectItems(true);												// Add project items
 	
+	$('[id^="gallery"]').off();												// Clear old handlers
+	
+	$('[id^="galleryPage"]').on("click",function(e) {
+		curPage=e.currentTarget.id.substr(11)-0;							// Extract curPage from id
+		curMenu="page";														// Edit page mode
+		Sound("click");														// Click
+		sf.Draw();															// Redraw
+		});
+
+	$('[id^="galleryLab"]').on("click", function(e) {						// ON PROJECT CLICK
+		curProject=e.currentTarget.id.substr(10)-0;							// Extract id
+		curMenu="project";													// Edit object mode
+		sf.userInfo.lastProject=curProject;									// Save last project index
+		Sound("click");														// Click
+		sf.Draw();															// Redraw
+		});
+
 	$("#pTitle").on("change",function() { 									// If changed
 		sf.Do()																// Something changed
 		sf.projects[curProject].title=Escape($("#pTitle").val(),true);		// Set it	
@@ -844,14 +843,23 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 		
 	playerObj.Update(this.projects[curProject].pages[curPage],this.projects[curProject].layout);	// Add player obj
 	
+	$('[id^="galleryPage"]').on("click",function(e) {
+		curPage=e.currentTarget.id.substr(11)-0;							// Extract curPage from id
+		curMenu="page";														// Edit page mode
+		Sound("click");														// Click
+		sf.Draw();															// Redraw
+		});
+
+	$('[id^="galleryLab"]').on("click", function(e) {						// ON PROJECT CLICK
+		curProject=e.currentTarget.id.substr(10)-0;							// Extract id
+		curMenu="project";													// Edit project mode
+		sf.userInfo.lastProject=curProject;									// Save last project index
+		Sound("click");														// Click
+		sf.Draw();															// Redraw
+		});
+
 	for (var i=0;i<sf.projects[curProject].pages.length;++i) {				// For each page
 		
-		$("#galleryLab"+i).on("click", function(e) {						// ON PAGE CLICK
-			curPage=e.currentTarget.id.substr(10)-0;						// Extract id
-			Sound("click");													// Click
-			sf.Draw();														// Redraw
-			});
-
 		$("#galleryLab"+i).draggable( {	zIndex:100 });						// MAKE PAGE LABELS DRAGGABLE
 		 	
 		$("#galleryLab"+i).droppable({ 										// MAKE PAGES DROPPABLE
