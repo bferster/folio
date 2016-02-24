@@ -565,8 +565,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<img id='tempTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a template'></td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
 	str+="<button class='sf-bs' style='width:90px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
-	if (this.projects[curProject].items && this.projects[curProject].items.length)						// If items to show
-		str+="<button class='sf-bs' style='width:90px' id='addPages'>Add items</button>&nbsp; &nbsp;";	// Add items button
+	str+="<button class='sf-bs' style='width:90px' id='addPages'>Add items</button>&nbsp; &nbsp;";	// Add items button
 	str+="<button class='sf-bs' style='width:90px' id='editPages'>Edit pages</button>";					// View pages button
 	str+="</table>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'></div>";		// Items div
@@ -775,6 +774,8 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		 });
 	
 	$("#addPages").on("click",function() { 									// ADD PAGES
+		if (sf.projects[curProject].items && !sf.projects[curProject].items.length)		// If no items 
+			return;															// Quit
 		var str="This will add a page for each item in the portfolio, in the order they are in now."
 		str+="You can reorder and edit them in the Page editor.<br><br>";
 		str+="<b>NOTE: </b>This will remove any pages you already have made!"
