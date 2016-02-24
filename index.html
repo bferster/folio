@@ -147,7 +147,7 @@
 				<span style="margin-left:100px"></span>
 				<span id="editMenu" class="sf-menuItem" style="margin-left:100px">Edit</span>
 				<span id="itemMenu" class="sf-menuItem"> Items</span>
-				<span id="projectMenu" class="sf-menuItem"> Portfolios</span>
+				<span id="portfolioMenu" class="sf-menuItem"> Portfolios</span>
 				<span id="shareMenu" class="sf-menuItem">Share</span>
 				<span id="helpMenu" class="sf-menuItem">Help</span>
 				<div id="breadMenu" class="sf-breadItem"><b>Portfolio:</b></div>
@@ -231,14 +231,13 @@ $(document).ready(function() {											// ON PAGE LOADED
 		Sound("click");												
 		sf.Draw();
 		});
-	$("#projectMenu").on("click",function() { 
+	$("#portfolioMenu").on("click",function() { 
 		curMenu="project";
 		Sound("click");												
 		sf.Draw();
 		});
 	$("#shareMenu").on("click",function() { 
 		shareObj.Set(sf.projects[curProject]);	
-		Sound("click");												
 		});
 	$("#helpMenu").on("click",function() { 
 		curMenu="help";
@@ -437,8 +436,7 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 	
 	var trsty=" onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";		// Hover style
 	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
-	var title=(curMenu == "project") ? "Portfolios" : "Pages";				// Set title
-	var str="<div id='galleryDiv' class='sf-gallery'><p><b>"+title+"</b></p>";	// Make gallery div
+	var str="<div id='galleryDiv' class='sf-gallery'><p><b>Portfolios</b></p>";	// Make gallery div
 	str+="<div class='sf-galleryContent' style='height:"+(h-20)+"px'>";		// Scrollable container
 
 	if (!this.projects.length)												// No projects yet
