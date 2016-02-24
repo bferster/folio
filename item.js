@@ -219,13 +219,13 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 		_this.UpdatePage();												// Update page
 		});
 
-	$("#pFilter").on("change",function() { 								// FILTER BY TYPE
-		itemFilter=$("#pFilter").val();									// Set it	
+	$("#projFilter").on("change",function() { 							// FILTER BY TYPE
+		itemFilter=$("#projFilter").val();								// Set it	
 		_this.UpdatePage();												// Update page
 		});
 
-	$("#pType").on("change",function() { 								// FILTER BY STRING
-		itemType=$("#pType").val();										// Set it	
+	$("#projType").on("change",function() { 							// FILTER BY STRING
+		itemType=$("#projType").val();									// Set it	
 		_this.UpdatePage();												// Update page
 		});
 

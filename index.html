@@ -335,7 +335,6 @@ folio.prototype.InitProject=function(num)								// INIT PROJECT
 
 folio.prototype.Draw=function()											// DRAW PAGE (Use sf instead of this!)
 {
-	trace("draw")
 	var h=window.innerHeight;												// Get height
 	var w=window.innerWidth;												// Get width
 	$("#sfNavigationBar").remove();											// Remove any previous nav
@@ -383,7 +382,8 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 		str+=" &nbsp;|&nbsp; ";												// Add to breadcrumb
 		str+=ShortenString(this.projects[curProject].title,20);				// Add title
 		}
-	str+=" &nbsp;|&nbsp; "+(curPage-0+1);									// Add to breadcrumb
+	if (curPage != -1)														// A page set
+		str+=" &nbsp;|&nbsp; "+(curPage-0+1);								// Add to breadcrumb
 	if (curMenu == "item") 													// If item
 		$("#itemMenu").css("color","#00aa00");								// Highlight it
 	else if (curMenu == "help") 											// If help
@@ -402,8 +402,6 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 		str+="<div id='itemPickerDiv' class='sf-itemsPicker'></div>";		// Item picker container
 		}
 	else if (curMenu == "page") {											// If page
-		if ((curProject >= 0) && (curPage < 0) && this.projects[curProject].pages && this.projects[curProject].pages.length)		// Nothing selected and something there
-			curPage=0;														// Pick first one
 		str+=this.MakeGallery();											// Add Gallery
 		str+=this.MakePagePage();											// Add page page
 		str+="<div id='itemPickerDiv' class='sf-itemsPicker'></div>";		// Item picker container
@@ -514,36 +512,36 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
 	var i,v=[];
-	var pTitle="",pDesc="",pCite="",pTags="",pCollab=[],pFormat="Booklet",pTemp="";
+	var projTitle="",projDesc="",projCite="",projTags="",projCollab=[],projFormat="Booklet",projTemp="";
 	var str="<div id='projectDiv' class='sf-projectPage'>";					// Project container
 	if (curProject < 0) 													// No project selected
 		return str+"</div>";												// Return empty page
-	if (this.projects[curProject].title)  	pTitle=this.projects[curProject].title;
-	if (this.projects[curProject].desc)   	pDesc=this.projects[curProject].desc;
-	if (this.projects[curProject].cite)   	pCite=this.projects[curProject].cite;
-	if (this.projects[curProject].tags)   	pTags=this.projects[curProject].tags;
-	if (this.projects[curProject].format)   pFormat=this.projects[curProject].format;
-	if (this.projects[curProject].collab) 	pCollab=this.projects[curProject].collab.split(",");
+	if (this.projects[curProject].title)  	projTitle=this.projects[curProject].title;
+	if (this.projects[curProject].desc)   	projDesc=this.projects[curProject].desc;
+	if (this.projects[curProject].cite)   	projCite=this.projects[curProject].cite;
+	if (this.projects[curProject].tags)   	projTags=this.projects[curProject].tags;
+	if (this.projects[curProject].format)   projFormat=this.projects[curProject].format;
+	if (this.projects[curProject].collab) 	projCollab=this.projects[curProject].collab.split(",");
 	str+="<table style='width:100%;font-weight:bold;text-align:left'>";
 	str+="<tr height='32'><td width='1%'>Title</td>";
-	str+="<td><input class='sf-is' id='pTitle' ";
-	str+="type='text' value='"+pTitle+"'></td></tr>";
-	str+="<tr height='28'><td>Description</td><td><textarea class='sf-is' id='pDesc' ";
-	str+="style='font-family:sans-serif'>"+pDesc+"</textarea></td></tr>";
+	str+="<td><input class='sf-is' id='projTitle' ";
+	str+="type='text' value='"+projTitle+"'></td></tr>";
+	str+="<tr height='28'><td>Description</td><td><textarea class='sf-is' id='projDesc' ";
+	str+="style='font-family:sans-serif'>"+projDesc+"</textarea></td></tr>";
 	str+="<tr height='28'><td>Citation</td>";
-	str+="<td><input class='sf-is' id='pCite' ";
-	str+="type='text' value='"+pCite+"'></td></tr>";
+	str+="<td><input class='sf-is' id='projCite' ";
+	str+="type='text' value='"+projCite+"'></td></tr>";
 	str+="<tr height='28'><td>Tags</td>";
-	str+="<td><input class='sf-is' id='pTags' type='text' value='"+pTags+"'></td></tr>";
+	str+="<td><input class='sf-is' id='projTags' type='text' value='"+projTags+"'></td></tr>";
 	str+="<tr height='28'><td>Collaborators</td>";
-	str+="<td>"+MakeSelect("pCollab",false,pCollab);
+	str+="<td>"+MakeSelect("projCollab",false,projCollab);
 	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new collaborator'>";
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
 	str+="<tr height='28'><td>Presention&nbsp;format&nbsp;&nbsp</td><td>";
-	str+=MakeSelect("pFormat",false,["Booklet","Single page","Canvas","Slide show","Up/Down"],pFormat)+"</td></tr>";
+	str+=MakeSelect("projFormat",false,["Booklet","Single page","Canvas","Slide show","Up/Down"],projFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
 	for (i=0;i<this.templates.length;++i)	v.push(this.templates[i].name);	
-	str+=MakeSelect("pTemp",false,v,v[this.userInfo.curTemplate]);
+	str+=MakeSelect("projTemp",false,v,v[this.userInfo.curTemplate]);
 	str+="<img id='tempAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new termplate'>";
 	str+="<img id='tempTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a template'></td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
@@ -576,11 +574,11 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 	this.AddProjectItems(true);												// Add project items
 	
 	$('[id^="gallery"]').off();												// Clear old handlers
+	$('[id^="proj"]').off();												// Clear old handlers
 	
 	$('[id^="galleryPage"]').on("click",function(e) {						// ON PAGE CLICK
 		curPage=e.currentTarget.id.substr(11)-0;							// Extract curPage from id
 		curMenu="page";														// Edit page mode
-		curPage=-1;															// No page set
 		Sound("click");														// Click
 		sf.Draw();															// Redraw
 		});
@@ -588,41 +586,42 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 	$('[id^="galleryLab"]').on("click", function(e) {						// ON PROJECT CLICK
 		curProject=e.currentTarget.id.substr(10)-0;							// Extract id
 		curMenu="project";													// Edit object mode
+		curPage=-1;															// No page set
 		sf.userInfo.lastProject=curProject;									// Save last project index
 		Sound("click");														// Click
 		sf.Draw();															// Redraw
 		});
 
-	$("#pTitle").on("change",function() { 									// If changed
+	$("#projTitle").on("change",function() { 								// If changed
 		sf.Do()																// Something changed
-		sf.projects[curProject].title=Escape($("#pTitle").val(),true);		// Set it	
+		sf.projects[curProject].title=Escape($("#projTitle").val(),true);	// Set it	
 		});
 	
-	$("#pDesc").on("change",function() { 									// If changed
+	$("#projDesc").on("change",function() { 								// If changed
 		sf.Do()																// Something changed
-		sf.projects[curProject].desc=Escape($("#pDesc").val(),true);		// Set it	
+		sf.projects[curProject].desc=Escape($("#projDesc").val(),true);		// Set it	
 		});
 	
-	$("#pCite").on("change",function() { 									// If changed
+	$("#projCite").on("change",function() { 								// If changed
 		sf.Do()																// Something changed
-		sf.projects[curProject].cite=Escape($("#pCite").val(),true);		// Set it	
+		sf.projects[curProject].cite=Escape($("#projCite").val(),true);		// Set it	
 		});
-	$("#pTags").on("change",function() { 									// If changed
+	$("#projTags").on("change",function() { 								// If changed
 		sf.Do()																// Something changed
-		sf.projects[curProject].tags=Escape($("#pTags").val(),true);		// Set it	
+		sf.projects[curProject].tags=Escape($("#projTags").val(),true);		// Set it	
 		});
 	
-	$("#pFormat").on("change",function() { 									// If changed
+	$("#projFormat").on("change",function() { 								// If changed
 		sf.Do()																// Something changed
-		sf.projects[curProject].format=$("#pFormat").val();					// Set it	
+		sf.projects[curProject].format=$("#projFormat").val();				// Set it	
 		Sound("click");														// Click
 		sf.Draw();															// Redraw
 		});
 	
-	$("#pTemp").on("change",function() { 									// If changed
+	$("#projTemp").on("change",function() { 								// If changed
 		ConfirmBox("This will remove any changes you have made to the layout, and replace them with the defaults from the template named <b>"+$(this).val()+".</b>", function() {
 			sf.Do()															// Something changed
-			sf.userInfo.curTemplate=$("#pTemp").prop("selectedIndex");		// Get index
+			sf.userInfo.curTemplate=$("#projTemp").prop("selectedIndex");	// Get index
 			var t=sf.projects[curProject].template=sf.templates[sf.userInfo.curTemplate].id;	// Get id of template and set in project	
 			t=Math.max(dataObj.FindFromID(sf.templates,t),0);				// Get index (use def template if bad)
 			layoutObj.Init(sf.projects[curProject],sf.templates[t]);		// Init project's layout object 
@@ -639,13 +638,13 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 			sf.Draw();														// Redraw
 			});
 
-	$("#pFilter").on("change",function() { 									// If changed
-		itemFilter=$("#pFilter").val();										// Set it	
+	$("#projFilter").on("change",function() { 								// If changed
+		itemFilter=$("#projFilter").val();									// Set it	
 		sf.Draw();															// Redraw
 		});
 
-	$("#pType").on("change",function() { 									// If changed
-		itemType=$("#pType").val();											// Set it	
+	$("#projType").on("change",function() { 								// If changed
+		itemType=$("#projType").val();										// Set it	
 		sf.Draw();															// Redraw
 		});
 	
@@ -687,18 +686,18 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 				sf.projects[curProject].collab=s;							// Add first collaborator
 			Sound("add");													// Add
 			sf.Draw();														// Redraw
-			$("#pCollab").val(s);
+			$("#projCollab").val(s);
 		});
 	});
 
 	$("#collabTrashBut").on("click",function() { 							// DELETE COLLABORATOR
-			var s=$("#pCollab").val();
+			var s=$("#projCollab").val();
 			if (!s)															// Nothing selected
 				return;														// Quit
 		ConfirmBox("This will delete  <b>"+s+" </b>from the project", function() {
 			sf.Do()															// Something changed
 			var v=sf.projects[curProject].collab.split(",");				// Make into array		
-			v.splice($("#pCollab").prop('selectedIndex'),1);				// Delete it
+			v.splice($("#projCollab").prop('selectedIndex'),1);				// Delete it
 			sf.projects[curProject].collab=v.toString();					// Combine into string
 			Sound("delete");												// Delete
 			sf.Draw();														// Redraw
@@ -744,7 +743,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 
 
 	$("#tempTrashBut").on("click",function() { 								// DELETE TEMPLATE
-			var s=$("#pTemp").val();										// Get current val
+			var s=$("#projTemp").val();										// Get current val
 			if (!s)															// Nothing selected
 				return;														// Quit
 			if (sf.userInfo.curTemplate)									// Can't remove default
@@ -1008,8 +1007,8 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 		fil=itemFilter.toLowerCase();										// Filter as lc
 		div="itemPickerDiv";												// Point at item picker
 		str="<div style='text-align:center;margin-bottom:16px;'>Show only&nbsp;";			
-		str+=MakeSelect("pType",false,["All types"].concat(itemObj.mediaTypeNames,itemType),itemType);
-		str+="&nbsp; filtered&nbsp;by&nbsp;&nbsp;<input type='text' class='sf-is' id='pFilter' value='"+itemFilter+"' style='width:80px'> &nbsp;";
+		str+=MakeSelect("projType",false,["All types"].concat(itemObj.mediaTypeNames,itemType),itemType);
+		str+="&nbsp; filtered&nbsp;by&nbsp;&nbsp;<input type='text' class='sf-is' id='projFilter' value='"+itemFilter+"' style='width:80px'> &nbsp;";
 		str+="</div>"; 
 		n=this.items.length;												// Number of items
 		}
