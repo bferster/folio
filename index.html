@@ -565,13 +565,14 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<img id='tempTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a template'></td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
 	str+="<button class='sf-bs' style='width:90px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
-	str+="<button class='sf-bs' style='width:90px' id='addPages'>Add items</button>&nbsp; &nbsp;";	// Add items button
-	str+="<button class='sf-bs' style='width:90px' id='editPages'>Edit pages</button>";					// View pages button
+	str+="<button class='sf-bs' style='width:90px' id='addPages'>Add items</button>&nbsp; &nbsp;";		// Add items button
+	if (dataObj.curShow)																				// A valid show
+		str+="<button class='sf-bs' style='width:90px' id='saveButton'>Save</button>";					// Add Saves button
 	str+="</table>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'></div>";		// Items div
 	return str+"</div>";													// Return project page
 }
-
+	
 folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 {
 
@@ -787,17 +788,14 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 			});
 		});
 
-	$("#editPages").on("click",function() { 								// CREATE PAGES
-		curMenu="page";														// Set for page
-		Sound("click");														// Click
-		sf.Draw();															// Redraw
-		});
-
 	$("#setLayout").on("click",function() { 								// SET LAYOUT
 		sf.Do()																// Something changed
 		layoutObj.Set(sf.projects[curProject],sf.templates[sf.userInfo.curTemplate]);	// Set layout
 		});
 
+	$("#saveButton").on("click",function() { 								// SAVE
+		dataObj.Save();														// Save it
+		});
 }	
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
