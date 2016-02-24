@@ -332,12 +332,13 @@
 			case 	"media": 		pic+="mediaitem"; 			break;			// Set
 			case 	"qmedia": 		pic+="qmediaitem"; 			break;			
 			case 	"image": 		pic+="imageitem"; 			break;			
-			case 	"pdf": 			pic+="pdfitem"; 			break;			
+			case 	"pdf": 			pic+="docitem"; 			break;			
+			case 	"wordpress": 	pic+="docitem"; 			break;			
+			case 	"document": 	pic+="docitem"; 			break;			
 			case 	"map": 			pic+="mapitem"; 			break;			
 			case 	"shiva": 		pic+="shivaitem"; 			break;			
 			case 	"visualeyes": 	pic+="veitem"; 				break;			
 			case 	"mandala": 		pic+="mandalaitem"; 		break;			
-			case 	"wordpress": 	pic+="wordpressitem"; 		break;			
 			default: 				pic+="webitem"; 			break;			// All others use web pic
 			}
 		pic+=".png";															// Add ext
@@ -350,9 +351,13 @@
 		var str=embed;															// Start with embed code
 		if (!embed)																// Nothing there
 			return "";															// Return null
-		if (str.match(/youtube|vimeo\.com/i)) {									// YouTube and vimeo
+		if (str.match(/youtube|vimeo\.com/i)) {									// YouTube, vimeo 
 			v=str.match(/src="https:(.*?)"/i);									// Extract src
-			if (v && v[1]) 	str= v[1];											// Construct new url								
+			if (v && v[1]) 	str=v[1];											// Construct new url								
+			}
+		else if (str.match(/google\.com\/maps/i)) {								// Google maps
+			v=str.match(/src="(https:.*?)"/i);									// Extract src with HTTPS
+			if (v && v[1]) 	str=v[1];											// Construct new url								
 			}
 		else if (str.match(/kaltura_player/i)) {								// Kaltura
 			var mid=0;															// Media id
@@ -372,10 +377,6 @@
 		return str;																// Return url
 	}
 
-
-
-
-
 	function LoadingIcon(mode, size, container)								// SHOW/HIDE LOADING ICON		
 	{
 		container=container ? "#"+containern: "body";							// If no container spec'd, use body
@@ -387,7 +388,6 @@
 		str+="id='sf-loadingIcon' style='position:absolute;top:calc(50% - "+size/2+"px);left:calc(50% - "+size/2+"px);z-index:5000'>";	
 		$(container).append(str);												// Add icon to container
 	}
-
 
 	function SendMessage(cmd, msg) 										// SEND HTML5 MESSAGE 
 	{
@@ -433,7 +433,7 @@ var items=[ {
 	desc:"Welcome to our Tale of Two Tours where we will lead you through a digital experience of Paul McCartney\'s 1989 World Tour and his 2009 Summer Tour. Here you will find setlist information, tour member biographies, and individual concert facts. Hope you enjoy!",
 	citation:"© 2015 Imani Nichols, Ashlyn Royer and Liz Carter",
 	},{
-	type:"pdf",
+	type:"document",
 	src:"//anthropos-lab.net/wp/wp-content/uploads/2011/12/Weber-Politics-as-a-Vocation.pdf",
 	id:"145545606991316194501",
 	title:"Politics as a Vocation by Max Weber",
@@ -478,7 +478,7 @@ var items=[ {
 	title:"An introduction to Lhasa",
 	citation:"© 2009 David Germano",
 	},{
-	type:"wordpress",
+	type:"document",
 	src:"//wordpress.com/themes/",
 	id:"145545606991490464565",
 	title:"Available themes",

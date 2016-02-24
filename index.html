@@ -147,6 +147,7 @@
 				<span id="itemMenu" class="sf-menuItem"> Items</span>
 				<span id="projectMenu" class="sf-menuItem"> Portfolios</span>
 				<span id="pageMenu" class="sf-menuItem">Pages</span>
+				<span id="shareMenu" class="sf-menuItem">Share</span>
 				<span id="helpMenu" class="sf-menuItem">Help</span>
 				<div id="breadMenu" class="sf-breadItem"><b>Portfolio:</b></div>
 			</span>
@@ -238,6 +239,10 @@ $(document).ready(function() {											// ON PAGE LOADED
 		curMenu="page";
 		Sound("click");												
 		sf.Draw();
+		});
+	$("#shareMenu").on("click",function() { 
+		shareObj.Set(sf.projects[curProject]);	
+		Sound("click");												
 		});
 	$("#helpMenu").on("click",function() { 
 		curMenu="help";
@@ -426,9 +431,9 @@ folio.prototype.DrawBody=function()										// DRAW BODY AREA
 	else if (curMenu == "splash") {											// If splash
 		str="<div style='width:100%;text-align:center'><br><br><br>";
 		str+="<div class='sf-doButs'><img src='img/addSplash.gif' style='width:25vw' onclick='curMenu=\"item\";sf.Draw(); Sound(\"click\");'>";
-		str+="<p style='color:#990000'>Add</p></div>";
+		str+="<p style='color:#990000'>Items</p></div>";
 		str+="<div class='sf-doButs'><img src='img/editSplash.gif' style='width:25vw' onclick='curMenu=\"project\";sf.Draw(); Sound(\"click\");'>";
-		str+="<p style='color:#009900'>Make</p></div>";
+		str+="<p style='color:#009900'>Portfolios</p></div>";
 		str+="<div class='sf-doButs'><img src='img/shareSplash.gif' style='width:25vw' onclick='curMenu=\"project\";sf.Draw(); Sound(\"click\");'>";
 		str+="<p style='color:#000099'>Share</p></div></div>";
 		}
@@ -559,10 +564,10 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<img id='tempAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new termplate'>";
 	str+="<img id='tempTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a template'></td></tr>";
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
-	str+="<button class='sf-bs' style='width:90px' id='addPages'>Add items</button>&nbsp; &nbsp;";		// Add items button
 	str+="<button class='sf-bs' style='width:90px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
-	str+="<button class='sf-bs' style='width:90px' id='editPages'>Edit pages</button>&nbsp; &nbsp;";	// View pages button
-	str+="<button class='sf-bs' style='width:90px' id='shareProject'>Share</button> </td></tr>";		// Share button
+	if (this.projects[curProject].items && this.projects[curProject].items.length)						// If items to show
+		str+="<button class='sf-bs' style='width:90px' id='addPages'>Add items</button>&nbsp; &nbsp;";	// Add items button
+	str+="<button class='sf-bs' style='width:90px' id='editPages'>Edit pages</button>";					// View pages button
 	str+="</table>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'></div>";		// Items div
 	return str+"</div>";													// Return project page
@@ -792,10 +797,6 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		layoutObj.Set(sf.projects[curProject],sf.templates[sf.userInfo.curTemplate]);	// Set layout
 		});
 
-	$("#shareProject").on("click",function() { 								// SHARE
-		sf.Do()																// Something changed
-		shareObj.Set(sf.projects[curProject]);								// Set share
-		});
 }	
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

@@ -7,7 +7,7 @@
 function item()													// CONSTRUCTOR
 {
 	this.lastClick=0;												// Helps mediate single/double clicking
-	this.mediaTypeNames=["Web","Image","Map","Media","WordPress","PDF","Mandala","SHIVA","Qmedia","VisualEyes"];
+	this.mediaTypeNames=["Web","Image","Media","Document","Map","Mandala","SHIVA","Qmedia","VisualEyes"];
 }	
 
 item.prototype.item=function()									// DRAW
@@ -111,6 +111,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			sf.Do();													// something changed
 			sf.items[curItem].type=$(this).val();						// Set value
 			sf.AddProjectItems(true);									// Redraw items
+			_this.AddHandlers(true);									// Re-add handlers
 			}								
 		_this.UpdatePage();												// Update page
 		});
@@ -119,6 +120,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			sf.Do();													// something changed
 			sf.items[curItem].title=$(this).val();						// Set value
 			sf.AddProjectItems(true);									// Redraw items
+			_this.AddHandlers(true);									// Re-add handlers
 			}								
 		_this.UpdatePage();												// Update page
 		});
@@ -127,14 +129,16 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			sf.Do();													// something changed
 			sf.items[curItem].desc=$(this).val();						// Set value
 			sf.AddProjectItems(true);									// Redraw items
+			_this.AddHandlers(true);									// Re-add handlers
 			}								
 		_this.UpdatePage();												// Update page
 		});	
 	$("#imCite").on("blur",function() { 								// EDIT CITE
 		if (curItem != -1) {											// If an existing item	
 			sf.Do();													// something changed
-			sf.items[curItem].citation=$(this).val();						// Set value
+			sf.items[curItem].citation=$(this).val();					// Set value
 			sf.AddProjectItems(true);									// Redraw items
+			_this.AddHandlers(true);									// Re-add handlers
 			}								
 		_this.UpdatePage();												// Update page
 		});
@@ -143,6 +147,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			sf.Do();													// something changed
 			sf.items[curItem].thumb=$(this).val();						// Set value
 			sf.AddProjectItems(true);									// Redraw items
+			_this.AddHandlers(true);									// Re-add handlers
 			}								
 		_this.UpdatePage();												// Update page
 		});
@@ -150,9 +155,24 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 		if (curItem != -1) {											// If an existing item	
 			sf.Do();													// something changed
 			sf.items[curItem].src=ExtractFromEmbed($(this).val());		// Extract url from embed code and set value
-			if (sf.items[curItem].src && sf.items[curItem].src.match(/youtube|video|kaltura|mp4/i))			// If media
-				sf.items[curItem].type="Media";							// Set type
+			if (sf.items[curItem].src) {								// Something in source
+				if (sf.items[curItem].src.match(/youtube|video|kaltura|mp4|mp3/i))		// If media
+					sf.items[curItem].type="Media";										// Set type
+				else if (sf.items[curItem].src.match(/google.com.map/i))				// If google map
+					sf.items[curItem].type="Map";										// Set type
+				else if (sf.items[curItem].src.match(/\.png|.gif|\.jpg|.jpeg/i)) 		// An image
+					sf.items[curItem].type="Image";										// Set type
+				else if (sf.items[curItem].src.match(/go\.htm/i)) 						// SHIVA
+					sf.items[curItem].type="SHIVA";										// Set type
+				else if (sf.items[curItem].src.match(/viseyes\.org\/visualeyes/i)) 		// VisualEyes
+					sf.items[curItem].type="VisualEyes";								// Set type
+				else if (sf.items[curItem].src.match(/qmediaplayer\.com/i)) 			// Qmedia
+					sf.items[curItem].type="Qmedia";									// Set type
+				$("#imSrc").val(sf.items[curItem].src);					// Set src, in case it changed
+				$("#imType").val(sf.items[curItem].type);				// Set pulldown
+				}	
 			sf.AddProjectItems(true);									// Redraw items
+			_this.AddHandlers(true);									// Re-add handlers
 			}								
 		});
 	$("#imTags").on("blur",function() { 								// EDIT TAGS
@@ -160,6 +180,7 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			sf.Do();													// something changed
 			sf.items[curItem].tags=$(this).val();						// Set value
 			sf.AddProjectItems(true);									// Redraw items
+			_this.AddHandlers(true);									// Re-add handlers
 			}								
 		_this.UpdatePage();												// Update page
 		});
