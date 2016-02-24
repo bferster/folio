@@ -335,6 +335,7 @@ folio.prototype.InitProject=function(num)								// INIT PROJECT
 
 folio.prototype.Draw=function()											// DRAW PAGE (Use sf instead of this!)
 {
+	trace("draw")
 	var h=window.innerHeight;												// Get height
 	var w=window.innerWidth;												// Get width
 	$("#sfNavigationBar").remove();											// Remove any previous nav
@@ -446,16 +447,16 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 		str+="<br>Add a new portfolio by clicking on the + icon below";		// Say so
 	for (i=0;i<this.projects.length;++i) {									// For each project
 		labs[i]=this.projects[i].title;										// Set label
-		str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab'><span";
+		str+="<div id='galleryLab"+i+"'"+trsty+" class='sf-galleryLab' title='Set portfolio'><span";
 		if (i == curProject) {												// If the current project
 			str+=" style='color:#009900'>"+labs[i]+"</span><br><br>"		// Color it
 			o=this.projects[curProject].pages;								// Point at pages
 			for (j=0;j<o.length;++j) {										// For each page
-				str+="<div class='sf-galleryPage' id='galleryPage"+j+"' ";	// Page start
+				str+="<div class='sf-galleryPage' id='galleryPage"+j+"' title='Set page'";	// Page start
 				str+="onMouseOver='this.style.color=\"#009900\"' ";			// Mouse over
 				str+="onMouseOut='this.style.color=\"#999\"'>";				// Mouse out
 				if (curPage == j)	
-					str+="<span style='color:#009900;font-weight:bold'> Page "+(j+1)+" </span></div>";	// Show page
+					str+="<span style='color:#009900'>&#10148; Page "+(j+1)+" &nbsp;&nbsp;&nbsp;</span></div>";	// Show page
 				else
 					str+="Page "+(j+1)+"</div>";							// Show page
 				}
@@ -576,9 +577,10 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 	
 	$('[id^="gallery"]').off();												// Clear old handlers
 	
-	$('[id^="galleryPage"]').on("click",function(e) {
+	$('[id^="galleryPage"]').on("click",function(e) {						// ON PAGE CLICK
 		curPage=e.currentTarget.id.substr(11)-0;							// Extract curPage from id
 		curMenu="page";														// Edit page mode
+		curPage=-1;															// No page set
 		Sound("click");														// Click
 		sf.Draw();															// Redraw
 		});
@@ -843,7 +845,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 		
 	playerObj.Update(this.projects[curProject].pages[curPage],this.projects[curProject].layout);	// Add player obj
 	
-	$('[id^="galleryPage"]').on("click",function(e) {
+	$('[id^="galleryPage"]').on("click",function(e) {						// ON PAGE CLICK
 		curPage=e.currentTarget.id.substr(11)-0;							// Extract curPage from id
 		curMenu="page";														// Edit page mode
 		Sound("click");														// Click
@@ -853,6 +855,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 	$('[id^="galleryLab"]').on("click", function(e) {						// ON PROJECT CLICK
 		curProject=e.currentTarget.id.substr(10)-0;							// Extract id
 		curMenu="project";													// Edit project mode
+		curPage=-1;															// No page set
 		sf.userInfo.lastProject=curProject;									// Save last project index
 		Sound("click");														// Click
 		sf.Draw();															// Redraw
