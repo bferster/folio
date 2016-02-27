@@ -340,9 +340,11 @@ folio.prototype.Draw=function()											// DRAW PAGE (Use sf instead of this!)
 	if ((curProject != -1) && sf.projects[curProject])						// A valid project
 		curPage=Math.min(sf.projects[curProject].pages.length-1,curPage);	// Cap at maxpages
 	if (curMenu == "show")	{												// If showing only
+		if (curProject == -1)												// No project
+			return 	$("#showDiv").html("<br> No portfolio found!");			// Not found
 		var o=sf.projects[curProject].pages[curPage];						// Point at page
 		if (!o)																// No page
-			return;															// Quit
+			return 	$("#showDiv").html("<br> No pages found!");				// Not found
 		var r=.75;															// Portrait
 		var asp=sf.projects[curProject].layout.aspect;						// Start with default
 		if (o.layout && (o.layout.aspect != undefined))						// If a layout val set
@@ -860,15 +862,15 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 
 	for (var i=0;i<sf.projects[curProject].pages.length;++i) {				// For each page
 		
-		$("#galleryLab"+i).draggable( {	zIndex:100 });						// MAKE PAGE LABELS DRAGGABLE
+		$("#galleryPage"+i).draggable( {	zIndex:100 });					// MAKE PAGE LABELS DRAGGABLE
 		 	
-		$("#galleryLab"+i).droppable({ 										// MAKE PAGES DROPPABLE
-			 accept: ".sf-galleryLab",										// Accept only pages
+		$("#galleryPage"+i).droppable({ 									// MAKE PAGES DROPPABLE
+			 accept: ".sf-galleryPage",										// Accept only pages
 			 drop: function(event, ui) {									// On drop
 				sf.Do()														// Something changed
 				var p=sf.projects[curProject].pages;						// Point p at current project pages
-				var from=ui.draggable.prop('id').substr(10);				// Get id of dragged page
-				var to=$(event.target).prop('id').substr(10);				// Get id of receiver page
+				var from=ui.draggable.prop('id').substr(11);				// Get id of dragged page
+				var to=$(event.target).prop('id').substr(11);				// Get id of receiver page
 				var t=p[to];												// Save to item
 				p[to]=p[from];												// Copy from -> to
 				p[from]=t;													// Reset to
