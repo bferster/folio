@@ -325,17 +325,17 @@ layout.prototype.SetItemSize=function(id)								// SET ITEM SIZE
 
 		$("#alertBoxDiv").append(str);	
 		$("#alertBoxDiv").dialog({ width:230, buttons: {
-					            	"Set":  	function() { 						
-					            		var v=$("#liWid").val();							// Get %
-					            		var off=Math.round(16/cw*v/100*100);				// Calc offset of border
-					            		$(it).attr("width",(v-off)+"%");					// Scale it
-					            		if ($("#liHgt").val() != "auto") {					// If setting iframe div
-						            		var r=cw/window.innerHeight;					// Get window hgt
-						            		$(it).attr("height",$("#liHgt").val()*r+"vh");	// Scale it
-					            			}
-					            		},
-					            	"Cancel":  	function() { $(this).remove(); }			// Quit
-									}});	
+            	"Set":  	function() { 						
+            		var v=$("#liWid").val();									// Get %
+            		var off=Math.round(16/cw*v/100*100);						// Calc offset of border
+            		$(it).attr("width",(v-off)+"%");							// Scale it
+            		if ($("#liHgt").val() != "auto") {							// If setting iframe div
+	            		var r=cw/window.innerHeight;							// Get window hgt
+	            		$(it).attr("height",$("#liHgt").val()*r+"vh");			// Scale it
+            			}
+            		},
+            	"Cancel":  	function() { $(this).remove(); }					// Quit
+				}});	
 		$(".ui-dialog-titlebar").hide();
 		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
 		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
