@@ -1,6 +1,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // PLAYER
-// Assumes access to curPage, page and layout structures
+// Assumes access to curPage, page and layout structures, layoutObj
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
@@ -95,20 +95,23 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 			this["ck"+this.paneNames[i]]=CKEDITOR.inline( $(this.divs[i])[0] );	// Enable rich text editor
 		}
 
-/*	if (this.editable) 														// If editable
+	if (this.editable) 														// If editable
 		CKEDITOR.on('instanceReady', function(ev) {							// When instance is ready
 	    	ev.editor.editable().attachListener(ev.editor.document, "click", function(e) {	// Attach new click handler
 	    		var id=$(e.data.getTarget()).attr("id");					// Get id
-				if (id && id.match(/sfItem/)) {							// Click on item
-		    	trace(id)
-	    			ev.cancel();											// Stop multiple hits
+				if (id && id.match(/sfItemDiv-/)) {							// Click on item
+		    		layoutObj.SetItemSize(id);								// Set item size
+		    		ev.cancel();											// Stop multiple hits
 		    		}
 	    		})	
 			});
-*/
+
 	this.StylePage(page,defLayout);											// Style page
-	if (!this.editable) 													// If not editable
+	if (!this.editable) {													// If not editable
+		$('[id^="sfItemDiv-"]').removeClass("sf-playerItem");				// Remove class added to manipulate size
+		$('[id^="sfItem-"]').removeClass("sf-playerItemInt");				// Remove class added to manipulate size
 		this.AddNavigation();												// Add navigation
+		}
 }	
 
 player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE

@@ -332,8 +332,6 @@
 			case 	"media": 		pic+="mediaitem"; 			break;			// Set
 			case 	"qmedia": 		pic+="qmediaitem"; 			break;			
 			case 	"image": 		pic+="imageitem"; 			break;			
-			case 	"pdf": 			pic+="docitem"; 			break;			
-			case 	"wordpress": 	pic+="docitem"; 			break;			
 			case 	"document": 	pic+="docitem"; 			break;			
 			case 	"map": 			pic+="mapitem"; 			break;			
 			case 	"shiva": 		pic+="shivaitem"; 			break;			

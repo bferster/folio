@@ -75,6 +75,10 @@
 		.sf-playerPane{	display:inline-block;box-sizing:border-box;background-color:#eeeeee;
 						overflow:hidden;padding:8px;
 						}
+		.sf-playerItem{	border:8px dashed #ccc;cursor:zoom-in;
+						}
+		.sf-playerItemInt{ cursor:default;
+						}
 		.sf-layoutParams { display:inline-block;width:50%;text-align:left;color:#888;margin:12px;
 						display:inline-block;margin-right:24px;
 						}
@@ -454,7 +458,7 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 				str+="onMouseOver='this.style.color=\"#009900\"' ";			// Mouse over
 				str+="onMouseOut='this.style.color=\"#999\"'>";				// Mouse out
 				if (curPage == j)	
-					str+="<span style='color:#009900'>&#10148; Page "+(j+1)+" &nbsp;&nbsp;&nbsp;</span></div>";	// Show page
+					str+="<span style='color:#009900'>&#10148; Page "+(j+1)+" <span style='opacity:0'>&#10148;</span></span></div>";	// Show page
 				else
 					str+="Page "+(j+1)+"</div>";							// Show page
 				}
@@ -944,18 +948,17 @@ folio.prototype.GetItemMarkup=function(id)								// GET ITEM's MARKUP
 	if (!o)																	// No item
 		return "";															// Return null
 	if (o.src) {															// If a source
-		str+="<br><div style='text-align:"+p.layout.itemAlign+"'>";			// Div for iframe	
+		str+="<br><div id='sfItemDiv-"+MakeUniqueId()+"' class='sf-playerItem' style='width:100%;text-align:"+p.layout.itemAlign+"'>";			// Div for item	
 		if (o.src.match(/.mp4/i)) {											// HTML5 video
-			str+="<video controls id='sfItem-"+MakeUniqueId()+"' width='"+p.layout.itemWid;	// Tag
+			str+="<video class='sf-playerItemInt' controls id='sfItem-"+MakeUniqueId()+"' width='"+p.layout.itemWid;	// Tag
 			str+="' src='"+o.src+"'/>";										// Src
 			}
 		else if (o.src.match(/\.png|.gif|\.jpg|.jpeg/i)) 					// An image
-			str+="<img id='sfItem-"+MakeUniqueId()+"' width='"+p.layout.itemWid+"' src='"+o.src+"'></div>";
+			str+="<img id='sfItem-"+MakeUniqueId()+"' class='sf-playerItemInt' width='"+p.layout.itemWid+"' src='"+o.src+"'></div>";
 		else{
-			str+="<iframe id='sfItem-"+MakeUniqueId()+"' frameborder='0' allowfullscreen "; 
-			str+=" style='border:"+p.layout.itemBorder;						// Start style
-			str+=";width:"+p.layout.itemWid+";height:"+p.layout.itemHgt+"' ";
-			str+="src='"+o.src+"'></iframe>";								// Src
+			str+="<iframe id='sfItem-"+MakeUniqueId()+"' class='sf-playerItemInt' frameborder='0' allowfullscreen "; 
+			str+=" style='border:"+p.layout.itemBorder+"' src='"+o.src+"' "; // Style
+			str+="width='"+p.layout.itemWid+"' height='"+p.layout.itemHgt+"'></iframe>";
 			}
 		str+="</div><br>";													// Close div											
 		}
@@ -1025,7 +1028,7 @@ folio.prototype.AddProjectItems=function(showAll)						// ADD ITEMS
 		if (!this.items[i])													// Nothing there
 			continue;														// Skip it
 		if (typ != "all types")												// If filtering by type
-			if (this.items[i].type != typ)									// Not the right one
+			if (this.items[i].type.toLowerCase() != typ)					// Not the right one
 				continue;													// Skip it
 		if (fil) {															// If filtering by text
 			lab=this.items[i].title+this.items[i].desc+this.items[i].citation+this.items[i].tags;	// Get certain fields
