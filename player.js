@@ -169,6 +169,8 @@ player.prototype.AddNavigation=function(page, defLayout)				// ADD NAVIGATION
 {
 	var maxPages=sf.projects[curProject].pages.length-1;					// Max page
 	$("#sfNavigationBar").remove();											// Remove any previous nav
+	if (inhibitNav)															// If no navigation
+		return;																// Quit
 	var str="<div class='sf-navigation' id='sfNavigationBar'>";				// Enclosing div
 	str+="<img class='sf-navButs' id='sfPrevPage' src='img/revbut.gif' title='Previous page'>'";
 	str+="<span class='sf-navButs' id='sfPageCtr'>"+(curPage+1)+" of "+(maxPages+1)+" </span>";

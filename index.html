@@ -75,9 +75,9 @@
 		.sf-playerPane{	display:inline-block;box-sizing:border-box;background-color:#eeeeee;
 						overflow:hidden;padding:8px;
 						}
-		.sf-playerItem{	border:8px dashed #ccc;cursor:zoom-in;
+		.sf-playerItem{	border-top:8px dotted #ccc;cursor:zoom-in;margin:0px;padding:0px;
 						}
-		.sf-playerItemInt{ cursor:default;
+		.sf-playerItemInt{ cursor:default;;margin:0px;padding:0px;
 						}
 		.sf-layoutParams { display:inline-block;width:50%;text-align:left;color:#888;margin:12px;
 						display:inline-block;margin-right:24px;
@@ -170,6 +170,7 @@ var curProject=-1,curPage=-1,curItem=-1;									// Keeps tabs on current places
 var playerObj=null,layoutObj=null,collectObj=null;							// Objects							
 var dataObj=null,shareObj=null,itemObj=null;
 var isMobile=false;															// Is it mobile?
+var inhibitNav=false;														// Flag to inhibit navigation
 var itemType="All types",itemFilter="";										// Filtering
 var curMenu="splash";														// Current menu item
 var drupalMan=false;														// Flag for drupal manager
@@ -197,6 +198,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 		curPage=0;															// Assume 1st page
 		if (url.split("|")[1]) {											// If a page set
 			curPage=url.split("|")[1]-1;									// Extract it
+			inhibitNav=true;												// Set flag to inhibit navigation
 			url=url.split("|")[0];											// Just use id
 			}
 		if (url && !isNaN(url)) {											// If a number
@@ -849,6 +851,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 	playerObj.Update(this.projects[curProject].pages[curPage],this.projects[curProject].layout);	// Add player obj
 	
 	$('[id^="galleryPage"]').on("click",function(e) {						// ON PAGE CLICK
+		$("#alertBoxDiv").remove();											// Remove any old dialogs
 		curPage=e.currentTarget.id.substr(11)-0;							// Extract curPage from id
 		curMenu="page";														// Edit page mode
 		Sound("click");														// Click
@@ -856,6 +859,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 		});
 
 	$('[id^="galleryLab"]').on("click", function(e) {						// ON PROJECT CLICK
+		$("#alertBoxDiv").remove();											// Remove any old dialogs
 		curProject=e.currentTarget.id.substr(10)-0;							// Extract id
 		curMenu="project";													// Edit project mode
 		curPage=-1;															// No page set
