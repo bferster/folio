@@ -303,18 +303,16 @@ layout.prototype.MakeSizer=function()									// PAGE SIZER
 
 layout.prototype.SetItemSize=function(id)								// SET ITEM SIZE
 {
-//	$("#"+id).resizable();	
+		$("#alertBoxDiv").remove();											// Remove any old dialogs
+		var it=($("#"+id).children()[0]);									// Point at content element
+		var cw=$("#"+id).parent().width();									// Width of container pane	
+		var ac=cw-$("#"+id).parent().css("padding").replace(/px/,"")*2;		// Less margins (shows as padding)
+		var w=Math.min(Math.max(1,Math.round(($(it).width()/ac)*100)),100); // Get as %, 1-100
+		var h="auto";														// Assume auto
 		
-		var it=($("#"+id).children()[0]);										// Point at content
-		var cw=$("#"+id).parent().width()-$("#"+id).parent().css("padding").replace(/px/,"")*2;
-		var h="auto";
-		var w=Math.min(Math.max(1,Math.round(($(it).width()/cw)*100)),100); 	// Get as %, 1-100
-		$("#alertBoxDiv").remove();												// Remove any old ones
-		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
-		str="<p><img src='";													// Image start
-		str+="img/shantilogo32.png";											// Logo
-		str+="' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
-		str+="<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#666'><b>Item size</b></span><p>";
+		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");		// Content													
+		str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>"; 	// Logo
+		str+="&nbsp;&nbsp;<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#666'><b>Item size</b></span><p>";
 		str+="Set the width and height of the item as a percentage of the pane width from 1 - 100%<br>";
 		str+="<table style='width:100%;font-weight:bold;text-align:left'>";
 		str+="<tr height='32'><td>Width</td>";
@@ -322,24 +320,29 @@ layout.prototype.SetItemSize=function(id)								// SET ITEM SIZE
 		str+="<tr height='32'><td>Height</td>";
 		str+="<td><input class='sf-is' style='width:40px;text-align:center' id='liHgt' type='text' value='"+h+"'>&nbsp;&nbsp;%</td></tr>";
 		str+="</table></div>";
-
-		$("#alertBoxDiv").append(str);	
-		$("#alertBoxDiv").dialog({ width:230, buttons: {
-            	"Set":  	function() { 						
-            		var v=$("#liWid").val();									// Get %
-            		var off=Math.round(16/cw*v/100*100);						// Calc offset of border
-            		$(it).attr("width",(v-off)+"%");							// Scale it
-            		if ($("#liHgt").val() != "auto") {							// If setting iframe div
-	            		var r=cw/window.innerHeight;							// Get window hgt
-	            		$(it).attr("height",$("#liHgt").val()*r+"vh");			// Scale it
+		$("#alertBoxDiv").append(str);										// Add to dialog
+		
+  		$("#alertBoxDiv").dialog({ width:230, buttons: {
+            	"Set":  	function() { 									// SET
+            		var v=$("#liWid").val();								// Get %
+            		var off=Math.round(16/cw*v/100*100);					// Calc offset of border
+            		$(it).attr("width",(v-off)+"%");						// Scale it
+            		if ($("#liHgt").val() != "auto") {						// If setting iframe div
+	            		v=$("#liHgt").val()*cw;								// Get height in pixels * 100
+	            		v/=window.innerHeight;								// Percent of hgt
+	            		$(it).attr("height",v*10+"vh");						// Scale it in terms of vh
             			}
             		},
-            	"Cancel":  	function() { $(this).remove(); }					// Quit
-				}});	
+            	"Done":  	function() {									// DONE
+               		id=$("#"+id).parent().attr("id");						// Get active pane
+               		var id2=(id == "playerPaneTop") ? "playerPaneMid" : "playerPaneTop";		// Not the currently active pane
+               		CKEDITOR.instances[id2].focus();						// Blur
+              		CKEDITOR.instances[id].focus();							// Focus
+              		CKEDITOR.instances[id2].focus();						// Blur
+          			$(this).remove(); }				
+					}});	
 		$(".ui-dialog-titlebar").hide();
 		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
 		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
  		$(".ui-button").css({"border-radius":"30px","outline":"none"});
-	
-	
 }

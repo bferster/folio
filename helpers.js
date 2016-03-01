@@ -528,7 +528,7 @@ var defTemplates=[
 	botPct:"10",
 	aspect:"Portrait",									
 	itemWid:"100%",									
-	itemHgt:"30vh",										
+	itemHgt:"200vh",										
 	itemAlign:"center",									
 	itemBorder:"2px solid #999999",					
 	panes:[{
@@ -570,7 +570,7 @@ var defTemplates=[
 	botPct:"0",
 	aspect:"Portrait",									
 	itemWid:"100%",									
-	itemHgt:"30vh",										
+	itemHgt:"200vh",										
 	itemAlign:"center",									
 	itemBorder:"2px solid #999999",					
 	panes:[{
