@@ -19,11 +19,11 @@ player.prototype.Make=function(showOnly)								// MAKE PLAYER
 	this.editable=!showOnly;												// Editable mode
 	var s=this.editable ? " contenteditable='true'" : "";					// Editable flag for CKEditor if editing
 	var str="<div id='playerDiv'  class='sf-player'>";						// Player container
-	str+="<div id='playerPaneTop'  class='sf-playerPane'"+s+" style='margin-bottom:-3px'></div>"; // Top			
+	str+="<div id='playerPaneTop'  class='sf-playerPane'"+s+"></div>"; 		// Top			
 	str+="<div id='playerPaneLeft' class='sf-playerPane'"+s+"></div>";		// Left
 	str+="<div id='playerPaneMid'  class='sf-playerPane'"+s+"></div>";		// Mid
 	str+="<div id='playerPaneRight' class='sf-playerPane'"+s+"></div>";		// Right
-	str+="<div id='playerPaneBot'  class='sf-playerPane'"+s+"style='margin-top:-3px'></div>";	// Bot	
+	str+="<div id='playerPaneBot'  class='sf-playerPane'"+s+"></div>";		// Bot	
 	return str+"</div>";													// Return player
 }
 

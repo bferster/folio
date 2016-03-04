@@ -20,7 +20,8 @@ share.prototype.Set=function(project)								// SHARE DIALOG
 	str+="<br><br>"+MakeSelect("sFormat",false,["Choose share format","Web page","WordPress","Iframe","JSON"]);
 	for (i=0;i<project.pages.length;++i)	v.push(i+1);				// Add pages
 	str+="&nbsp; &nbsp;Page &nbsp;"+MakeSelect("sPage",false,v);		// Page select
-	str+="<br><br><div id='sCode' class='sf-is selectable' style='margin-bottom:8px;padding:12px;background-color:#fff;width:80%;height:80px;font-family:monospace;overflow:auto'><div>"
+	str+="<br><br><div id='sCode' class='sf-is selectable' style='margin-bottom:8px;padding:12px;background-color:#fff;width:80%;height:80px;font-family:monospace;overflow:auto'></div>"
+	str+="<p><button class='sf-bs' id='sPrev'>Preview in new tab</button></p>";	// Preview
 	Sound("click");														// Click
 	ShowLightBox(500,"Portfolio Sharing",str);							// Create dialog
 
@@ -38,4 +39,12 @@ share.prototype.Set=function(project)								// SHARE DIALOG
 			}						
 		$("#sCode").text(str);											// Show embed
 		});
+		
+	$("#sPrev").on("click",function() { 								// ON PREVIEW
+		var p=$("#sPage").val();										// Get page
+		var src="http://www.viseyes.org/folio?"+dataObj.curShow;		// Get source
+		if (p != "All")		src+="|"+p;									// If getting a particular page
+		window.open(src,"_blank");										// Open new window
+		});
+
 }	

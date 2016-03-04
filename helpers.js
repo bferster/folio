@@ -387,14 +387,15 @@
 		$(container).append(str);												// Add icon to container
 	}
 
-	function SendMessage(cmd, msg) 										// SEND HTML5 MESSAGE 
+	function SendMessage(cmd, msg, callback) 							// SEND HTML5 MESSAGE 
 	{
 		var str=cmd+"|Folio";												// Add src and window						
 		if (msg)															// If more to it
 			str+="|"+msg;													// Add it
 		window.parent.postMessage(str,"*");									// Send message to parent wind		
+		if (callback)														// If a callback
+			eventCallback=callback;											// Set callback
 	}
-
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // DATA
