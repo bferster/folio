@@ -954,7 +954,7 @@ folio.prototype.GetItemMarkup=function(id)								// GET ITEM's MARKUP
 	if (!o)																	// No item
 		return "";															// Return null
 	if (o.src) {															// If a source
-		str+="<br><div id='sfItemDiv-"+MakeUniqueId()+"' class='sf-playerItem' style='width:100%;text-align:"+p.layout.itemAlign+"'>";			// Div for item	
+		str+="<div id='sfItemDiv-"+MakeUniqueId()+"' class='sf-playerItem' style='width:100%;text-align:"+p.layout.itemAlign+"'>";			// Div for item	
 		if (o.src.match(/.mp4/i)) {											// HTML5 video
 			str+="<video class='sf-playerItemInt' controls id='sfItem-"+MakeUniqueId()+"' width='"+p.layout.itemWid;	// Tag
 			str+="' src='"+o.src+"'/>";										// Src
