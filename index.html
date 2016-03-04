@@ -819,14 +819,15 @@ folio.prototype.MakePagePage=function(showOnly)							// MAKE PAGE PAGE
 		return str+"</div>";												// Return empty page
 		}
 	var o=this.projects[curProject].pages[curPage];							// Point at page
-
 	var r=.75;																// Portrait
 	var asp=this.projects[curProject].layout.aspect;						// Start with default
 	if (o && o.layout && (o.layout.aspect != undefined))					// If a layout val set
 		asp=o.layout.aspect;												// Use page override
 	if (asp == "Square")			r=1;									// Square
 	else if (asp == "Landscape")	r=1.5;									// Landscape
-	str+=$("#bodyDiv").height()*r+"px'>";									// Set width
+	r=r*$("#bodyDiv").height();												// Desired width
+	r=Math.min(r,$("#bodyDiv").width()-$("#galleryDiv").width()-100);		// Cap
+	str+=r+"px'>";															// Set width
 	str+=playerObj.Make(showOnly);											// Create divs for player
 	return str+"</div>";													// Return page page
 }
