@@ -114,6 +114,10 @@
 		.sf-pullDownItem {	padding-bottom:6px;cursor:pointer;width:92px;padding:6px;
 						padding-left:8px;padding-right:0px;color:#999;
 						}
+		.sf-artPicker  	{ overflow-x:auto;white-space:nowrap;height:90px;
+						}
+		.sf-artPic		{ width:128px;height:64px;margin-right:8px;overflow:hidden;vertical-align:top;
+						}
 		.sf-pullDownItem:hover{ background-color:#bbb;color:#eee
 						}
 		.sf-citation	{ text-align:right;cursor:pointer;font-style:italic;
@@ -288,7 +292,7 @@ function folio()														// CONSTRUCTOR
 	sf=this;																// Point to folio
 	this.projects=[];														// Holds project
 	this.items=[];															// Holds items
-	this.userInfo={ firstName:"Not", lastName:"logged in"};					// Holds user information
+	this.userInfo={ firstName:"Not", lastName:"logged in", curTemplate:0};	// Holds user information
 	this.templates=defTemplates;											// Holds templates, fill with default
 
 this.projects=projects;	 projects=undefined;						////////////// REPLACE !!!!												

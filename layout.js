@@ -9,6 +9,21 @@ function layout()											// CONSTRUCTOR
 	this.plo=null;														// Ptr to 				
 	this.ckMark=null;													// CKEditor instance
 	this.paneNames=["Top","Left","Mid","Right","Bot"];					// Name of all the panes
+	this.stockImages=[	"art/sky.jpg",									// Holds stock images
+						"art/rothko.jpg",
+						"art/moon.jpg",
+						"art/slate.jpg",
+						"art/cork.jpg",
+						"art/sea.jpg",
+						"art/brickwall.jpg",
+						"art/moon2.jpg",
+						"art/sand.jpg",
+						"art/dune.jpg",
+						"art/mountain.jpg",
+						"art/desert.jpg",
+						"art/marble.jpg",
+						"art/granite.jpg"
+						];
 }	
 
 layout.prototype.Init=function(container, template)					// INIT LAYOUT 
@@ -184,6 +199,14 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 			_this.Update();												// Update resizer
 			}
 		});
+
+	$("#lbgpick").on("click", function(e) {								// CHOOSE ART HANDLER
+			_this.PickArt(function(s) {									// Choose
+			_this.plo.panes[_this.curPane].backImg=s;					// Set back img
+			$("#lbgimg").val(s);										// Show it	
+			});											
+		}); 
+
 }
 
 layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS 
@@ -255,7 +278,8 @@ layout.prototype.MakeParams=function()									// PAGE SIZER
 	str+="<table style='width:100%;text-align:left'>";	// Table
 	str+="<tr height='28'><td>Pane<td style='color:#009900;font-weight:bold' id='paneTitle'></td></tr>";	// Pane name
 	str+="<tr height='28'><td>Background image &nbsp; </td>";				// Back Pic
-	str+="<td><input class='sf-is' id='lbgimg' type='text'></td></tr>";
+	str+="<td><input class='sf-is' style='width:100px' id='lbgimg' type='text'>";
+	str+="&nbsp;&nbsp;<button class='sf-bs' id='lbgpick'>Choose</button></td></tr>";
 	str+="<tr height='28'><td>Background color &nbsp;</td>";				// Back col
 	str+="<td><input class='sf-is' style='width:50px' id='lbgcol' type='text'></td></tr>";
 	str+="<tr height='28'><td>Border style</td><td>";						// Border style
@@ -300,6 +324,40 @@ layout.prototype.MakeSizer=function()									// PAGE SIZER
 	return str+"</div>";													// Return sizer
 }
 
+layout.prototype.PickArt=function(callback)								// CHOOSE ARTWORK
+{
+		var i;
+		var _this=this;														// Get context
+		var trsty=" onMouseOver='this.style.border=\"3px solid #009900\"' ";// Hover style
+
+		$("#alertBoxDiv").remove();											// Remove any old dialogs
+  		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");		// Content													
+		var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>"; 	// Logo
+		str+="&nbsp;&nbsp;<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#666'><b>Choose stock image</b></span><p>";
+		str+="<div class='sf-artPicker'>";									// Scrolling div
+		for (i=0;i<this.stockImages.length;++i) 							// For each image
+			str+="<img id='artPic"+i+"' class='sf-artPic' src='"+this.stockImages[i]+"'"+trsty+">"	// add pic
+		$("#alertBoxDiv").append(str+"</div>");								// Add to dialog
+	
+		$("#alertBoxDiv").dialog({ width:600, buttons: {
+               	"Cancel":  	function() {									// DONE
+		          			$(this).remove(); 								// Close dialog			
+							}
+   					}});	
+			
+		$(".ui-dialog-titlebar").hide();
+		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
+		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
+ 		$(".ui-button").css({"border-radius":"30px","outline":"none"});
+
+		$('[id^="artPic"]').on("click", function(e) {						// CLICK ON PIC
+			Sound("click");													// Click
+			var id=e.target.id.substr(6);									// Get id
+			callback(_this.stockImages[id]);								// Send url
+   			$("#alertBoxDiv").remove(); 									// Close dialog			
+			});
+}
+
 
 layout.prototype.SetItemSize=function(id)								// SET ITEM SIZE
 {
@@ -328,18 +386,19 @@ layout.prototype.SetItemSize=function(id)								// SET ITEM SIZE
 		$("#alertBoxDiv").append(str);										// Add to dialog
 		
   		$("#alertBoxDiv").dialog({ width:230, buttons: {
-            	"Set":  	function() { 									// SET
+            	"Set":  function() { 										// SET
                				SetSize();										// Set size
                				},
-            	"Done":  	function() {									// DONE
-               		id=$("#"+id).parent().attr("id");						// Get active pane
-               		var id2=(id == "playerPaneTop") ? "playerPaneMid" : "playerPaneTop";		// Not the currently active pane
-               		CKEDITOR.instances[id2].focus();						// Blur KLUGE!!!
-              		CKEDITOR.instances[id].focus();							// Focus
-              		CKEDITOR.instances[id2].focus();						// Blur
-             		CKEDITOR.instances[id2].focusManager.blur();			// Blur
-          			$(this).remove(); }				
-					}});	
+            	"Done":  function() {										// DONE
+		               		id=$("#"+id).parent().attr("id");						// Get active pane
+		               		var id2=(id == "playerPaneTop") ? "playerPaneMid" : "playerPaneTop";		// Not the currently active pane
+		               		CKEDITOR.instances[id2].focus();						// Blur KLUGE!!!
+		              		CKEDITOR.instances[id].focus();							// Focus
+		              		CKEDITOR.instances[id2].focus();						// Blur
+		             		CKEDITOR.instances[id2].focusManager.blur();			// Blur
+		          			$(this).remove(); 				
+							}
+				}});	
 		
 		$("#liWid").on("change",SetSize);									// Set size on change
 		$("#liHgt").on("change",SetSize);									// Set size on change
@@ -361,3 +420,4 @@ layout.prototype.SetItemSize=function(id)								// SET ITEM SIZE
 		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
  		$(".ui-button").css({"border-radius":"30px","outline":"none"});
 }
+
