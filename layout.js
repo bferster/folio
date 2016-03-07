@@ -22,6 +22,7 @@ function layout()											// CONSTRUCTOR
 						"art/mountain.jpg",
 						"art/desert.jpg",
 						"art/marble.jpg",
+						"art/woodfloor.jpg",
 						"art/granite.jpg"
 						];
 }	
