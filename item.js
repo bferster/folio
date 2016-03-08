@@ -201,6 +201,8 @@ item.prototype.AddHandlers=function(fromUpdate)						// ADD  HANDLERS
 			_this.ImportFlickr();										// Run importer
 		else if ($(this).val() == "Google drive")						// If Google
 		  	_this.ImportGoogle(true);									// Run importer
+		else if ($(this).val() == "Mandala")							// If Mandala
+		  	_this.ImportMandala();										// Run importer
   		else if ($(this).val() == "Manually") {							// By hand	
   			sf.Do()														// Something changed
 			Sound("add");												// Add sound
@@ -554,4 +556,81 @@ item.prototype.ImportGoogle=function(allFiles, callback)						// FLICKR IMPORTER
 	}	// End closure
  }
  
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+// MANDALA
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+item.prototype.ImportMandala=function()											// MANDALA IMPORTER
+{
+	var _this=this;																	// Save context
+	var collections=["Audio-Video","Images","Sources","Texts","Visual"];			// Supported collections
+	$("#alertBoxDiv").remove();														// Remove any old ones
+	$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");														
+	str="<p><img src='";															// Image start
+	str+="img/shantilogo32.png";													// Logo
+	str+="' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
+	str+="<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#666'><b>Get Item from Mandala</b></span><p>";
+	str+="<p style='text-align:right'>Collection: "+MakeSelect("mdCollect",false,collections);
+	str+="&nbsp;&nbsp;filter by: <input class='sf-is' id='mdFilter' type='text' style='width:100px;margin-bottom:8px'></p>";
+	str+="<div id='mdAssets' style='width:100%px;height:300px;overflow-y:auto;background-color:#f8f8f8;padding:8px;border:1px solid #999;border-radius:6px'>";		// Scrollable container
+	str+="</div>";
+
+	$("#alertBoxDiv").append(str+"</div>");	
+	$("#alertBoxDiv").dialog({ width:800, buttons: {
+				            	"Cancel":  	function() { LoadingIcon(false); $(this).remove(); }
+								}});	
+	$(".ui-dialog-titlebar").hide();
+	$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
+	$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
+	$(".ui-button").css({"border-radius":"30px","outline":"none"});
+
+	LoadCollection($("#mdCollect").val());											// Load 1st collection
+ 	
+	$("#mdCollect").on("change", function() {										// ON CHANGE COLLECTION
+		 	LoadCollection($(this).val());											// Load it
+			});
+	
+	function LoadCollection(coll)
+	{
+		var search="service%3A"+coll.toLowerCase()+"*";
+		$.ajax({
+			'url': 'http://kidx.shanti.virginia.edu/solr/kmindex-dev/select?q='+search,
+		  	'data': {'wt':'json', 'json.wrf':'loadMandala1234', rows:50 },
+		  	'dataType': 'jsonp',
+		});
+	}
+	
+ }	// End closure
+
+item.prototype.FormatMandalaItems=function(data)								// SHOW MANDALA ITEMS
+{
+	var i,o;
+	var str="";		
+	this.data=data;
+	for (i=0;i<data.response.docs.length;++i) {
+		o=data.response.docs[i];
+		str+=o.timestamp.substr(5,2)+"/"+o.timestamp.substr(8,2)+"/"+o.timestamp.substr(0,4);
+		if (o.caption)
+			str+=" "+o.caption;
+		else
+			str+="No title";
+		if (o.url_jsonp)
+			str+=" "+o.url_jsonp;
+		else if (o.url_html)
+			str+=" "+o.url_html;
+		else if (o.url_ajax)
+			str+=" "+o.url_ajax;
+		if (o.url_thumb)
+			str+=" "+o.url_thumb;
+		str+="<br>"
+		}
+	$("#mdAssets").html(str);	
+}
+
+
+//////	JSON CALLBACKS
+	
+	function loadMandala1234(solrData)
+	{
+		itemObj.FormatMandalaItems(solrData);
+	}
