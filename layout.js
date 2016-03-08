@@ -348,7 +348,7 @@ layout.prototype.PickArt=function(callback)								// CHOOSE ARTWORK
 			
 		$(".ui-dialog-titlebar").hide();
 		$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
-		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc"});
+		$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc", "z-index":3000});
  		$(".ui-button").css({"border-radius":"30px","outline":"none"});
 
 		$('[id^="artPic"]').on("click", function(e) {						// CLICK ON PIC
