@@ -8,6 +8,8 @@ function item()													// CONSTRUCTOR
 {
 	this.lastClick=0;												// Helps mediate single/double clicking
 	this.mediaTypeNames=["Web","Image","Media","Document","Map","Mandala","SHIVA","Qmedia","VisualEyes"];
+	this.type="";
+	this.filter="";
 }	
 
 item.prototype.item=function()									// DRAW
@@ -570,8 +572,8 @@ item.prototype.ImportMandala=function()											// MANDALA IMPORTER
 	str+="img/shantilogo32.png";													// Logo
 	str+="' style='vertical-align:-10px'/>&nbsp;&nbsp;";								
 	str+="<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#666'><b>Get Item from Mandala</b></span><p>";
-	str+="<p style='text-align:right'>Collection: "+MakeSelect("mdCollect",false,collections);
-	str+="&nbsp;&nbsp;filter by: <input class='sf-is' id='mdFilter' type='text' style='width:100px;margin-bottom:8px'></p>";
+	str+="<p style='text-align:right'>Collection: "+MakeSelect("mdCollect",false,collections,this.type);
+	str+="&nbsp;&nbsp;filter by: <input class='sf-is' id='mdFilter' type='text' value='"+this.filter+"' style='width:100px;margin-bottom:8px'></p>";
 	str+="<div id='mdAssets' style='width:100%px;height:300px;overflow-y:auto;background-color:#f8f8f8;padding:8px;border:1px solid #999;border-radius:6px'>";		// Scrollable container
 	str+="</div>";
 
@@ -586,13 +588,25 @@ item.prototype.ImportMandala=function()											// MANDALA IMPORTER
 
 	LoadCollection($("#mdCollect").val());											// Load 1st collection
  	
+ 	
 	$("#mdCollect").on("change", function() {										// ON CHANGE COLLECTION
+			itemObj.type=$(this).val();												// Save for later											
+		 	LoadCollection($(this).val());											// Load it
+			});
+	$("#mdFilter").on("change", function() {										// ON CHANGE FILTER
+			itemObj.filter=$(this).val();											// Save for later											
 		 	LoadCollection($(this).val());											// Load it
 			});
 	
-	function LoadCollection(coll)
+ 
+ 
+ 	function LoadCollection(coll)												// LOAD COLLECTION FROM SOLR
 	{
-		var search="service%3A"+coll.toLowerCase()+"*";
+		LoadingIcon(true,64);														// Show loading icon
+		var search="service%3A"+coll.toLowerCase()+"*";								// Add servoce						
+		if ($("#mdFilter").val())													// If a filter spec'd
+			search+=", caption%3A*"+$("#mdFilter").val().toLowerCase()+"*";			// Add filter to query
+		
 		$.ajax({
 			'url': 'http://kidx.shanti.virginia.edu/solr/kmindex-dev/select?q='+search,
 		  	'data': {'wt':'json', 'json.wrf':'loadMandala1234', rows:50 },
@@ -602,31 +616,86 @@ item.prototype.ImportMandala=function()											// MANDALA IMPORTER
 	
  }	// End closure
 
-item.prototype.FormatMandalaItems=function(data)								// SHOW MANDALA ITEMS
+item.prototype.FormatMandalaItems=function(data, sortBy)						// SHOW MANDALA ITEMS
 {
-	var i,o;
-	var str="";		
-	this.data=data;
-	for (i=0;i<data.response.docs.length;++i) {
-		o=data.response.docs[i];
-		str+=o.timestamp.substr(5,2)+"/"+o.timestamp.substr(8,2)+"/"+o.timestamp.substr(0,4);
-		if (o.caption)
-			str+=" "+o.caption;
-		else
-			str+="No title";
-		if (o.url_jsonp)
-			str+=" "+o.url_jsonp;
-		else if (o.url_html)
-			str+=" "+o.url_html;
-		else if (o.url_ajax)
-			str+=" "+o.url_ajax;
-		if (o.url_thumb)
-			str+=" "+o.url_thumb;
-		str+="<br>"
+	var i,r,o;
+if (data) trace(data)
+	LoadingIcon(false);																// Hide loading icon
+
+	if (data) {																		// If not just sorting
+		this.data=[];																	// New results store 
+		for (i=0;i<data.response.docs.length;++i) {									// For each doc returned
+			r=data.response.docs[i];												// Point at it
+			o={ title:"No title", desc:""};											// Create obj												
+			o.date=r.timestamp.substr(5,2)+"/"+r.timestamp.substr(8,2)+"/"+r.timestamp.substr(0,4);	// Munge date
+			if (r.caption)															// If a caption defined
+				o.title=r.caption;													// Use it
+			o.id=r.id;																// Save id
+			o.thumb=r.url_thumb;													// Save thumb
+			o.json=r.url_json;														// Save json
+			o.html=r.url_html;														// Save html
+			o.embed=r.url_embed;													// Add embed 
+			o.kmap=r.kmapid;														// Save kmap array
+			this.data.push(o);														// Add result to array
+			}
 		}
+	else if (this.data) {															// Just sorting and some data
+		var order=1;																// Assume ascending
+		if (this.data[0][sortBy] < this.data[this.data.length-1][sortBy])			// Ascending already
+			order=-1;																// Make it descending
+		trace(order,this.data[0][sortBy],this.data[this.data.length-1][sortBy])
+		this.data.sort(function(a,b) { 												// Reshuffle chairs on Titanic
+				if (a[sortBy] < b[sortBy])    	return -1*order;
+				else if (a[sortBy] > b[sortBy])	return 1*order;
+				else 			   				return 0;
+				});					
+		}
+	var trsty=" style='height:20px;cursor:pointer' onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";
+	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"' onclick='itemObj.AddMandalaFile(this.id.substr(6))'";
+
+	var str="<table style='width:100%;text-align:left'>";								// Header row
+	str+="<tr style='font-weight:bold'><td id='mdh-date'>Date</td><td id='mdh-id'>&nbsp;ID&nbsp;</td><td id='mdh-title'>Title</td><td>&nbsp;View?</td></tr>";
+	str+="<tr><td colspan='4'><hr></td></tr>";
+	
+	for (i=0;i<this.data.length;++i) {												// For each doc returned
+		o=this.data[i];																// Point at doc
+		str+="<tr id='mdres-"+i+"'"+trsty+"><td>"+o.date;							// Add start and date
+		str+="</td><td>&nbsp;"+o.id+"&nbsp;"										// Add id
+		str+="</td><td>"+ShortenString(o.title,60)+"<td>";							// Add title
+		if (o.html) 																// If a vlew 																																			
+			str+="&nbsp;<a target='_blank' href='"+o.html+"'>View</a><br>";			// Add anchor
+		str+="</td></tr>";															// Close line	
+		}
+	str+="</table>";																// Close table
 	$("#mdAssets").html(str);	
+	
+	$('[id^="mdh-"]').off();														// Remove old handlers
+
+	$('[id^="mdh-"]').on("click",function(e) {										// ON CLICK ON HEADER
+		var field=$(this).prop("id").substr(4);										// Isolate field
+		itemObj.FormatMandalaItems(null,field);										// Sort by field
+		});
 }
 
+item.prototype.AddMandalaFile=function(num)										// ADD MANDALA ITEM
+{
+	var r=this.data[num];															// Point at result
+	var o={ type:"Mandala" };														// Holds new item
+    if (r.embed)																	// If Google native
+    	o.src=r.embed;																// Use embed
+    else if (r.html)																// If html
+    	o.src=r.html;																// Use it
+  	o.title=r.title;																// Set title
+   	if (r.desc)																		// If desc
+    	o.desc=r.desc;																// Use it
+	o.id=MakeUniqueId();															// Create new id
+	sf.items.push(o);																// Add item
+	curItem=sf.items.length-1;														// Point to this one
+	this.UpdatePage();																// Update page
+	$("#alertBoxDiv").remove();														// Remove dialog
+	LoadingIcon(false);																// Hide loading icon
+	this.data=null;																	// Release data
+}
 
 //////	JSON CALLBACKS
 	
