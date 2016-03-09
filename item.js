@@ -643,7 +643,6 @@ if (data) trace(data)
 		var order=1;																// Assume ascending
 		if (this.data[0][sortBy] < this.data[this.data.length-1][sortBy])			// Ascending already
 			order=-1;																// Make it descending
-		trace(order,this.data[0][sortBy],this.data[this.data.length-1][sortBy])
 		this.data.sort(function(a,b) { 												// Reshuffle chairs on Titanic
 				if (a[sortBy] < b[sortBy])    	return -1*order;
 				else if (a[sortBy] > b[sortBy])	return 1*order;
@@ -690,6 +689,8 @@ item.prototype.AddMandalaFile=function(num)										// ADD MANDALA ITEM
     	o.desc=r.desc;																// Use it
 	o.id=MakeUniqueId();															// Create new id
 	sf.items.push(o);																// Add item
+	if (r.thumb && r.thumb.match(/\.png|.gif|\.jpg|.jpeg/i))						// If valid a thumbnail 
+		o.thumb=r.thumb;															// Use it
 	curItem=sf.items.length-1;														// Point to this one
 	this.UpdatePage();																// Update page
 	$("#alertBoxDiv").remove();														// Remove dialog
