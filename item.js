@@ -609,7 +609,7 @@ item.prototype.ImportMandala=function()											// MANDALA IMPORTER
 		
 		$.ajax({
 			'url': 'http://kidx.shanti.virginia.edu/solr/kmindex-dev/select?q='+search,
-		  	'data': {'wt':'json', 'json.wrf':'loadMandala1234', rows:50 },
+		  	'data': {'wt':'json', 'json.wrf':'itemObj.FormatMandalaItems', rows:50 },
 		  	'dataType': 'jsonp',
 		});
 	}
