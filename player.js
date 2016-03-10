@@ -36,6 +36,8 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 		return;																// Quit
 	var w=$(parent).width();												// Get width of parent
 	var h=$(parent).height()-3;												// Get height 
+	var pFormat=sf.projects[curProject].format;								// Portfolio format
+
 	var v1=defLayout.topGut ? this.guts[defLayout.topGut] : 0;				// If def top gutter, use it
 	if (page.layout && (page.layout.topGut != undefined))					// If a page override set
 		v1=this.guts[page.layout.topGut];									// Use it
@@ -73,6 +75,13 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	$("#playerPaneMid").css({ width:+cpct+"%",height:mhgt+"%"});
 	$("#playerPaneRight").css({ width:"calc("+rpct+"% - "+v2+"px)",height:mhgt+"%"});
 	$("#playerPaneBot").css({ width:"100%",height:bpct+"%" });
+		
+	if (pFormat == "Single page") {											// Single page format
+		$("#playerPaneLeft").css("height","auto");							// As big as it gets
+		$("#playerPaneMid").css("height","auto");							
+		$("#playerPaneRight").css("height","auto");						
+		$(parent).css({ "height":"auto","width":"auto" });								
+		}
 
 	if (!mhgt) {															// No middle's
 		$("#playerPaneLeft").hide();										// Hide them

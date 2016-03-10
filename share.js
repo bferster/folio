@@ -16,7 +16,7 @@ share.prototype.Set=function(project)								// SHARE DIALOG
 	var i, v=["All"];
 	this.project=project
 	this.Init();														// Init object
-	var str="<br><br>You can share portfolios with others in a number of formats. Please pick the format below:";			
+	var str="<br><br>You can share portfolios with others in a number of formats. Please pick the format from the pulldown menu below:";			
 	str+="<br><br>"+MakeSelect("sFormat",false,["Choose share format","Web page","WordPress","Iframe","JSON"]);
 	for (i=0;i<project.pages.length;++i)	v.push(i+1);				// Add pages
 	str+="&nbsp; &nbsp;Page &nbsp;"+MakeSelect("sPage",false,v);		// Page select
@@ -42,9 +42,13 @@ share.prototype.Set=function(project)								// SHARE DIALOG
 		
 	$("#sPrev").on("click",function() { 								// ON PREVIEW
 		var p=$("#sPage").val();										// Get page
-		var src="http://www.viseyes.org/folio?"+dataObj.curShow;		// Get source
+		var src="index.html?preview";									// Get source
 		if (p != "All")		src+="|"+p;									// If getting a particular page
-		window.open(src,"_blank");										// Open new window
+		var win=window.open(src,"_blank");								// Open new window
+		$(win).on("load",function() {									// When loaded
+			var str="set|folio|{\"projects\":["+JSON.stringify(sf.projects[curProject])+"]}";				
+			win.postMessage(str,"*");									// Send message to new window	
+			});
 		});
 
 }	

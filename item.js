@@ -632,6 +632,7 @@ if (data) trace(data)
 				o.title=r.caption;													// Use it
 			o.id=r.id;																// Save id
 			o.thumb=r.url_thumb;													// Save thumb
+			o.ajax=r.url_ajax;														// Save ajax
 			o.json=r.url_json;														// Save json
 			o.html=r.url_html;														// Save html
 			o.embed=r.url_embed;													// Add embed 
@@ -680,8 +681,8 @@ item.prototype.AddMandalaFile=function(num)										// ADD MANDALA ITEM
 {
 	var r=this.data[num];															// Point at result
 	var o={ type:"Mandala" };														// Holds new item
-    if (r.embed)																	// If Google native
-    	o.src=r.embed;																// Use embed
+    if (r.ajax)																		// If an embed code
+    	o.src=r.ajax;																// Use ajax
     else if (r.html)																// If html
     	o.src=r.html;																// Use it
   	o.title=r.title;																// Set title

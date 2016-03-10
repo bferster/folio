@@ -197,11 +197,11 @@ $(document).ready(function() {											// ON PAGE LOADED
 	layoutObj=new layout();													// Load share object
 	playerObj=new player();													// Load player object
   	sf=new folio();															// Load main object
-	SendMessage("ready");													// Send ready mnessage
 
 	if (drupalMan)	url="";													// If drupal, kill url
 	if (url) {																// If a url spec'd
 		curPage=0;															// Assume 1st page
+		curMenu="show";														// Show mode
 		if (url.split("|")[1]) {											// If a page set
 			curPage=url.split("|")[1]-1;									// Extract it
 			inhibitNav=true;												// Set flag to inhibit navigation
@@ -212,14 +212,15 @@ $(document).ready(function() {											// ON PAGE LOADED
 			}	
 		else if ((url) && (!url.match(/\./)))								// No file extension
 			url+=".json";													// Add txt
-		curMenu="show";														// Show mode
-		$.ajax({ url: url, dataType:'jsonp' });								// Get jsonp and call LoadShow() from it
+		if (url != "preview.json")											// If not previewing
+			$.ajax({ url: url, dataType:'jsonp' });							// Get jsonp and call LoadShow() from it
 		}
 	
 	if (window.addEventListener) 											// If supported this way
 		window.addEventListener("message",html5MessageHandler,false);		// Add event handler
 	else																	// Use other method
 		window.attachEvent("message",html5MessageHandler);					// Add handler
+	SendMessage("ready");													// Send ready message
 
 	if (curMenu == "show") { 												// Showing
 		$("#splashDiv").css("visibility","hidden");							// Hided splash				
@@ -234,7 +235,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 									
 		$("#mainDiv").animate({ opacity:1},2000, function() {				// Animate in content		
 			$("#mainDiv").css("opacity",1);									// Force full
-			if (!drupalMan)													// Not from drupal, or not just showing
+			if (!drupalMan && (url != "preview.json"))						// Not from drupal, or not just showing
 				dataObj.Load();												// Log in
 			});
 		}
@@ -334,6 +335,8 @@ folio.prototype.InitProject=function(num)								// INIT PROJECT
 {
 	if (!this.projects[num].pages)											// If no pages yets
 		this.projects[num].pages=[];										// Allocate array
+	if (!this.projects[num].format)											// If no format spec's
+		this.projects[num].format="Slides";									// Default to slide
 	var t=dataObj.FindFromID(this.templates,this.projects[num].template);	// Get template from project
 	layoutObj.Init(this.projects[num],this.templates[Math.max(t,0)]);		// Init project's layout object (use def template if bad)
 }
@@ -490,8 +493,8 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 
 	function html5MessageHandler(e)										// ON HTML5 MESSAGE
 	{
-  		if (e && e.data)													// If message
- 			if (!e.data.match(/|Mandala/))									// Not from Folio
+   		if (e && e.data)													// If message
+ 			if (!e.data.match(/\|mandala|\|folio/i))						// Not from Folio or Mandala
  				return;														// Quit
 		var o={};															// Clean object
 		var v=e.data.split("|");											// Get data
@@ -499,6 +502,7 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 			o=$.parseJSON(v[2]);											// Turn into object and set
 			sf.Init(o,"set");												// Init folio
 			SendMessage("done");											// Send done mnessage
+			if (sf.projects && (curProject == -1))	curProject=0;			// Force to at least to 1st project
 			sf.Draw();														// Draw 
 			}
 		else if (v[0].toLowerCase() == "add") {								// Get project(s)
@@ -526,7 +530,7 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
 	var i,v=[];
-	var projTitle="",projDesc="",projCite="",projTags="",projCollab=[],projFormat="Booklet",projTemp="";
+	var projTitle="",projDesc="",projCite="",projTags="",projCollab=[],projFormat="Slides",projTemp="";
 	var str="<div id='projectDiv' class='sf-projectPage'>";					// Project container
 	if (curProject < 0) 													// No project selected
 		return str+"</div>";												// Return empty page
@@ -552,7 +556,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new collaborator'>";
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
 	str+="<tr height='28'><td>Presention&nbsp;format&nbsp;&nbsp</td><td>";
-	str+=MakeSelect("projFormat",false,["Booklet","Single page","Canvas","Slide show","Up/Down"],projFormat)+"</td></tr>";
+	str+=MakeSelect("projFormat",false,["Slides","Single page","Booklet","Canvas","Up/Down"],projFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
 	for (i=0;i<this.templates.length;++i)	v.push(this.templates[i].name);	
 	str+=MakeSelect("projTemp",false,v,v[this.userInfo.curTemplate]);
