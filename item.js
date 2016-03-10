@@ -689,7 +689,7 @@ item.prototype.AddMandalaFile=function(num)										// ADD MANDALA ITEM
     	o.desc=r.desc;																// Use it
 	o.id=MakeUniqueId();															// Create new id
 	sf.items.push(o);																// Add item
-	if (r.thumb && r.thumb.match(/\.png|.gif|\.jpg|.jpeg/i))						// If valid a thumbnail 
+	if (r.thumb && r.thumb.match(/\.png|.gif|\.jpg|.jpeg|thumb/i))					// If valid a thumbnail 
 		o.thumb=r.thumb;															// Use it
 	curItem=sf.items.length-1;														// Point to this one
 	this.UpdatePage();																// Update page
