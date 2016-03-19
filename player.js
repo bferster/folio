@@ -135,7 +135,10 @@ player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
 		val=defLayout.panes[i].margin ? defLayout.panes[i].margin : "";		// If def margin, use it
 		if (page.layout && (page.layout.panes[i].margin != undefined))		// If a page override set
 			val=page.layout.panes[i].margin;								// Use it
-		if (val) $(this.divs[i]).css("padding",val+"px");					// Apply value if set 
+		val=defLayout.panes[i].scroll ? defLayout.panes[i].scroll : "";		// If def scroll, use it
+		if (page.layout && (page.layout.panes[i].scroll != undefined))		// If a page override set
+			val=page.layout.panes[i].scroll;								// Use it
+		if (val) $(this.divs[i]).css("overflow-y",val);						// Apply value if set 
 		val=defLayout.panes[i].backImg ? defLayout.panes[i].backImg : "";	// If def back image, use it
 		if (page.layout && (page.layout.panes[i].backImg != undefined))		// If a page override set
 			val=page.layout.panes[i].backImg;								// Use it
