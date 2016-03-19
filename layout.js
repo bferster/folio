@@ -35,7 +35,7 @@ layout.prototype.Init=function(container, template)					// INIT LAYOUT
 	container.layout.rightPct=template.rightPct;
 	container.layout.botPct=template.botPct;
 	container.layout.aspect="";									
-	container.layout.sect="";									
+	container.layout.title="";									
 	container.layout.panes=[];											// Holds pane info
 	if (container.cite == undefined) {									// If called as a page override
 		for (i=0;i<this.paneNames.length;++i) 							// For each pane
@@ -125,8 +125,8 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 			_this.plo.aspect=$(this).val();								// Set aspect
 			_this.Update();												// Update resizer
 			}); 
-	$("#lsect").on("change", function(e) {								// SECTION NAME HANDLER
-			_this.plo.sect=$(this).val();								// Set aspect
+	$("#ltitle").on("change", function(e) {								// PAGE NAME HANDLER
+			_this.plo.title=$(this).val();								// Set aspect
 			_this.Update();												// Update resizer
 			}); 
 	$("#lscroll").on("change", function(e) {							// SCROLL HANDLER
@@ -281,14 +281,18 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	$("#rgut").val(o.rightGut);											
 	$("#bgut").val(o.botGut);											
 	$("#lasp").val(o.aspect);											// Set aspect
-	$("#lsect").val(o.sect);											// Set section name
+	$("#ltitle").val(o.title);											// Set page name
 }
 
 layout.prototype.MakeParams=function(container)						// PAGE PARAMS
 {
 	var str="<div id='layoutParamsDiv' class='sf-layoutParams'>";			// Overall div
-	str+="<table style='width:100%;text-align:left'>";	// Table
+	str+="<table style='width:100%;text-align:left'>";						// Table
 	str+="<tr height='28'><td>Pane<td style='color:#009900;font-weight:bold' id='paneTitle'></td></tr>";	// Pane name
+	if (container.cite == undefined) {										// If called as a page override
+		str+="<tr height='28'><td>Page name</td>";							// Name
+		str+="<td><input class='sf-is' id='ltitle' type='text'></td></tr>";
+		}
 	str+="<tr height='28'><td>Background image &nbsp; </td>";				// Back Pic
 	str+="<td><input class='sf-is' style='width:100px' id='lbgimg' type='text'>";
 	str+="&nbsp;&nbsp;<button class='sf-bs' id='lbgpick'>Choose</button></td></tr>";
@@ -317,10 +321,6 @@ layout.prototype.MakeParams=function(container)						// PAGE PARAMS
 	str+="<tr height='28'><td>Font styles</td>";							$// Font styles
 	str+="<td><button class='sf-is' id='lbfont' style='width:46%'>Body</button> &nbsp; ";
 	str+="<button class='sf-is' id='ltfont' style='width:46%'>Title </button></td></tr>";
-	if (container.cite == undefined) {										// If called as a page override
-		str+="<tr height='28'><td>Section name</td>";						// Section name
-		str+="<td><input class='sf-is' id='lsect' type='text'></td></tr>";
-		}
 	str+="</table><br>";	
 	str+="Click on a pane to show its current settings.<br>";				// Help
 	return str+"</div>";													// Return sizer
