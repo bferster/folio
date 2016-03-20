@@ -347,11 +347,13 @@ folio.prototype.InitProject=function(num)								// INIT PROJECT
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-folio.prototype.Draw=function()											// DRAW PAGE (Use sf instead of this!)
+folio.prototype.Draw=function(page)											// DRAW PAGE (Use sf instead of this!)
 {
 	var h=window.innerHeight;												// Get height
 	var w=window.innerWidth;												// Get width
 	$("#sfNavigationBar").remove();											// Remove any previous nav
+	if (page)																// If a page set
+		curPage=page;														// Use it
 	if ((curProject != -1) && sf.projects[curProject])						// A valid project
 		curPage=Math.min(sf.projects[curProject].pages.length-1,curPage);	// Cap at maxpages
 	if (curMenu == "show")	{												// If showing only

@@ -56,13 +56,16 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 {
 	var i,o;
 	var _this=this;														// Get context
+	var title="Set layout for all pages";								// Default title
 	this.curPane=0;														// Start with top
 	if (!container.layout) 												// If no layout object yet
 		this.Init(container,template);									// Init object
 	this.plo=container.layout;											// Point at layout object							
 	var str="<br>"+this.MakeParams(container);							// Make page params UI
 	str+=this.MakeSizer();												// Make page sizer UI
-	ShowLightBox(700,"Set page layout",str,callback);					// Put up dialog
+	if (container.cite == undefined)									// If called as a page override
+		title="Set this page's layout";									// Change title	
+	ShowLightBox(700,title,str,callback);								// Put up dialog
 	this.Update();														// Update resizer/params
 	if (this.ckMark)	this.ckMark.destroy();							// Kill old instance						
 	this.ckMark=CKEDITOR.inline($("#lmark")[0]);						// Enable rich text editor
@@ -123,15 +126,16 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 			}); 
 	$("#lasp").on("change", function(e) {								// ASPECT RATIO HANDLER
 			_this.plo.aspect=$(this).val();								// Set aspect
-			_this.Update();												// Update resizer
+			_this.Update();												// Update resiser
+			}); 
+	$("#lnav").on("change", function(e) {								// NAVIGATION HANDLER
+			_this.plo.navigation=$(this).val();							// Set navigation
 			}); 
 	$("#ltitle").on("change", function(e) {								// PAGE NAME HANDLER
 			_this.plo.title=$(this).val();								// Set aspect
-			_this.Update();												// Update resizer
 			}); 
 	$("#lscroll").on("change", function(e) {							// SCROLL HANDLER
 			_this.plo.panes[_this.curPane].scroll=$(this).val();		// Set val
-			_this.Update();												// Update resizer
 			}); 
 	$("#ltfont").on("click", function(e) {								// SET TITLE FONT
 			if (_this.plo.panes[_this.curPane].titleStyle)				// If a style set
@@ -144,7 +148,12 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 				TextStyleBox("Body font",_this.plo.panes[_this.curPane].bodyStyle, function(s) {	// Style it
 					_this.plo.panes[_this.curPane].bodyStyle=s;			// Set val
 					});
-				}); 
+			}); 
+	$("#lnfont").on("click", function(e) {								// SET NAVIGATION FONT
+			TextStyleBox("Navigation",_this.plo.navStyle, function(s) {	// Style it
+				_this.plo.navStyle=s;									// Set val
+				});
+			}); 
 
 	
 	$('[id$="SizBar"]').hover(											// HOVER ON PANE SIZER
@@ -270,6 +279,7 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	ColorPicker("lbgcol",-1,true);
 	$("#lbfont").val(o.bodyStyle);										// Set body font style
 	$("#ltfont").val(o.titleStyle);										// Set title font style
+	$("#lnfont").val(o.navStyle);										// Set navigation font style
 	$("#lbgimg").val(o.panes[this.curPane].backImg);					// Set back image
 	$("#lmar").val(o.panes[this.curPane].margin);						// Set margin
 	$("#lbs").val(o.panes[this.curPane].borderSty);						// Set border style
@@ -281,6 +291,7 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	$("#rgut").val(o.rightGut);											
 	$("#bgut").val(o.botGut);											
 	$("#lasp").val(o.aspect);											// Set aspect
+	$("#lnav").val(o.navigation);										// Set navigation
 	$("#ltitle").val(o.title);											// Set page name
 }
 
@@ -288,11 +299,6 @@ layout.prototype.MakeParams=function(container)						// PAGE PARAMS
 {
 	var str="<div id='layoutParamsDiv' class='sf-layoutParams'>";			// Overall div
 	str+="<table style='width:100%;text-align:left'>";						// Table
-	str+="<tr height='28'><td>Pane<td style='color:#009900;font-weight:bold' id='paneTitle'></td></tr>";	// Pane name
-	if (container.cite == undefined) {										// If called as a page override
-		str+="<tr height='28'><td>Page name</td>";							// Name
-		str+="<td><input class='sf-is' id='ltitle' type='text'></td></tr>";
-		}
 	str+="<tr height='28'><td>Background image &nbsp; </td>";				// Back Pic
 	str+="<td><input class='sf-is' style='width:100px' id='lbgimg' type='text'>";
 	str+="&nbsp;&nbsp;<button class='sf-bs' id='lbgpick'>Choose</button></td></tr>";
@@ -308,9 +314,15 @@ layout.prototype.MakeParams=function(container)						// PAGE PARAMS
 	str+="<td>"+MakeSelect("lscroll",false,["auto","hidden"])+"</td></tr>";
 	str+="<tr height='28'><td>Margins</td>";								// Margin
 	str+="<td>"+MakeSelect("lmar",false,["0","2","4","8","16","32"])+"</td></tr>";
+	str+="<tr height='28'><td>Font styles</td>";							// Font styles
+	str+="<td><button class='sf-is' id='lbfont' style='width:46%'>Body</button>&nbsp;&nbsp;&nbsp;";
+	str+="<button class='sf-is' id='ltfont' style='width:46%'>Title</button></td></tr>";
 	str+="<tr><td>Default text</td><td><div class='sf-is' id='lmark' ";		// Markup
 	str+="style='height:50px;overflow:hidden' contenteditable='true'></div></td></tr>";
-	str+="<tr height='28'><td>Top / bot gutter</td>";						// Gutter
+	str+="<tr height='28'><td style='color:#009900'><b>Page</b></td><td>";	// Page settings
+	if (container.cite == undefined)										// If called as a page override
+		str+="<input class='sf-is' style='width:100px' id='ltitle' type='text'>"
+	str+="</td></tr><tr height='28'><td>Top / bot gutter</td>";				// Gutter
 	str+="<td>"+MakeSelect("tgut",false,["None","Thin","Medium","Wide"])+" &nbsp;:&nbsp; ";
 	str+=MakeSelect("bgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";
 	str+="<tr height='28'><td>Left / right gutter</td>";					// Gutter
@@ -318,11 +330,10 @@ layout.prototype.MakeParams=function(container)						// PAGE PARAMS
 	str+=MakeSelect("rgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";
 	str+="<tr height='28'><td>Aspect format</td><td>";						// Aspect
 	str+=MakeSelect("lasp",false,["Portrait","Landscape","Square"])+"</td></tr>";
-	str+="<tr height='28'><td>Font styles</td>";							$// Font styles
-	str+="<td><button class='sf-is' id='lbfont' style='width:46%'>Body</button> &nbsp; ";
-	str+="<button class='sf-is' id='ltfont' style='width:46%'>Title </button></td></tr>";
+	str+="<tr height='28'><td>Navigation</td><td>";							// Navigation
+	str+=MakeSelect("lnav",false,["None","Top","Middle","Bottom"])+"&nbsp;&nbsp;";
+	str+="<button class='sf-is' id='lnfont' style='width:46%'>Font</button></td></tr>";
 	str+="</table><br>";	
-	str+="Click on a pane to show its current settings.<br>";				// Help
 	return str+"</div>";													// Return sizer
 }
 
@@ -338,6 +349,8 @@ layout.prototype.MakeSizer=function()									// PAGE SIZER
 	str+="<div id='leftSizBar' 	style='position:absolute;width:8px;cursor:col-resize'  class='sf-unselectable' title='Resize left'></div>";
 	str+="<div id='rightSizBar' style='position:absolute;width:8px;cursor:col-resize'  class='sf-unselectable' title='Resize right'></div>";
 	str+="<div id='botSizBar' 	style='position:absolute;height:8px;cursor:row-resize' class='sf-unselectable' title='Resize bot'></div>";
+	str+="<p><div style='position:absolute'>Click on a pane to show its current settings.</div>";		// Help
+	str+="<br>Drag space between panes to change size.</p></div>";
 	return str+"</div>";													// Return sizer
 }
 

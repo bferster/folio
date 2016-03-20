@@ -532,6 +532,8 @@ var defTemplates=[
 	itemHgt:"200vh",										
 	itemAlign:"center",									
 	itemBorder:"2px solid #999999",					
+	navigation:"None",
+	navStyle:"sans-serif,16px,#000000,bold,left,100%",		
 	panes:[{
 		borderCol:"#999999", borderSty:"None", borderWid:"1",							
 		backCol:"#eeeeee", backImg:"", markUp:"",margin:8,scroll:"auto",
@@ -574,6 +576,8 @@ var defTemplates=[
 	itemHgt:"200vh",										
 	itemAlign:"center",									
 	itemBorder:"2px solid #999999",					
+	navigation:"None",
+	navStyle:"sans-serif,16px,#000000,bold,left,100%",		
 	panes:[{
 		borderCol:"#999999", borderSty:"None", borderWid:"1",							
 		backCol:"#eeeeee", backImg:"art/sky.jpg", markUp:"<br>My work...&nbsp;",margin:8,scroll:"auto",
