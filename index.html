@@ -476,20 +476,20 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 				str+="onMouseOver='this.style.color=\"#009900\"' ";			// Mouse over
 				str+="onMouseOut='this.style.color=\"#999\"'>";				// Mouse out
 				if (curPage == j){	
-					str+="<span style='color:#009900'>&#10148;" 			// Start caret
+					str+="<span style='color:#009900'>&#10148; " 			// Start caret
 					if (o[j].layout && o[j].layout.title)					// If page name set
-						str+="[ "+o[j].layout.title+" ]";					// Use it
+						str+=o[j].layout.title;								// Use it
 					else													// Child page
-						str+=" Page "+(j+1);								// Generic name
+						str+="Page "+(j+1);									// Generic name
 					str+=" <span style='opacity:0'>&#10148;</span></span></div>";	// Show page
 					}
 				else if (j == o.length)										// Add new page
-					str+="<button class='sf-bs' style='margin-top:6px'>Add new page</button></div>";		// Add page
+					str+="<br><button class='sf-bs' style='margin-top:6px'>Add new page</button></div>";		// Add page
 				else{														// A page
 					if (o[j].layout && o[j].layout.title)					// If page name set
-						str+="[ "+o[j].layout.title+" ]</div>";				// Use it
+						str+=o[j].layout.title+"</div>";					// Use it
 					else													// Child page
-						str+=" Page "+(j+1)+" </div>";						// Generic
+						str+="<span style='font-size:10px'>Page "+(j+1)+"</span></div>";	// Generic
 					}
 				}
 			str+="</div>";													// Close portfolio div

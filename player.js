@@ -237,8 +237,6 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 		sf.Draw(e.currentTarget.id.substr(10)-0);							// Extract page from id and draw
 		});
 	
-
-
 	var css={};
 	var pane="Top";
 	if (l.navStyle) {
@@ -262,7 +260,7 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 	css.left=$("#playerPane"+pane).position().left+"px"; 					// Left
 	css.top=$("#playerPane"+pane).position().top+"px"; 						// Top
 	if (l.navigation == "Middle") 											// Middle
-		css.top=$("#playerPaneTop").position().top+$("#playerPaneTop").height()-s[1].replace(/px/,"")-8+"px"; 						
+		css.top=$("#playerPaneTop").position().top+$("#playerPaneTop").height()-s[1].replace(/px/,"")-10+"px"; 						
 
 	$("#sfNavMenubar").css(css);											// Set css
 }
