@@ -124,6 +124,8 @@
 						}
 		.sf-navigation  { position:absolute;padding:16px;font-style:italic;
 						}
+		.sf-navMenubar  { position:absolute;padding:16px;
+						}
 		.sf-navButs  	{ position:absolute;cursor:pointer;
 						}
 		.sf-lightBox	{ position:absolute;padding:16px;border-radius:6px;z-index:2500;
@@ -337,8 +339,8 @@ folio.prototype.InitProject=function(num)								// INIT PROJECT
 		this.projects[num].pages=[];										// Allocate array
 	if (!this.projects[num].format)											// If no format spec's
 		this.projects[num].format="Slides";									// Default to slide
-	var t=dataObj.FindFromID(this.templates,this.projects[num].template);	// Get template from project
-	layoutObj.Init(this.projects[num],this.templates[Math.max(t,0)]);		// Init project's layout object (use def template if bad)
+//	var t=dataObj.FindFromID(this.templates,this.projects[num].template);	// Get template from project
+//	layoutObj.Init(this.projects[num],this.templates[Math.max(t,0)]);		// Init project's layout object (use def template if bad)
 }
 
 
@@ -352,6 +354,7 @@ folio.prototype.Draw=function(page)											// DRAW PAGE (Use sf instead of th
 	var h=window.innerHeight;												// Get height
 	var w=window.innerWidth;												// Get width
 	$("#sfNavigationBar").remove();											// Remove any previous nav
+	$("#sfNavMenubar").remove();											// Remove any previous menubar
 	if (page)																// If a page set
 		curPage=page;														// Use it
 	if ((curProject != -1) && sf.projects[curProject])						// A valid project

@@ -116,6 +116,7 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 			});
 
 	this.StylePage(page,defLayout);											// Style page
+	this.AddMenubar();														// Add menubar navigation?
 	if (!this.editable) {													// If not editable
 		$('[id^="sfItemDiv-"]').removeClass("sf-playerItem");				// Remove class added to manipulate size
 		$('[id^="sfItem-"]').removeClass("sf-playerItemInt");				// Remove class added to manipulate size
@@ -179,7 +180,7 @@ player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
 
 }
 
-player.prototype.AddNavigation=function(page, defLayout)				// ADD NAVIGATION
+player.prototype.AddNavigation=function()								// ADD NAVIGATION
 {
 	var maxPages=sf.projects[curProject].pages.length-1;					// Max page
 	$("#sfNavigationBar").remove();											// Remove any previous nav
@@ -205,5 +206,41 @@ player.prototype.AddNavigation=function(page, defLayout)				// ADD NAVIGATION
 		Sound("click");														// Click
 		sf.Draw();															// Redraw
 		});
-	
+}
+
+
+player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGATION
+{
+	$("#sfNavMenubar").remove();											// Remove any previous nav
+	if ((curProject < 0) || (curPage < 0) )									// Invalid page
+		return;																// Quit
+	var p=sf.projects[curProject];											// Point a project layout
+	var l=p.layout;															// Point a project layout
+	var pg=p.pages[curPage];												// Point at page
+	if (pg.layout && pg.layout.navigation)									// If layout override
+		l=pg.layout;
+	if (!l.navigation || (l.navigation == "None"))							// No menu bar
+		return;																// Quit
+	var i;
+	var str="<div class='sf-navMenubar' id='sfNavMenubar'>";				// Enclosing div
+	for (i=0;i<p.pages.length;++i) {										// For each page in project
+		if (p.pages[i].layout && p.pages[i].layout.title)					// If a title set
+			str+=p.pages[i].layout.title;									// Add page
+		}
+	$("body").append(str+"</div>");											// Add to body
+
+	var css={};
+	if (l.navStyle) {
+		var s=l.navStyle.split(",");										// Get as array (font,size,color,weight,align,height)
+		css["font-family"]=s[0];											// Family
+		css["font-size"]=s[1];												// Size
+		css["color"]=s[2];													// Color
+		css["font-weight"]=s[3];											// Weight
+		}
+	if (l.navigation == "Top") {
+		css.width=$("#playerPaneTop").css("width");							// Width
+		css.left=$("#playerPaneTop").position().left+"px"; 					// Left
+		css.top=$("#playerPaneTop").position().top+"px"; 					// Top
+		}
+	$("#sfNavMenubar").css(css);											// Set css
 }
