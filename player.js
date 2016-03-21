@@ -208,7 +208,6 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 		});
 }
 
-
 player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGATION
 {
 	$("#sfNavMenubar").remove();											// Remove any previous nav
@@ -224,12 +223,24 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 	var i;
 	var str="<div class='sf-navMenubar' id='sfNavMenubar'>";				// Enclosing div
 	for (i=0;i<p.pages.length;++i) {										// For each page in project
-		if (p.pages[i].layout && p.pages[i].layout.title)					// If a title set
-			str+=p.pages[i].layout.title;									// Add page
+		if (p.pages[i].layout && p.pages[i].layout.title) {					// If a title set
+			str+="<span class='sf-navMenuItem' id='sfNavItem-"+i+"'>";		// Span header
+			str+=p.pages[i].layout.title+"</span>"							// Add page
+			if ((l.navigation == "Left") || (l.navigation == "Right")) 		// If vertical
+				str+="<br>"
+			}
 		}
 	$("body").append(str+"</div>");											// Add to body
+	
+	$('[id^="sfNavItem-"]').off(); 											// Remove old handlers
+	$('[id^="sfNavItem-"]').on("click", function(e) { 						// CLICK HANDLER
+		sf.Draw(e.currentTarget.id.substr(10)-0);							// Extract page from id and draw
+		});
+	
+
 
 	var css={};
+	var pane="Top";
 	if (l.navStyle) {
 		var s=l.navStyle.split(",");										// Get as array (font,size,color,weight,align,height)
 		css["font-family"]=s[0];											// Family
@@ -237,10 +248,21 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 		css["color"]=s[2];													// Color
 		css["font-weight"]=s[3];											// Weight
 		}
-	if (l.navigation == "Top") {
-		css.width=$("#playerPaneTop").css("width");							// Width
-		css.left=$("#playerPaneTop").position().left+"px"; 					// Left
-		css.top=$("#playerPaneTop").position().top+"px"; 					// Top
+	if ((l.navigation == "Top") || (l.navigation == "Middle" ))				// Top or middle
+		pane="Top";															// Set pane
+	else if (l.navigation == "Left") 										// Left
+		pane="Left";														// Set pane
+	else if (l.navigation == "Bottom") 										// Bot
+		pane="Bot";															// Set pane
+	else if (l.navigation == "Right") {										// Right
+		pane="Right";
+		css["text-align"]="right";											// Align right
 		}
+	css.width=$("#playerPane"+pane).css("width");							// Width
+	css.left=$("#playerPane"+pane).position().left+"px"; 					// Left
+	css.top=$("#playerPane"+pane).position().top+"px"; 						// Top
+	if (l.navigation == "Middle") 											// Middle
+		css.top=$("#playerPaneTop").position().top+$("#playerPaneTop").height()-s[1].replace(/px/,"")-8+"px"; 						
+
 	$("#sfNavMenubar").css(css);											// Set css
 }
