@@ -322,15 +322,15 @@ layout.prototype.MakeParams=function(container)						// PAGE PARAMS
 	str+="<tr height='28'><td style='color:#009900'><b>Page</b></td><td>";	// Page settings
 	if (container.cite == undefined)										// If called as a page override
 		str+="<input class='sf-is' style='width:100px' id='ltitle' type='text'>"
-	str+="</td></tr><tr height='28'><td>Top / bot gutter</td>";				// Gutter
+	str+="</td></tr><tr height='28'><td>Top&nbsp;/&nbsp;bot&nbsp;gutter</td>";				// Gutter
 	str+="<td>"+MakeSelect("tgut",false,["None","Thin","Medium","Wide"])+" &nbsp;:&nbsp; ";
 	str+=MakeSelect("bgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";
-	str+="<tr height='28'><td>Left / right gutter</td>";					// Gutter
+	str+="<tr height='28'><td>Left&nbsp;/&nbsp;right&nbsp;gutter</td>";					// Gutter
 	str+="<td>"+MakeSelect("lgut",false,["None","Thin","Medium","Wide"])+" &nbsp;:&nbsp; ";
 	str+=MakeSelect("rgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";
 	str+="<tr height='28'><td>Aspect format</td><td>";						// Aspect
 	str+=MakeSelect("lasp",false,["Portrait","Landscape","Square"])+"</td></tr>";
-	str+="<tr height='28'><td>Menubar</td><td>";							// Navigation
+	str+="<tr height='28'><td>Menu bar</td><td>";							// Navigation
 	str+=MakeSelect("lnav",false,["None","Top","Middle","Bottom","Left","Right"]);
 	str+="&nbsp;&nbsp;&nbsp;<button class='sf-is' id='lnfont' style='width:46%'>Font</button></td></tr>";
 	str+="</table><br>";	
