@@ -47,6 +47,7 @@ share.prototype.Set=function(project)								// SHARE DIALOG
 		var win=window.open(src,"_blank");								// Open new window
 		$(win).on("load",function() {									// When loaded
 			var str="set|folio|{\"projects\":["+JSON.stringify(sf.projects[curProject])+"]}";				
+			$("#lightBoxDiv").remove();									// Remove lightbox
 			win.postMessage(str,"*");									// Send message to new window	
 			});
 		});

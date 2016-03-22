@@ -330,7 +330,7 @@ layout.prototype.MakeParams=function(container)						// PAGE PARAMS
 	str+=MakeSelect("rgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";
 	str+="<tr height='28'><td>Aspect format</td><td>";						// Aspect
 	str+=MakeSelect("lasp",false,["Portrait","Landscape","Square"])+"</td></tr>";
-	str+="<tr height='28'><td>Navigation</td><td>";							// Navigation
+	str+="<tr height='28'><td>Menubar</td><td>";							// Navigation
 	str+=MakeSelect("lnav",false,["None","Top","Middle","Bottom","Left","Right"]);
 	str+="&nbsp;&nbsp;&nbsp;<button class='sf-is' id='lnfont' style='width:46%'>Font</button></td></tr>";
 	str+="</table><br>";	

@@ -12,6 +12,7 @@ function player()													// CONSTRUCTOR
 	this.guts["None"]=0;  this.guts["Thin"]=2;  this.guts["Medium"]=8; this.guts["Wide"]=16;	
 	this.ckTop=this.ckMid=this.ckLeft=this.ckRight=this.ckBot=null;			// Holds CKEditor instances
 	this.editable=false;
+	this.page=null;
 }	
 
 player.prototype.Make=function(showOnly)								// MAKE PLAYER
@@ -29,11 +30,19 @@ player.prototype.Make=function(showOnly)								// MAKE PLAYER
 
 player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 {
+	if (this.editable && this.page) {										// If editable and not first time
+		this.page.markUpTop=playerObj.ckTop.getData();						// Clean up data
+		this.page.markUpLeft=playerObj.ckLeft.getData();					
+		this.page.markUpMid=playerObj.ckMid.getData();						
+		this.page.markUpRight=playerObj.ckRight.getData();					
+		this.page.markUpBot=playerObj.ckBot.getData();						
+		}
 	var markUp,s,css,id;
 	var asp=defLayout.aspect;												// Start with default
 	var parent=$("#playerDiv").parent();									// Point at panrent container
 	if (!page)																// If no page
 		return;																// Quit
+	this.page=page;															// Save page object
 	var w=$(parent).width();												// Get width of parent
 	var h=$(parent).height()-3;												// Get height 
 	var pFormat=sf.projects[curProject].format;								// Portfolio format
@@ -104,7 +113,7 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 			this["ck"+this.paneNames[i]]=CKEDITOR.inline( $(this.divs[i])[0] );	// Enable rich text editor
 		}
 
-	if (this.editable) 														// If editable
+	if (this.editable) {														// If editable
 		CKEDITOR.on('instanceReady', function(ev) {							// When instance is ready
 	    	ev.editor.editable().attachListener(ev.editor.document, "click", function(e) {	// Attach new click handler
 	    		var id=$(e.data.getTarget()).attr("id");					// Get id
@@ -112,8 +121,24 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 		    		layoutObj.SetItemSize(id);								// Set item size
 		    		ev.cancel();											// Stop multiple hits
 		    		}
-	    		})	
+	    		});
 			});
+	   
+/*	    this.ckTop.on("getData", function() {
+//	   		$("#playerPaneTop").html(playerObj.ckTop.getData());
+	    	});    
+	    this.ckLeft.on("getData", function() {
+//	   		$("#playerPaneLeft").html(playerObj.ckLeft.getData());
+	    	});    
+	    this.ckRight.on("getData", function() {
+//	   		$("#playerPaneRight").html(playerObj.ckRight.getData());
+	    	});    
+	    this.ckBot.on("getData", function() {
+//	   		$("#playerPaneBot").html(playerObj.ckBot.getData());
+	    	});    
+*/
+		
+		}
 
 	this.StylePage(page,defLayout);											// Style page
 	this.AddMenubar();														// Add menubar navigation?
