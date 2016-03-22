@@ -31,7 +31,7 @@ player.prototype.Make=function(showOnly)								// MAKE PLAYER
 player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 {
 	if (this.editable && this.page) {										// If editable and not first time
-		this.page.markUpTop=playerObj.ckTop.getData();						// Clean up data
+		this.page.markUpTop=playerObj.ckTop.getData();						// Clean up html data
 		this.page.markUpLeft=playerObj.ckLeft.getData();					
 		this.page.markUpMid=playerObj.ckMid.getData();						
 		this.page.markUpRight=playerObj.ckRight.getData();					
