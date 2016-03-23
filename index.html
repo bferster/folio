@@ -912,10 +912,10 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 				var p=sf.projects[curProject].pages;						// Point p at current project pages
 				var from=ui.draggable.prop('id').substr(11);				// Get id of dragged page
 				var to=$(event.target).prop('id').substr(11);				// Get id of receiver page
-				var t=p[to];												// Save to item
-				p[to]=p[from];												// Copy from -> to
-				p[from]=t;													// Reset to
-				Sound("add");												// Add
+				var t=$.parseJSON(JSON.stringify(p[from]));					// Copy as object to t					
+				p.splice(from,1);											// Remove from				
+				if (from > to)	++to;										// If from after to
+				p.splice(to,0,t);											// Reinsert	page		
 				sf.Draw();													// Redraw
 				}
 			 });
