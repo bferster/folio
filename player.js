@@ -85,7 +85,7 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	$("#playerPaneRight").css({ width:"calc("+rpct+"% - "+v2+"px)",height:mhgt+"%"});
 	$("#playerPaneBot").css({ width:"100%",height:bpct+"%" });
 		
-	if (pFormat == "Single page") {											// Single page format
+	if (!this.editable && (pFormat == "Single page")) {						// Single page format
 		$("#playerPaneLeft").css("height","auto");							// As big as it gets
 		$("#playerPaneMid").css("height","auto");							
 		$("#playerPaneRight").css("height","auto");						
@@ -210,6 +210,8 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 	var maxPages=sf.projects[curProject].pages.length-1;					// Max page
 	$("#sfNavigationBar").remove();											// Remove any previous nav
 	if (inhibitNav)															// If no navigation
+		return;																// Quit
+	if (sf.projects[curProject].format != "Slides")							// Not showing as slides
 		return;																// Quit
 	var str="<div class='sf-navigation' id='sfNavigationBar'>";				// Enclosing div
 	str+="<img class='sf-navButs' id='sfPrevPage' src='img/revbut.gif' title='Previous page'>'";

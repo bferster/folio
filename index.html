@@ -882,7 +882,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 			var p=sf.projects[curProject].pages;							// Point p at pages array
 			if (!p) p=sf.projects[curProject].pages=[];						// Create it														
 			sf.Do()															// Something changed
-			p.push({ title:"New page"});									// Add page
+			p.push({ title:"New page", id:MakeUniqueId()});					// Add page
 			Sound("add");													// Add
 			}
 		else
@@ -916,6 +916,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 				p.splice(from,1);											// Remove from				
 				if (from > to)	++to;										// If from after to
 				p.splice(to,0,t);											// Reinsert	page		
+				Sound("add");												// Add
 				sf.Draw();													// Redraw
 				}
 			 });
@@ -928,6 +929,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 		sf.Do()																// Something changed
 		p.push($.parseJSON(JSON.stringify(p[curPage])));					// Copy as object					
 		curPage=p.length-1;													// Point at it
+		p[curPage].id=MakeUniqueId();										// Add unique id
 		Sound("add");														// Add
 		sf.Draw();															// Redraw
 		});
@@ -1026,6 +1028,7 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 		for (j=0;j<5;++j) {													// For each pane
 			if (p.layout && (p.layout.panes[j].markUp != undefined))		// If a layout markup set for top
 				po["markUp"+paneNames[j]]=p.layout.panes[j].markUp;			// Use it
+			po.id=MakeUniqueId();											// Add unique id
 			}		
 		str+=this.GetItemMarkup(p.items[i],2)								// Add item markup								
 		po.markUpMid+=str;													// Add to markUp
