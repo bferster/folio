@@ -128,6 +128,8 @@
 						}
 		.sf-navMenuItem  { margin-right:20px;cursor:pointer;
 						}
+		.sf-navPageButs { cursor:pointer;margin-left:12px;margin-right:12px;vertical-align:-2px;
+						}
 		.sf-navButs  	{ position:absolute;cursor:pointer;
 						}
 		.sf-lightBox	{ position:absolute;padding:16px;border-radius:6px;z-index:2500;
@@ -184,6 +186,7 @@ var inhibitNav=false;														// Flag to inhibit navigation
 var itemType="All types",itemFilter="";										// Filtering
 var curMenu="splash";														// Current menu item
 var drupalMan=false;														// Flag for drupal manager
+var portSections=null;														// Holds section info
 
 		
 $(window).resize(function() {											// ON WINDOW RESIZE
@@ -359,8 +362,25 @@ folio.prototype.Draw=function(page)											// DRAW PAGE (Use sf instead of th
 	$("#sfNavMenubar").remove();											// Remove any previous menubar
 	if (page)																// If a page set
 		curPage=page;														// Use it
-	if ((curProject != -1) && sf.projects[curProject])						// A valid project
+	if ((curProject != -1) && sf.projects[curProject]) {					// A valid project
 		curPage=Math.min(sf.projects[curProject].pages.length-1,curPage);	// Cap at maxpages
+		var i,n,title;
+		var p=sf.projects[curProject].pages;								// Point at pages
+		portSections=[{title:"",start:0,num:1}];							// Clear old sections and a new one
+		if (p[0] && p[0].layout && p[0].layout.title)						// If a title on 1st page
+			portSections[0].title=p[0].layout.title;						// Use it
+		for (i=1;i<p.length;++i) {											// For each page
+			if (p[i].layout && p[i].layout.title) 							// A valid title
+				title=p[i].layout.title;									// Get title
+			else															// No title set
+				title="";													// Null
+			n=portSections.length-1;										// Current section
+			if (title && (title != portSections[n].title))					// A change
+				portSections.push({title:title,start:i,num:1});				// Add new section
+			else															// Same section
+				portSections[n].num++;										// Add to count
+			}		
+		}
 	if (curMenu == "show")	{												// If showing only
 		if (curProject == -1)												// No project
 			return 	$("#showDiv").html("<br> No portfolio found!");			// Not found
