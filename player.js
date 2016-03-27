@@ -85,11 +85,8 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	$("#playerPaneRight").css({ width:"calc("+rpct+"% - "+v2+"px)",height:mhgt+"%"});
 	$("#playerPaneBot").css({ width:"100%",height:bpct+"%" });
 		
-	if (!this.editable && (pFormat == "Single page")) {						// Single page format
-		$("#playerPaneLeft").css("height","auto");							// As big as it gets
-		$("#playerPaneMid").css("height","auto");							
-		$("#playerPaneRight").css("height","auto");						
-		$(parent).css({ "height":"auto","width":"auto" });								
+	if (!this.editable && (pFormat == "Wide screen")) {						// Wide screen format
+		$(parent).css({ "width":"calc(100% - 16px" });								
 		}
 
 	if (!mhgt) {															// No middle's
@@ -211,7 +208,7 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 	var p=sf.projects[curProject];											// Point at project
 	if (inhibitNav)															// If no navigation
 		return;																// Quit
-	if ((p.format != "Slides") && (p.format != "Matrix"))					// Not showing as slides or matrix
+	if ((p.format == "Canvas") || (p.format == "Single page"))				// Multipage display
 		return;																// Quit
 	var endPage=sf.projects[curProject].pages.length-1;						// End page
 	
@@ -222,14 +219,13 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 			}
 		}
 	var str="<div class='sf-navigation unselectable' id='sfNavigationBar'>";// Enclosing div
-	if (portSections[curSect].title)														// If somewhere to go
+	if ((portSections[curSect].title) && (p.format == "Matrix"))			// If somewhere to go in Matrix mode
 		str+="<span class='sf-navPageButs' id='sfPrevSect' title='Previous section'>"+portSections[curSect].title+"</span>";
 	str+="<span class='sf-navButs' id='sfPageCtr'>";						// Center span start
 	str+="<img class='sf-navPageButs' id='sfPrevPage' src='img/revbut.gif' title='Previous page'>";
 	str+="Page "+(curPage+1)+" of "+(endPage+1);							// Page id
 	str+="<img class='sf-navPageButs' id='sfNextPage' src='img/playbut.gif' title='Next page'></span>"
-
-	if ((curSect+1 != portSections.length) && portSections[curSect+1].title)	// If somewhere to go
+	if ((curSect+1 != portSections.length) && portSections[curSect+1].title && (p.format == "Matrix"))	// If somewhere to go in Matrix mode	
 		str+="<span class='sf-navPageButs' title='Next section'id='sfNextSect' style='float:right;margin-right:36px'>"+portSections[curSect+1].title+"</span>"
 
 	$("body").append(str+"</div");

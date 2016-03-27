@@ -593,7 +593,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new collaborator'>";
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
 	str+="<tr height='28'><td>Presention&nbsp;format&nbsp;&nbsp</td><td>";
-	str+=MakeSelect("projFormat",false,["Slides","Single page","Booklet","Matrix","Canvas"],projFormat)+"</td></tr>";
+	str+=MakeSelect("projFormat",false,["Slides","Booklet","Wide screen","Matrix","Canvas","Single page"],projFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
 	for (i=0;i<this.templates.length;++i)	v.push(this.templates[i].name);	
 	str+=MakeSelect("projTemp",false,v,v[this.userInfo.curTemplate]);
