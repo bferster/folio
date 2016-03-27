@@ -396,13 +396,11 @@ layout.prototype.SetItemSize=function(id)								// SET ITEM SIZE
 		var cw=$("#"+id).parent().width();									// Width of container pane	
 		var ac=cw-$("#"+id).parent().css("padding").replace(/px/,"")*2;		// Less margins (shows as padding)
 		var w=Math.min(Math.max(1,Math.round(($(it).width()/ac)*100)),100); // Get as %, 1-100
-		var h=$(it).attr("height");											// Get current height
+		var h=$(it).attr("hgt");											// Get current height
  		if (h) 																// If defined
- 			h=""+h.replace(/vh/i,"");										// Remove suffix
+ 			h=""+h.replace(/%/i,"");										// Remove suffix
  		else																// Undefined
  			h="auto";														// Set as 'auto'
- 		if (!isNaN(h))														// If a number
-  			h=Math.round(h/(cw-0+4)*100);									// Convert to %  
   		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");		// Content													
 		str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>"; 	// Logo
 		str+="&nbsp;&nbsp;<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#666'><b>Item size</b></span><p>";
@@ -420,12 +418,12 @@ layout.prototype.SetItemSize=function(id)								// SET ITEM SIZE
                				SetSize();										// Set size
                				},
             	"Done":  function() {										// DONE
-		               		id=$("#"+id).parent().attr("id");						// Get active pane
+		               		id=$("#"+id).parent().attr("id");				// Get active pane
 		               		var id2=(id == "playerPaneTop") ? "playerPaneMid" : "playerPaneTop";		// Not the currently active pane
-		               		CKEDITOR.instances[id2].focus();						// Blur KLUGE!!!
-		              		CKEDITOR.instances[id].focus();							// Focus
-		              		CKEDITOR.instances[id2].focus();						// Blur
-		             		CKEDITOR.instances[id2].focusManager.blur();			// Blur
+		               		CKEDITOR.instances[id2].focus();				// Blur KLUGE!!!
+		              		CKEDITOR.instances[id].focus();					// Focus
+		              		CKEDITOR.instances[id2].focus();				// Blur
+		             		CKEDITOR.instances[id2].focusManager.blur();	// Blur
 		          			$(this).remove(); 				
 							}
 				}});	
@@ -437,12 +435,13 @@ layout.prototype.SetItemSize=function(id)								// SET ITEM SIZE
 			var v=$("#liWid").val();										// Get %
             var off=Math.round((cw-ac)/cw*v);								// Calc offset of margin
             $(it).attr("width",(v-off)+"%");								// Scale it
-  	        v=$("#liHgt").val()*cw;											// Get height in pixels * 100
-	        v/=window.innerHeight;											// Percent of hgt
-           	if ($("#liHgt").val() == "auto") 								// If setting iframe div
+           	if ($("#liHgt").val() == "auto") 								// If not setting iframe div
 	            $(it).attr("height","auto");								// Auto scale
- 			else															// Scale height explicitly
- 	            $(it).attr("height",v*10+"vh");								// Scale it in terms of vh
+ 			else{															// Scale height explicitly
+ 	            var h=$("#liHgt").val();									// Get height
+ 	            $(it).attr("hgt",h+"%");									// Set hgt %
+				$(it).attr("height",$(it).width()*h/100);					// Set height
+				}
 			}
 		
 		$(".ui-dialog-titlebar").hide();

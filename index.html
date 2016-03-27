@@ -1019,7 +1019,7 @@ folio.prototype.GetItemMarkup=function(id)								// GET ITEM's MARKUP
 		else{
 			str+="<iframe id='sfItem-"+MakeUniqueId()+"' class='sf-playerItemInt' frameborder='0' allowfullscreen "; 
 			str+=" style='border:"+p.layout.itemBorder+"' src='"+o.src+"' "; // Style
-			str+="width='"+p.layout.itemWid+"' height='"+p.layout.itemHgt+"'></iframe>";
+			str+="width='"+p.layout.itemWid+"' hgt='"+p.layout.itemHgt+"'></iframe>";
 			}
 		str+="</div><br>";													// Close div											
 		}
@@ -1052,7 +1052,7 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 				po["markUp"+paneNames[j]]=p.layout.panes[j].markUp;			// Use it
 			po.id=MakeUniqueId();											// Add unique id
 			}		
-		str+=this.GetItemMarkup(p.items[i],2)								// Add item markup								
+		str+=this.GetItemMarkup(p.items[i])									// Add item markup								
 		po.markUpMid+=str;													// Add to markUp
 		p.pages.push(po);													// Add page
 		}

@@ -105,6 +105,16 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 		$(this.divs[i]).html(page["markUp"+this.paneNames[i]] ? page["markUp"+this.paneNames[i]] : defLayout.panes[i].markUp ? defLayout.panes[i].markUp : ""); 		// Set html of panes
 		s=defLayout.panes[i].bodyStyle.split(',');							// Get pane style array (font,size,color,weight,align,height)
 		css={ "font-family":s[0],"font-size":s[1],"color":s[2],"font-weight":s[3],"text-align":s[4],"line-height":s[5] };
+
+		$.each($('[id^="sfItem-"]'), function(index, val) {					// For each item
+			if ($(val).attr("frameborder") != undefined) {					// If not an iframe	
+				var r=.75;													// Start of assuming .75
+				if ($(val).attr("hgt")) 									// If height set
+					r=""+$(val).attr("hgt").replace(/%/,"")/100;			// Get %
+				$(val).attr("height",$(val).width()*r+"px");				// Set height
+				}
+			});
+		
 		$(this.divs[i]).css(css);											// Set style
 		if (this.editable) 													// If editable
 			this["ck"+this.paneNames[i]]=CKEDITOR.inline( $(this.divs[i])[0] );	// Enable rich text editor
@@ -120,7 +130,7 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 		    		}
 	    		});
 			});
-	   
+  
 /*	    this.ckTop.on("getData", function() {
 	   		$("#playerPaneTop").html(playerObj.ckTop.getData());
 	    	});    
