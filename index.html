@@ -344,8 +344,9 @@ folio.prototype.InitProject=function(num)								// INIT PROJECT
 		this.projects[num].pages=[];										// Allocate array
 	if (!this.projects[num].format)											// If no format spec's
 		this.projects[num].format="Slides";									// Default to slide
-//	var t=dataObj.FindFromID(this.templates,this.projects[num].template);	// Get template from project
-//	layoutObj.Init(this.projects[num],this.templates[Math.max(t,0)]);		// Init project's layout object (use def template if bad)
+	var t=dataObj.FindFromID(this.templates,this.projects[num].template);	// Get template from project
+	if (!this.projects[num].layout)											// If no layout set
+		layoutObj.Init(this.projects[num],this.templates[Math.max(t,0)]);	// Init project's layout object with template
 }
 
 
@@ -874,8 +875,9 @@ folio.prototype.MakePagePage=function(showOnly)							// MAKE PAGE PAGE
 		return str+"</div>";												// Return empty page
 		}
 	var o=this.projects[curProject].pages[curPage];							// Point at page
-	var r=.75;																// Portrait
-	var asp=this.projects[curProject].layout.aspect;						// Start with default
+	var asp="Portait",r=.75;												// Portrait
+	if (this.projects[curProject].layout)									// If layout set
+		asp=this.projects[curProject].layout.aspect;						// Start with default
 	if (o && o.layout && (o.layout.aspect != undefined))					// If a layout val set
 		asp=o.layout.aspect;												// Use page override
 	if (asp == "Square")			r=1;									// Square

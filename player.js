@@ -86,7 +86,7 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	$("#playerPaneBot").css({ width:"100%",height:bpct+"%" });
 		
 	if (!this.editable && (pFormat == "Wide screen")) {						// Wide screen format
-		$(parent).css({ "width":"calc(100% - 16px" });								
+		$(parent).css({ "width":"100%" });									// Go full screen							
 		}
 
 	if (!mhgt) {															// No middle's
@@ -122,19 +122,10 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 			});
 	   
 /*	    this.ckTop.on("getData", function() {
-//	   		$("#playerPaneTop").html(playerObj.ckTop.getData());
-	    	});    
-	    this.ckLeft.on("getData", function() {
-//	   		$("#playerPaneLeft").html(playerObj.ckLeft.getData());
-	    	});    
-	    this.ckRight.on("getData", function() {
-//	   		$("#playerPaneRight").html(playerObj.ckRight.getData());
-	    	});    
-	    this.ckBot.on("getData", function() {
-//	   		$("#playerPaneBot").html(playerObj.ckBot.getData());
+	   		$("#playerPaneTop").html(playerObj.ckTop.getData());
 	    	});    
 */
-		
+
 		}
 
 	this.StylePage(page,defLayout);											// Style page
@@ -212,7 +203,7 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 		return;																// Quit
 	var endPage=sf.projects[curProject].pages.length-1;						// End page
 	
-	for (i=0;i<portSections.length;++i) {										// For each section
+	for (i=0;i<portSections.length;++i) {									// For each section
 		if ((curPage >= portSections[i].start) && (curPage < portSections[i].start+portSections[i].num)) { // If in this section
 			curSect=i;														// Current sectiom
 			break;
@@ -228,11 +219,11 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 	if ((curSect+1 != portSections.length) && portSections[curSect+1].title && (p.format == "Matrix"))	// If somewhere to go in Matrix mode	
 		str+="<span class='sf-navPageButs' title='Next section'id='sfNextSect' style='float:right;margin-right:36px'>"+portSections[curSect+1].title+"</span>"
 
-	$("body").append(str+"</div");
-	$("#sfNavigationBar").css("top",$("#playerDiv").height()-45+"px")
-	$("#sfNavigationBar").width($("#playerDiv").width())
-	$("#sfPageCtr").css("left",$("#playerDiv").width()/2-60+"px")
-	$("#sfNextSect").css("left",$("#playerDiv").width()-30+"px")
+	$("body").append(str+"</div");											// Add to body
+	$("#sfNavigationBar").css("top",$("#playerDiv").height()-45+"px");		// Position top
+	$("#sfNavigationBar").width($("#playerDiv").width()-16);				// Width less padding
+	$("#sfPageCtr").css("left",$("#playerDiv").width()/2-60+"px");			// Center page controls
+	$("#sfNextSect").css("left",$("#playerDiv").width()-30+"px");			// Position next control
 	
 	$("#sfNextPage").on("click",function() {								// NEXT PAGE
 		curPage=Math.min(curPage+1,endPage);								// Advance and cap at end
@@ -306,11 +297,10 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 		pane="Right";
 		css["text-align"]="right";											// Align right
 		}
-	css.width=$("#playerPane"+pane).css("width");							// Width
+	css.width=$("#playerPane"+pane).width()-32+"px";						// Width less padding
 	css.left=$("#playerPane"+pane).position().left+"px"; 					// Left
 	css.top=$("#playerPane"+pane).position().top+"px"; 						// Top
 	if (l.navigation == "Middle") 											// Middle
 		css.top=$("#playerPaneTop").position().top+$("#playerPaneTop").height()-s[1].replace(/px/,"")-10+"px"; 						
-
 	$("#sfNavMenubar").css(css);											// Set css
 }
