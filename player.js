@@ -273,8 +273,10 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 	var str="<div class='sf-navMenubar unselectable' id='sfNavMenubar'>";	// Enclosing div
 	for (i=0;i<p.pages.length;++i) {										// For each page in project
 		if (p.pages[i].layout && p.pages[i].layout.title) {					// If a title set
-			str+="<span class='sf-navMenuItem' id='sfNavItem-"+i+"'>";		// Span header
-			str+=p.pages[i].layout.title+"</span>"							// Add page
+			str+="<span class='sf-navMenuItem' id='sfNavItem-"+i+"'";		// Span header
+			if ((l.navigation == "Left") || (l.navigation == "Right")) 		// If vertical
+				str+=" style='margin:0px'";									// No margins
+			str+=">"+p.pages[i].layout.title+"</span>"						// Add page
 			if ((l.navigation == "Left") || (l.navigation == "Right")) 		// If vertical
 				str+="<br>"
 			}
@@ -294,6 +296,7 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 		css["font-size"]=s[1];												// Size
 		css["color"]=s[2];													// Color
 		css["font-weight"]=s[3];											// Weight
+		css["line-height"]=s[5];											// Height
 		}
 	if ((l.navigation == "Top") || (l.navigation == "Middle" ))				// Top or middle
 		pane="Top";															// Set pane
@@ -305,7 +308,10 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 		pane="Right";
 		css["text-align"]="right";											// Align right
 		}
-	css.width=$("#playerPane"+pane).width()-32+"px";						// Width less padding
+	if (l.navigation == "Right") 											// Right
+		css.width=$("#playerPane"+pane).width()-16+"px";					// Width
+	else																	// All others
+		css.width=$("#playerPane"+pane).width()-32+"px";					// Width less padding
 	css.left=$("#playerPane"+pane).position().left+"px"; 					// Left
 	css.top=$("#playerPane"+pane).position().top+"px"; 						// Top
 	if (l.navigation == "Middle") 											// Middle
