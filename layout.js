@@ -9,6 +9,7 @@ function layout()											// CONSTRUCTOR
 	this.plo=null;														// Ptr to 				
 	this.ckMark=null;													// CKEditor instance
 	this.paneNames=["Top","Left","Mid","Right","Bot"];					// Name of all the panes
+	this.template=null;													// No template
 	this.stockImages=[	"art/sky.jpg",									// Holds stock images
 						"art/rothko.jpg",
 						"art/moon.jpg",
@@ -29,24 +30,19 @@ function layout()											// CONSTRUCTOR
 
 layout.prototype.Init=function(container, template)					// INIT LAYOUT 
 {
-	container.layout={};												// Make one
-	container.layout.topPct=template.topPct;							// Set default sizes
-	container.layout.leftPct=template.leftPct;
-	container.layout.rightPct=template.rightPct;
-	container.layout.botPct=template.botPct;
-	container.layout.aspect="";									
-	container.layout.title="";									
+	var i;
+	this.template=template;												// Save default template
+	container.layout={};												// Make fresh container
 	container.layout.panes=[];											// Holds pane info
-	if (container.cite == undefined) {									// If called as a page override
-		for (i=0;i<this.paneNames.length;++i) 							// For each pane
-			container.layout.panes.push({});							// Alloc pane obj
-		var o=sf.projects[curProject].layout;							// Point at current project's layout
-		container.layout.topPct=o.topPct;								// Set default sizes from project
-		container.layout.leftPct=o.leftPct;
-		container.layout.rightPct=o.rightPct;
-		container.layout.botPct=o.botPct;
-		}
-	else{																// Set default
+	for (i=0;i<this.paneNames.length;++i) 								// For each pane
+		container.layout.panes.push({});								// Alloc pane obj
+	if (container.cite != undefined) {									// If NOT called as a page override
+		container.layout.topPct=template.topPct;						// Set default sizes
+		container.layout.leftPct=template.leftPct;
+		container.layout.rightPct=template.rightPct;
+		container.layout.botPct=template.botPct;
+		container.layout.aspect="";									
+		container.layout.title="";									
 		var o=JSON.stringify(template);									// Deep copy default layout as JSON
 		container.layout=$.parseJSON(o);								// Use template as inits
 		}
@@ -170,7 +166,8 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 			var y=event.clientY-$("#sizerTopDiv").offset().top;			// Position within layout block
 			var h=$("#sizerTopDiv").height()+$("#sizerMidDiv").height()+$("#sizerBotDiv").height();	// Height of travel
 			var r=y/h;													// Ratio
-			r=Math.min(100-_this.plo.botPct,Math.max(0,r*100));			// Cap 0-100% - bot
+			var bp=(_this.plo.botPct != undefined) ? _this.plo.botPct : _this.template.botPct;	
+			r=Math.min(100-bp,Math.max(0,r*100));						// Cap 0-100% - bot
 			_this.plo.topPct=r;											// Set val
 			_this.Update();												// Update resizer
 			}
@@ -185,7 +182,8 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 			var y=event.clientY-$("#sizerTopDiv").offset().top;		// Position within layout block
 			var h=$("#sizerTopDiv").height()+$("#sizerMidDiv").height()+$("#sizerBotDiv").height();	// Height of travel
 			var r=y/h;													// Ratio
-			r=Math.max(_this.plo.topPct,Math.min(100,r*100));			// Cap 0-100% - top
+			var tp=(_this.plo.topPct != undefined) ? _this.plo.topPct : _this.template.topPct;	
+			r=Math.max(tp,Math.min(100,r*100));							// Cap 0-100% - top
 			_this.plo.botPct=100-r;										// Set val
 			_this.Update();												// Update resizer
 			}
@@ -199,7 +197,8 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 		drag: function(event, ui) {										// On drag
 			var x=event.clientX-$("#layoutSizerDiv").offset().left;		// Position within width
 			var r=x/$("#layoutSizerDiv").width()						// Ratio
-			r=Math.min(100-_this.plo.rightPct,Math.max(0,r*100));		// Cap 0-100% - right
+			var rp=(_this.plo.rightPct != undefined) ? _this.plo.rightPct : _this.template.rightPct;	
+			r=Math.min(100-rp,Math.max(0,r*100));						// Cap 0-100% - right
 			_this.plo.leftPct=r;										// Set val
 			_this.Update();												// Update resizer
 			}
@@ -213,7 +212,8 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 		drag: function(event, ui) {										// On drag
 			var x=event.clientX-$("#layoutSizerDiv").offset().left;		// Position within width
 			var r=x/$("#layoutSizerDiv").width()						// Ratio
-			r=100-Math.max(_this.plo.leftPct,Math.min(100,r*100));		// Cap 0-100% - left
+			var lp=(_this.plo.leftPct != undefined) ? _this.plo.leftPct : _this.template.leftPct;	
+			r=100-Math.max(lp,Math.min(100,r*100));						// Cap 0-100% - left
 			_this.plo.rightPct=r;										// Set val
 			_this.Update();												// Update resizer
 			}
@@ -234,15 +234,20 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	if (o.aspect == "Landscape")	$("#layoutSizerDiv").height(200);	// Set size to match aspect
 	else if (o.aspect == "Square")	$("#layoutSizerDiv").height(300);
 	else 							$("#layoutSizerDiv").height(400);
+
+	var tp=(o.topPct != undefined) ? o.topPct : this.template.topPct;	// If template if if undefined
+	var bp=(o.botPct != undefined) ? o.botPct : this.template.botPct;	
+	var lp=(o.leftPct != undefined) ? o.leftPct : this.template.leftPct;	
+	var rp=(o.rightPct != undefined) ? o.rightPct : this.template.rightPct;	
 	
-	var midHgt=Math.max(Math.min(100-o.topPct-o.botPct,100),0);			// Get mid% height 0-100
-	var midWid=Math.max(Math.min(100-o.rightPct-o.leftPct,100),0);		// Get mid% width 0-100
+	var midHgt=Math.max(Math.min(100-tp-bp,100),0);						// Get mid% height 0-100
+	var midWid=Math.max(Math.min(100-rp-lp,100),0);						// Get mid% width 0-100
 	$('[id^="sizer"]').show();											// Make sure they are all showing
-	$("#sizerTopDiv").css({ height:o.topPct+"%" });						// Set top		
-	$("#sizerLeftDiv").css({   height:midHgt+"%",width:o.leftPct+"%" });// Set left
+	$("#sizerTopDiv").css({ height:tp+"%" });							// Set top		
+	$("#sizerLeftDiv").css({   height:midHgt+"%",width:lp+"%" });		// Set left
 	$("#sizerMidDiv").css({   height:midHgt+"%",width:midWid+"%" });	// Set mid
-	$("#sizerRightDiv").css({  height:midHgt+"%",width:o.rightPct+"%" });// Set right
-	$("#sizerBotDiv").css({ height:o.botPct+"%" })						// Set bot		
+	$("#sizerRightDiv").css({  height:midHgt+"%",width:rp+"%" });		// Set right
+	$("#sizerBotDiv").css({ height:bp+"%" })							// Set bot		
 	$("#sizerMidDiv").width($("#sizerMidDiv").width()-7);				// Remove extra margins
 	if (!midWid && $("#sizerleftDiv").width())							// No mid, but left visible
 		$("#sizerLeftDiv").width($("#sizerLeftDiv").width()-8);			// Remove extra margins
@@ -267,11 +272,11 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	$("#rightSizBar").css("left",$("#sizerRightDiv").position().left+"px"); // X pos left
 	$("#rightSizBar").height($("#sizerRightDiv").height());				// Hgt left
 
-	$("#topPct").text(Math.floor(o.topPct)+"%");						// Show %
-	$("#leftPct").text(Math.floor(o.leftPct)+"%");					
-	$("#midPct").text(Math.floor(100-o.leftPct-o.rightPct)+"%");		// Mid is 100-left-right			
-	$("#rightPct").text(Math.floor(o.rightPct)+"%");					
-	$("#botPct").text(Math.floor(o.botPct)+"%");				
+	$("#topPct").text(Math.floor(tp)+"%");								// Show %
+	$("#leftPct").text(Math.floor(lp)+"%");					
+	$("#midPct").text(Math.floor(100-lp-rp)+"%");						// Mid is 100-left-right			
+	$("#rightPct").text(Math.floor(rp)+"%");					
+	$("#botPct").text(Math.floor(bp)+"%");				
 	$("#paneTitle").text(this.paneNames[this.curPane]);					// Pane name			
 	$("#lbcol").val(o.panes[this.curPane].borderCol);					// Set border color
 	ColorPicker("lbcol",-1,true);
@@ -359,6 +364,7 @@ layout.prototype.PickArt=function(callback)								// CHOOSE ARTWORK
 		var i;
 		var _this=this;														// Get context
 		var trsty=" onMouseOver='this.style.border=\"3px solid #009900\"' ";// Hover style
+		trsty+="onMouseOut='this.style.border=\"3px solid #ffffff\"'";
 
 		$("#alertBoxDiv").remove();											// Remove any old dialogs
   		$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");		// Content													
@@ -367,7 +373,8 @@ layout.prototype.PickArt=function(callback)								// CHOOSE ARTWORK
 		str+="<div class='sf-artPicker'>";									// Scrolling div
 		for (i=0;i<this.stockImages.length;++i) 							// For each image
 			str+="<img id='artPic"+i+"' class='sf-artPic' src='"+this.stockImages[i]+"'"+trsty+">"	// add pic
-		$("#alertBoxDiv").append(str+"</div>");								// Add to dialog
+		str+="</div><br>Scroll left-right to choose image. Click to select.";	// Directions
+		$("#alertBoxDiv").append(str);										// Add to dialog
 	
 		$("#alertBoxDiv").dialog({ width:600, buttons: {
                	"Cancel":  	function() {									// DONE

@@ -150,7 +150,7 @@
 		   			 	-webkit-user-select: text;  -ms-user-select: text;   user-select: text;
 		   				}
 		*[contenteditable] 	{   -webkit-user-select: auto !important; }
-	
+		
 	</style>
 </head>
 <body>
@@ -361,7 +361,7 @@ folio.prototype.Draw=function(page)											// DRAW PAGE (Use sf instead of th
 	var w=window.innerWidth;												// Get width
 	$("#sfNavigationBar").remove();											// Remove any previous nav
 	$("#sfNavMenubar").remove();											// Remove any previous menubar
-	if (page)																// If a page set
+	if (page != undefined)													// If a page set
 		curPage=page;														// Use it
 	if ((curProject != -1) && sf.projects[curProject]) {					// A valid project
 		curPage=Math.min(sf.projects[curProject].pages.length-1,curPage);	// Cap at maxpages
@@ -847,7 +847,6 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		ConfirmBox(str, function() {										// Confirm it
 			sf.Do()															// Something changed
 			sf.AddPages();													// Add pages
-			curMenu="page";													// Set for page
 			sf.Draw();														// Redraw
 			});
 		});
@@ -991,6 +990,7 @@ folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 			var str=sf.GetItemMarkup(from);									// Add item to page
 			$(this).html(str+$(this).html());								// Add item
 			p.pages[curPage]["markUp"+to]=$(this).html();					// Copy html contents of pane into page
+			playerObj.Update(sf.projects[curProject].pages[curPage],sf.projects[curProject].layout);	// Update player obj
 			}
 		 });
 }	
@@ -1052,6 +1052,7 @@ folio.prototype.AddPages=function()										// ADD PAGES TO PROJECT
 				po["markUp"+paneNames[j]]=p.layout.panes[j].markUp;			// Use it
 			po.id=MakeUniqueId();											// Add unique id
 			}		
+		
 		str+=this.GetItemMarkup(p.items[i])									// Add item markup								
 		po.markUpMid+=str;													// Add to markUp
 		p.pages.push(po);													// Add page

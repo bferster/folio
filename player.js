@@ -199,8 +199,6 @@ player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
 	if (page.layout && (page.layout.rightGut != undefined))					// If a page override set
 		val=this.guts[page.layout.rightGut];								// Use it
 	if (val) $(this.divs[3]).css("margin-left",val);						// Apply value if set 
-
-
 }
 
 player.prototype.AddNavigation=function()								// ADD NAVIGATION
@@ -272,7 +270,7 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 	if (!l.navigation || (l.navigation == "None"))							// No menu bar
 		return;																// Quit
 	var i;
-	var str="<div class='sf-navMenubar' id='sfNavMenubar'>";				// Enclosing div
+	var str="<div class='sf-navMenubar unselectable' id='sfNavMenubar'>";	// Enclosing div
 	for (i=0;i<p.pages.length;++i) {										// For each page in project
 		if (p.pages[i].layout && p.pages[i].layout.title) {					// If a title set
 			str+="<span class='sf-navMenuItem' id='sfNavItem-"+i+"'>";		// Span header
