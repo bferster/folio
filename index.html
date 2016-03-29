@@ -106,6 +106,8 @@
 						}
 		.sf-pullDown {	position:absolute;background-color:#ddd;width:100px; 
 						}
+		.sf-pullDownItem:hover{ background-color:#bbb;color:#eee
+						}
 		.sf-doButs {  	text-align:center;cursor:pointer;vertical-align:middle;
 						display:inline-block;text-align:center;padding:10px;font-size:14px;
 						}
@@ -118,19 +120,21 @@
 						}
 		.sf-artPic		{ width:128px;height:64px;margin-right:8px;overflow:hidden;vertical-align:top;
 						}
-		.sf-pullDownItem:hover{ background-color:#bbb;color:#eee
-						}
 		.sf-citation	{ text-align:right;cursor:pointer;font-style:italic;
 						}
-		.sf-navigation  { position:absolute;padding:16px;font-style:italic;
+		.sf-navigation  { position:absolute;padding:16px;
 						}
 		.sf-navMenubar  { position:absolute;padding:16px;
 						}
-		.sf-navMenuItem  { margin-right:20px;cursor:pointer;
+		.sf-navMenuItem { margin-right:20px;cursor:pointer;
 						}
 		.sf-navPageButs { cursor:pointer;margin-left:12px;margin-right:12px;vertical-align:-2px;
 						}
-		.sf-navButs  	{ position:absolute;cursor:pointer;
+		.sf-navButs  	{ position:absolute;cursor:pointer;text-align:center;
+						}
+		.sf-menuPullDown{ position:absolute;background-color:#e8e8e8;min-width:100px;padding:8px;border-radius:4px;
+						}
+		.sf-menuPullDownItem:hover{ background-color:#ccc;
 						}
 		.sf-lightBox	{ position:absolute;padding:16px;border-radius:6px;z-index:2500;
 						background-color:#f8f8f8;font-size:12px;
@@ -365,22 +369,19 @@ folio.prototype.Draw=function(page)											// DRAW PAGE (Use sf instead of th
 		curPage=page;														// Use it
 	if ((curProject != -1) && sf.projects[curProject]) {					// A valid project
 		curPage=Math.min(sf.projects[curProject].pages.length-1,curPage);	// Cap at maxpages
-		var i,n,title;
+		var i,title;
 		var p=sf.projects[curProject].pages;								// Point at pages
-		portSections=[{title:"",start:0,num:1}];							// Clear old sections and a new one
+		portSections=[{title:"Home",start:0,num:1}];						// Clear old sections and a new one
 		if (p[0] && p[0].layout && p[0].layout.title)						// If a title on 1st page
 			portSections[0].title=p[0].layout.title;						// Use it
 		for (i=1;i<p.length;++i) {											// For each page
-			if (p[i].layout && p[i].layout.title) 							// A valid title
-				title=p[i].layout.title;									// Get title
-			else															// No title set
-				title="";													// Null
-			n=portSections.length-1;										// Current section
-			if (title && (title != portSections[n].title))					// A change
+			if (p[i].layout && p[i].layout.header) {						// A header page
+				title=p[i].layout.title ? p[i].layout.title : "Header";		// Set title
 				portSections.push({title:title,start:i,num:1});				// Add new section
-			else															// Same section
-				portSections[n].num++;										// Add to count
-			}		
+				}
+			else															// Child page
+				portSections[portSections.length-1].num++;					// Add to count
+			}
 		}
 	if (curMenu == "show")	{												// If showing only
 		if (curProject == -1)												// No project
@@ -568,7 +569,7 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
 	var i,v=[];
-	var projTitle="",projDesc="",projCite="",projTags="",projCollab=[],projFormat="Slides",projTemp="";
+	var projTitle="",projDesc="",projCite="",projTags="",projCollab=[],projFormat="Web-page",projTemp="";
 	var str="<div id='projectDiv' class='sf-projectPage'>";					// Project container
 	if (curProject < 0) 													// No project selected
 		return str+"</div>";												// Return empty page
@@ -594,7 +595,7 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new collaborator'>";
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
 	str+="<tr height='28'><td>Presention&nbsp;format&nbsp;&nbsp</td><td>";
-	str+=MakeSelect("projFormat",false,["Slides","Booklet","Wide screen","Matrix","Canvas","Single page"],projFormat)+"</td></tr>";
+	str+=MakeSelect("projFormat",false,["Web-page","Slides","Booklet","Wide screen","Matrix"],projFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
 	for (i=0;i<this.templates.length;++i)	v.push(this.templates[i].name);	
 	str+=MakeSelect("projTemp",false,v,v[this.userInfo.curTemplate]);

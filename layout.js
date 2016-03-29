@@ -43,6 +43,7 @@ layout.prototype.Init=function(container, template)					// INIT LAYOUT
 		container.layout.botPct=template.botPct;
 		container.layout.aspect="";									
 		container.layout.title="";									
+		container.layout.header="";									
 		var o=JSON.stringify(template);									// Deep copy default layout as JSON
 		container.layout=$.parseJSON(o);								// Use template as inits
 		}
@@ -128,7 +129,10 @@ layout.prototype.Set=function(container, template, callback)		// SET LAYOUT
 			_this.plo.navigation=$(this).val();							// Set navigation
 			}); 
 	$("#ltitle").on("change", function(e) {								// PAGE NAME HANDLER
-			_this.plo.title=$(this).val();								// Set aspect
+			_this.plo.title=$(this).val();								// Set title
+			}); 
+	$("#lhead").on("change", function(e) {								// HEADER HANDLER
+			_this.plo.header=$(this).prop("checked") ? "true" : "false" ; // Set header
 			}); 
 	$("#lscroll").on("change", function(e) {							// SCROLL HANDLER
 			_this.plo.panes[_this.curPane].scroll=$(this).val();		// Set val
@@ -298,6 +302,7 @@ layout.prototype.Update=function()									// UPDATE PAGE SIZER/PARAMS
 	$("#lasp").val(o.aspect);											// Set aspect
 	$("#lnav").val(o.navigation);										// Set navigation
 	$("#ltitle").val(o.title);											// Set page name
+	$("#lhead").prop("checked",o.header == "true")						// Set header status
 }
 
 layout.prototype.MakeParams=function(container)						// PAGE PARAMS
@@ -325,8 +330,10 @@ layout.prototype.MakeParams=function(container)						// PAGE PARAMS
 	str+="<tr><td>Default text</td><td><div class='sf-is' id='lmark' ";		// Markup
 	str+="style='height:50px;overflow:hidden' contenteditable='true'></div></td></tr>";
 	str+="<tr height='28'><td style='color:#009900'><b>Page</b></td><td>";	// Page settings
-	if (container.cite == undefined)										// If called as a page override
-		str+="<input class='sf-is' style='width:100px' id='ltitle' type='text'>"
+	if (container.cite == undefined) {										// If called as a page override
+		str+="<input class='sf-is' style='width:90px' id='ltitle' type='text'>&nbsp;&nbsp;";
+		str+="In menu? <input id='lhead' type='checkbox' style='vertical-align:-2px'>";
+		}
 	str+="</td></tr><tr height='28'><td>Top&nbsp;/&nbsp;bot&nbsp;gutter</td>";				// Gutter
 	str+="<td>"+MakeSelect("tgut",false,["None","Thin","Medium","Wide"])+" &nbsp;:&nbsp; ";
 	str+=MakeSelect("bgut",false,["None","Thin","Medium","Wide"])+"</td></tr>";

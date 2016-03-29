@@ -85,8 +85,9 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	$("#playerPaneRight").css({ width:"calc("+rpct+"% - "+v2+"px)",height:mhgt+"%"});
 	$("#playerPaneBot").css({ width:"100%",height:bpct+"%" });
 		
-	if (!this.editable && (pFormat == "Wide screen")) {						// Wide screen format
-		$(parent).css({ "width":"100%" });									// Go full screen							
+	if (!this.editable) {													// Show mode
+		if (pFormat == "Wide screen") 										// Wide screen format
+			$(parent).css({ "width":"100%" });								// Go full screen							
 		}
 
 	if (!mhgt) {															// No middle's
@@ -203,11 +204,12 @@ player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
 
 player.prototype.AddNavigation=function()								// ADD NAVIGATION
 {
+	var y=45;
 	$("#sfNavigationBar").remove();											// Remove any previous nav
 	var p=sf.projects[curProject];											// Point at project
 	if (inhibitNav)															// If no navigation
 		return;																// Quit
-	if ((p.format == "Canvas") || (p.format == "Single page"))				// Multipage display
+	if ((p.format == "Canvas") || (p.format == "Single page") || (p.format == "Web-page"))				// Multipage display
 		return;																// Quit
 	var endPage=sf.projects[curProject].pages.length-1;						// End page
 	
@@ -218,17 +220,18 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 			}
 		}
 	var str="<div class='sf-navigation unselectable' id='sfNavigationBar'>";// Enclosing div
-	if ((portSections[curSect].title) && (p.format == "Matrix"))			// If somewhere to go in Matrix mode
-		str+="<span class='sf-navPageButs' id='sfPrevSect' title='Previous section'>"+portSections[curSect].title+"</span>";
 	str+="<span class='sf-navButs' id='sfPageCtr'>";						// Center span start
+	if (p.format == "Matrix") {												// If matrix mode
+		y=85;
+		str+="<img class='sf-navPageButs' id='sfPrevSect' src='img/upbut.gif' title='"+(portSections[curSect] ? portSections[curSect].title : "")+"'><br>";
+		}
 	str+="<img class='sf-navPageButs' id='sfPrevPage' src='img/revbut.gif' title='Previous page'>";
 	str+="Page "+(curPage+1)+" of "+(endPage+1);							// Page id
-	str+="<img class='sf-navPageButs' id='sfNextPage' src='img/playbut.gif' title='Next page'></span>"
-	if ((curSect+1 != portSections.length) && portSections[curSect+1].title && (p.format == "Matrix"))	// If somewhere to go in Matrix mode	
-		str+="<span class='sf-navPageButs' title='Next section'id='sfNextSect' style='float:right;margin-right:36px'>"+portSections[curSect+1].title+"</span>"
-
-	$("body").append(str+"</div");											// Add to body
-	$("#sfNavigationBar").css("top",$("#playerDiv").height()-45+"px");		// Position top
+	str+="<img class='sf-navPageButs' id='sfNextPage' src='img/playbut.gif' title='Next page'>"
+	if (p.format == "Matrix") 												// If matrix mode	
+		str+="<br><img class='sf-navPageButs' id='sfNextSect' src='img/downbut.gif' title='"+(portSections[curSect+1] ? portSections[curSect+1].title : "")+"'>";
+	$("body").append(str+"</span></div");									// Add to body
+	$("#sfNavigationBar").css("top",$("#playerDiv").height()-y+"px");		// Position top
 	$("#sfNavigationBar").width($("#playerDiv").width()-16);				// Width less padding
 	$("#sfPageCtr").css("left",$("#playerDiv").width()/2-60+"px");			// Center page controls
 	$("#sfNextSect").css("left",$("#playerDiv").width()-30+"px");			// Position next control
@@ -271,21 +274,21 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 		return;																// Quit
 	var i;
 	var str="<div class='sf-navMenubar unselectable' id='sfNavMenubar'>";	// Enclosing div
-	for (i=0;i<p.pages.length;++i) {										// For each page in project
-		if (p.pages[i].layout && p.pages[i].layout.title) {					// If a title set
-			str+="<span class='sf-navMenuItem' id='sfNavItem-"+i+"'";		// Span header
-			if ((l.navigation == "Left") || (l.navigation == "Right")) 		// If vertical
-				str+=" style='margin:0px'";									// No margins
-			str+=">"+p.pages[i].layout.title+"</span>"						// Add page
-			if ((l.navigation == "Left") || (l.navigation == "Right")) 		// If vertical
-				str+="<br>"
-			}
+	for (i=0;i<portSections.length;++i) {									// For each section
+		str+="<span class='sf-navMenuItem' id='sfNavItem-"+i+"'";			// Span header
+		if ((l.navigation == "Left") || (l.navigation == "Right")) 			// If vertical
+			str+=" style='margin:0px'";										// No margins
+		str+=">"+portSections[i].title+"</span>"							// Add page
+		if ((l.navigation == "Left") || (l.navigation == "Right")) 			// If vertical
+			str+="<br>"
 		}
 	$("body").append(str+"</div>");											// Add to body
 	
 	$('[id^="sfNavItem-"]').off(); 											// Remove old handlers
 	$('[id^="sfNavItem-"]').on("click", function(e) { 						// CLICK HANDLER
-		sf.Draw(e.currentTarget.id.substr(10)-0);							// Extract page from id and draw
+		var id=e.currentTarget.id.substr(10)-0;								// Get index of section
+		sf.Draw(portSections[id].start);									// Draw
+		$("#editDiv").remove();												// Clear page menu
 		});
 	
 	var css={};
@@ -317,4 +320,37 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 	if (l.navigation == "Middle") 											// Middle
 		css.top=$("#playerPaneTop").position().top+$("#playerPaneTop").height()-s[1].replace(/px/,"")-10+"px"; 						
 	$("#sfNavMenubar").css(css);											// Set css
+
+	$('[id^="sfNavItem-"]').on("mouseenter",function(e) { 					// ON HOVER OVER HEADER
+		$("#editDiv").remove();												// Remove previos entries
+		var sid=e.currentTarget.id.substr(10)-0;							// Get index of section
+		if (portSections[sid].num < 2)										// If just one child
+			return;															// Don't bother
+		var i,p;
+		var ps=sf.projects[curProject].pages;								// Point at pages
+		var l=$(this).offset().left-8;
+		var t=$(this).offset().top+20;
+		var str="<div class='sf-menuPullDown' style='left:"+l+"px;top:"+t+"px' id='editDiv'>";
+		for (i=0;i<portSections[sid].num;++i) {								// For each section
+			str+="<div class='sf-menuPullDownItem' id='sfNavpage-"+i+"'>"	// Start entry
+			p=portSections[sid].start+i;									// Page index
+			if (ps[p] && ps[p].layout && ps[p].layout.title)				// If a title		
+				str+=ps[p].layout.title;									// Use it
+			else															// Not title
+				str+="Page "+(p+1);											// Use page num
+			str+="</div>"
+			}
+		str+="</div>";
+		$("body").append(str);
+	
+		$("#editDiv").on("mouseleave",function() { 							// ON EXIT BOX
+			$("#editDiv").remove();											// Remove box
+			});
+		$('[id^="sfNavpage-"]').on("click",function(e) { 					// ON PAGE CLICK
+			var id=e.currentTarget.id.substr(10)-0;							// Get index of page
+			sf.Draw(portSections[sid].start+id);							// Draw
+			$("#editDiv").remove();											// Remove box
+			});
+		});
 }
+
