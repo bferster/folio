@@ -293,6 +293,7 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 	
 	var css={};
 	var pane="Top";
+	
 	if (l.navStyle) {
 		var s=l.navStyle.split(",");										// Get as array (font,size,color,weight,align,height)
 		css["font-family"]=s[0];											// Family
@@ -328,9 +329,8 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 			return;															// Don't bother
 		var i,p;
 		var ps=sf.projects[curProject].pages;								// Point at pages
-		var l=$(this).offset().left-8;
-		var t=$(this).offset().top+20;
-		var str="<div class='sf-menuPullDown' style='left:"+l+"px;top:"+t+"px' id='editDiv'>";
+		
+		var str="<div class='sf-menuPullDown' id='editDiv'>";				// Enclosinfg div
 		for (i=0;i<portSections[sid].num;++i) {								// For each section
 			str+="<div class='sf-menuPullDownItem' id='sfNavpage-"+i+"'>"	// Start entry
 			p=portSections[sid].start+i;									// Page index
@@ -342,6 +342,17 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 			}
 		str+="</div>";
 		$("body").append(str);
+	
+		var x=$(this).offset().left-8;										// Left side of box 
+		var y=$(this).offset().top+20;										// Top
+		if ((l.navigation == "Top") || (l.navigation == "Middle"))			// Top/Middle
+			$("#editDiv").css({ left:x+"px",top:y+"px" });					// Set pos
+		else if (l.navigation == "Bottom") 									// Bottom
+			$("#editDiv").css({ left:x+"px",top:y-$("#editDiv").height()-20+"px" }); 	// Set pos
+		else if (l.navigation == "Left") 									// Left
+			$("#editDiv").css({ left:$("#playerPaneMid").position().left+"px",top:y-20+"px" }); 	// Set pos
+		else if (l.navigation == "Right") 									// Right
+			$("#editDiv").css({ left:$("#playerPaneRight").position().left-$("#editDiv").width()-16+"px",top:y-20+"px" }); 	// Set pos
 	
 		$("#editDiv").on("mouseleave",function() { 							// ON EXIT BOX
 			$("#editDiv").remove();											// Remove box
