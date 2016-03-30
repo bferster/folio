@@ -211,7 +211,10 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 		return;																// Quit
 	if ((p.format == "Canvas") || (p.format == "Single page") || (p.format == "Web-page"))				// Multipage display
 		return;																// Quit
+	var thisPage=curPage;													// Ger current page
+	var startPage=0;														// Start page
 	var endPage=sf.projects[curProject].pages.length-1;						// End page
+	var maxPage=endPage;													// Maximum pages
 	
 	for (i=0;i<portSections.length;++i) {									// For each section
 		if ((curPage >= portSections[i].start) && (curPage < portSections[i].start+portSections[i].num)) { // If in this section
@@ -223,10 +226,14 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 	str+="<span class='sf-navButs' id='sfPageCtr'>";						// Center span start
 	if (p.format == "Matrix") {												// If matrix mode
 		y=85;
+		startPage=portSections[curSect].start;								// Start at beginning of section
+		maxPage=portSections[curSect].num-1;								// Num pages in this section
+		endPage=startPage+maxPage;											// Show only pages in this section
+		thisPage=curPage-startPage;											// Progress through section
 		str+="<img class='sf-navPageButs' id='sfPrevSect' src='img/upbut.gif' title='"+(portSections[curSect] ? portSections[curSect].title : "")+"'><br>";
 		}
 	str+="<img class='sf-navPageButs' id='sfPrevPage' src='img/revbut.gif' title='Previous page'>";
-	str+="Page "+(curPage+1)+" of "+(endPage+1);							// Page id
+	str+="Page "+(thisPage+1)+" of "+(maxPage+1);							// Page id
 	str+="<img class='sf-navPageButs' id='sfNextPage' src='img/playbut.gif' title='Next page'>"
 	if (p.format == "Matrix") 												// If matrix mode	
 		str+="<br><img class='sf-navPageButs' id='sfNextSect' src='img/downbut.gif' title='"+(portSections[curSect+1] ? portSections[curSect+1].title : "")+"'>";
@@ -237,26 +244,34 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 	$("#sfNextSect").css("left",$("#playerDiv").width()-30+"px");			// Position next control
 	
 	$("#sfNextPage").on("click",function() {								// NEXT PAGE
-		curPage=Math.min(curPage+1,endPage);								// Advance and cap at end
-		Sound("click");														// Click
-		sf.Draw();															// Redraw
+		if (curPage < endPage) {											// If somewhere to go
+			curPage++;														// Advance
+			Sound("click");													// Click
+			sf.Draw();														// Redraw
+			}
 		});
 	$("#sfPrevPage").on("click",function() {								// BACK A PAGE
-		curPage=Math.max(curPage-1,0);										// Go back and cap at start
-		Sound("click");														// Click
-		sf.Draw();															// Redraw
+		if (curPage > startPage) {											// If somewhere to go
+			curPage--;														// Go back
+			Sound("click");													// Click
+			sf.Draw();														// Redraw
+			}
 		});
 	$("#sfNextSect").on("click",function() {								// NEXT SECTION
-		curSect=Math.min(curSect+1,portSections.length-1);					// Go up a section
-		curPage=portSections[curSect].start;								// Set current page
-		Sound("click");														// Click
-		sf.Draw();															// Redraw
+		if (curSect < portSections.length-1) {								// If somewhere to go
+			curSect++;														// Go up a section
+			curPage=portSections[curSect].start;							// Set current page
+			Sound("click");													// Click
+			sf.Draw();														// Redraw
+			}
 		});
 	$("#sfPrevSect").on("click",function() {								// LAST SECTION
-		curSect=Math.max(curSect-1,0);										// Go back a section
-		curPage=portSections[curSect].start;								// Set current page
-		Sound("click");														// Click
-		sf.Draw();															// Redraw
+		if (curSect > 0) {													// If somewhere to go
+			curSect--;														// Back a section
+			curPage=portSections[curSect].start;							// Set current page
+			Sound("click");													// Click
+			sf.Draw();														// Redraw
+			}
 		});
 }
 
