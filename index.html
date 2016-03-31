@@ -437,7 +437,7 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 	$("#pageMenu").css("color","#00aa00");									// Highlight it
 	if ((curProject != -1) && this.projects[curProject].title)	{			// A valid project
 		str+=" &nbsp;|&nbsp; ";												// Add to breadcrumb
-		str+=ShortenString(this.projects[curProject].title,20);				// Add title
+		str+=ShortenString(this.projects[curProject].title.replace(/&apos;/,"'"),30);	// Add title with no &apos
 		}
 	if (curPage != -1)														// A page set
 		str+=" &nbsp;|&nbsp; "+(curPage-0+1);								// Add to breadcrumb
