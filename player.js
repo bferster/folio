@@ -45,7 +45,6 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	this.page=page;															// Save page object
 	var w=$(parent).width();												// Get width of parent
 	var h=$(parent).height()-3;												// Get height 
-	var pFormat=sf.projects[curProject].format;								// Portfolio format
 
 	var v1=defLayout.topGut ? this.guts[defLayout.topGut] : 0;				// If def top gutter, use it
 	if (page.layout && (page.layout.topGut != undefined))					// If a page override set
@@ -86,7 +85,7 @@ player.prototype.Update=function(page, defLayout)						// UPDATE PLAYER
 	$("#playerPaneBot").css({ width:"100%",height:bpct+"%" });
 		
 	if (!this.editable) {													// Show mode
-		if (pFormat == "Wide screen") 										// Wide screen format
+		if (projectFormat == "Wide screen") 								// Wide screen format
 			$(parent).css({ "width":"100%" });								// Go full screen							
 		}
 
@@ -207,7 +206,7 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 	var p=sf.projects[curProject];											// Point at project
 	if (inhibitNav)															// If no navigation
 		return;																// Quit
-	if ((p.format == "Canvas") || (p.format == "Single page") || (p.format == "Web-page"))				// Multipage display
+	if ((projectFormat == "Canvas") || (projectFormat == "Single page") || (projectFormat == "Web-page"))	// Multipage display
 		return;																// Quit
 	var thisPage=curPage;													// Ger current page
 	var startPage=0;														// Start page
@@ -222,7 +221,7 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 		}
 	var str="<div class='sf-navigation unselectable' id='sfNavigationBar'>";// Enclosing div
 	str+="<span class='sf-navButs' id='sfPageCtr'>";						// Center span start
-	if (p.format == "Matrix") {												// If matrix mode
+	if (projectFormat == "Matrix") {										// If matrix mode
 		y=85;
 		startPage=portSections[curSect].start;								// Start at beginning of section
 		maxPage=portSections[curSect].num-1;								// Num pages in this section
@@ -231,11 +230,11 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 		str+="<img class='sf-navPageButs' id='sfPrevSect' src='img/upbut.gif' title='"+(portSections[curSect] ? portSections[curSect].title : "")+"'><br>";
 		}
 	str+="<img class='sf-navPageButs' id='sfPrevPage' src='img/revbut.gif' title='Previous page'><span";
-	if (p.format == "Matrix")												// If matrix mode
+	if (projectFormat == "Matrix")											// If matrix mode
 		str+=" id='sfChoosePage' style='cursor:pointer'";					// Chooose page on click
 	str+=">Page "+(thisPage+1)+" of "+(maxPage+1)+"</span>";				// Page id
 	str+="<img class='sf-navPageButs' id='sfNextPage' src='img/playbut.gif' title='Next page'>"
-	if (p.format == "Matrix") 												// If matrix mode	
+	if (projectFormat == "Matrix") 											// If matrix mode	
 		str+="<br><img class='sf-navPageButs' id='sfNextSect' src='img/downbut.gif' title='"+(portSections[curSect+1] ? portSections[curSect+1].title : "")+"'>";
 	$("body").append(str+"</span></div");									// Add to body
 	$("#sfNavigationBar").css("top",$("#playerDiv").height()-y+"px");		// Position top

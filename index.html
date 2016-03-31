@@ -203,8 +203,9 @@ var itemType="All types",itemFilter="";										// Filtering
 var curMenu="splash";														// Current menu item
 var drupalMan=false;														// Flag for drupal manager
 var portSections=null;														// Holds section info
+var projectFormats=["Web-page","Slides","Wide screen","Matrix"];			// Available formats		
+var projectFormat=projectFormats[0];										// Project format
 
-		
 $(window).resize(function() {											// ON WINDOW RESIZE
 	if (sf && !isMobile)													// If loaded and not mobile
 		sf.Draw();															// Redraw to adjust responsivivly
@@ -231,12 +232,16 @@ $(document).ready(function() {											// ON PAGE LOADED
 			url=url.split("|")[0];											// Just use id
 			}
 		if (url && !isNaN(url)) {											// If a number
-			url="//qmediaplayer.com/loadshow.php?password=*&id="+url;		// Get from db
+			projectFormat=projectFormats[Math.round(url%1*10)];				// Set format
+			url="//qmediaplayer.com/loadshow.php?password=*&id="+Math.floor(url); // Get from db
 			}	
 		else if ((url) && (!url.match(/\./)))								// No file extension
 			url+=".json";													// Add txt
-		if (url != "preview.json")											// If not previewing
+		
+		if (url.indexOf("preview") == -1)									// If not previewing
 			$.ajax({ url: url, dataType:'jsonp' });							// Get jsonp and call LoadShow() from it
+		else
+			projectFormat=projectFormats[url.split(".")[1]];				// Set format
 		}
 	
 	if (window.addEventListener) 											// If supported this way
@@ -358,8 +363,6 @@ folio.prototype.InitProject=function(num)								// INIT PROJECT
 {
 	if (!this.projects[num].pages)											// If no pages yets
 		this.projects[num].pages=[];										// Allocate array
-	if (!this.projects[num].format)											// If no format spec's
-		this.projects[num].format="Slides";									// Default to slide
 	var t=dataObj.FindFromID(this.templates,this.projects[num].template);	// Get template from project
 	if (!this.projects[num].layout)											// If no layout set
 		layoutObj.Init(this.projects[num],this.templates[Math.max(t,0)]);	// Init project's layout object with template
@@ -581,7 +584,7 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 {
 	var i,v=[];
-	var projTitle="",projDesc="",projCite="",projTags="",projCollab=[],projFormat="Web-page",projTemp="";
+	var projTitle="",projDesc="",projCite="",projTags="",projCollab=[],projTemp="";
 	var str="<div id='projectDiv' class='sf-projectPage'>";					// Project container
 	if (curProject < 0) 													// No project selected
 		return str+"</div>";												// Return empty page
@@ -589,7 +592,6 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	if (this.projects[curProject].desc)   	projDesc=this.projects[curProject].desc;
 	if (this.projects[curProject].cite)   	projCite=this.projects[curProject].cite;
 	if (this.projects[curProject].tags)   	projTags=this.projects[curProject].tags;
-	if (this.projects[curProject].format)   projFormat=this.projects[curProject].format;
 	if (this.projects[curProject].collab) 	projCollab=this.projects[curProject].collab.split(",");
 	str+="<table style='width:100%;font-weight:bold;text-align:left'>";
 	str+="<tr height='32'><td width='1%'>Title</td>";
@@ -606,8 +608,6 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<td>"+MakeSelect("projCollab",false,projCollab);
 	str+="<img id='collabAddBut' class='sf-galleryBut' src='img/addbut.gif' style='vertical-align:-4px;margin-left:16px;margin-right:8px' title='Add a new collaborator'>";
 	str+="<img id='collabTrashBut' class='sf-galleryBut' src='img/trashbut.gif' style='vertical-align:-4px;margin-right:0px' title='Remove a collaborator'></td></tr>";
-	str+="<tr height='28'><td>Presention&nbsp;format&nbsp;&nbsp</td><td>";
-	str+=MakeSelect("projFormat",false,["Web-page","Slides","Wide screen","Matrix"],projFormat)+"</td></tr>";
 	str+="<tr height='28'><td>Template</td><td>";
 	for (i=0;i<this.templates.length;++i)	v.push(this.templates[i].name);	
 	str+=MakeSelect("projTemp",false,v,v[this.userInfo.curTemplate]);
@@ -687,14 +687,7 @@ folio.prototype.AddProjectHandlers=function()							// ADD PROJECT HANDLERS
 		sf.Do()																// Something changed
 		sf.projects[curProject].tags=Escape($("#projTags").val(),true);		// Set it	
 		});
-	
-	$("#projFormat").on("change",function() { 								// If changed
-		sf.Do()																// Something changed
-		sf.projects[curProject].format=$("#projFormat").val();				// Set it	
-		Sound("click");														// Click
-		sf.Draw();															// Redraw
-		});
-	
+		
 	$("#projTemp").on("change",function() { 								// If changed
 		ConfirmBox("This will remove any changes you have made to the layout, and replace them with the defaults from the template named <b>"+$(this).val()+".</b>", function() {
 			sf.Do()															// Something changed
