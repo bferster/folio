@@ -156,27 +156,28 @@ player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
 		if (page.layout && page.layout.panes && (page.layout.panes[i].backCol != undefined))		// If a page override set
 			val=page.layout.panes[i].backCol;								// Use it
 		if (val) $(this.divs[i]).css("background-color",val);				// Apply value if set 
+trace(page,i)
 
 		val=defLayout.panes[i].margin ? defLayout.panes[i].margin : "";		// If def margin, use it
-		if (page.layout && (page.layout.panes[i].margin != undefined))		// If a page override set
+		if (page.layout && page.layout.panes && (page.layout.panes[i].margin != undefined))		// If a page override set
 			val=page.layout.panes[i].margin;								// Use it
 		val=defLayout.panes[i].scroll ? defLayout.panes[i].scroll : "";		// If def scroll, use it
-		if (page.layout && (page.layout.panes[i].scroll != undefined))		// If a page override set
+		if (page.layout && page.layout.panes && (page.layout.panes[i].scroll != undefined))		// If a page override set
 			val=page.layout.panes[i].scroll;								// Use it
 		if (val) $(this.divs[i]).css("overflow-y",val);						// Apply value if set 
 		val=defLayout.panes[i].backImg ? defLayout.panes[i].backImg : "";	// If def back image, use it
-		if (page.layout && (page.layout.panes[i].backImg != undefined))		// If a page override set
+		if (page.layout && page.layout.panes && (page.layout.panes[i].backImg != undefined))	// If a page override set
 			val=page.layout.panes[i].backImg;								// Use it
 		if (val) $(this.divs[i]).css({ "background-size":"cover","background-image":"url('"+val+"')"});	// Apply value if set 
 
 		val=defLayout.panes[i].borderSty ? defLayout.panes[i].borderSty : "";	// If def border style, use it
-		if (page.layout && (page.layout.panes[i].borderSty != undefined))		// If a page override set
+		if (page.layout && page.layout.panes && (page.layout.panes[i].borderSty != undefined))		// If a page override set
 			val=page.layout.panes[i].borderSty;									// Use it
 		val2=defLayout.panes[i].borderWid ? defLayout.panes[i].borderWid : "";	// If def border width, use it
-		if (page.layout && (page.layout.panes[i].borderWid != undefined))		// If a page override set
+		if (page.layout && page.layout.panes && (page.layout.panes[i].borderWid != undefined))		// If a page override set
 			val2=page.layout.panes[i].borderWid;								// Use it
 		val3=defLayout.panes[i].borderCol ? defLayout.panes[i].borderCol : "";	// If def border color, use it
-		if (page.layout && (page.layout.panes[i].borderCol != undefined))		// If a page override set
+		if (page.layout && page.layout.panes && (page.layout.panes[i].borderCol != undefined))		// If a page override set
 			val3=page.layout.panes[i].borderCol;								// Use it
 		if (val) $(this.divs[i]).css("border",val2+"px "+val+" "+val3);			// Apply value if set 
 		}
