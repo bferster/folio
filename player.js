@@ -156,8 +156,6 @@ player.prototype.StylePage=function(page, defLayout)					// STYLE PAGE
 		if (page.layout && page.layout.panes && (page.layout.panes[i].backCol != undefined))		// If a page override set
 			val=page.layout.panes[i].backCol;								// Use it
 		if (val) $(this.divs[i]).css("background-color",val);				// Apply value if set 
-trace(page,i)
-
 		val=defLayout.panes[i].margin ? defLayout.panes[i].margin : "";		// If def margin, use it
 		if (page.layout && page.layout.panes && (page.layout.panes[i].margin != undefined))		// If a page override set
 			val=page.layout.panes[i].margin;								// Use it
@@ -169,7 +167,6 @@ trace(page,i)
 		if (page.layout && page.layout.panes && (page.layout.panes[i].backImg != undefined))	// If a page override set
 			val=page.layout.panes[i].backImg;								// Use it
 		if (val) $(this.divs[i]).css({ "background-size":"cover","background-image":"url('"+val+"')"});	// Apply value if set 
-
 		val=defLayout.panes[i].borderSty ? defLayout.panes[i].borderSty : "";	// If def border style, use it
 		if (page.layout && page.layout.panes && (page.layout.panes[i].borderSty != undefined))		// If a page override set
 			val=page.layout.panes[i].borderSty;									// Use it
