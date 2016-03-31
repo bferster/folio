@@ -426,7 +426,7 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 		$("body").append(str);
 	
 		var x=$(this).offset().left-8;										// Left side of box 
-		var y=$(this).offset().top+20;										// Top
+		var y=$(this).offset().top+28;										// Top
 		if ((l.navigation == "Top") || (l.navigation == "Middle"))			// Top/Middle
 			$("#editDiv").css({ left:x+"px",top:y+"px" });					// Set pos
 		else if (l.navigation == "Bottom") 									// Bottom
