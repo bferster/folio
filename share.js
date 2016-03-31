@@ -46,7 +46,7 @@ share.prototype.Set=function(project)								// SHARE DIALOG
 		var p=$("#sPage").val();										// Get page
 		var src="index.html?preview";									// Get source
 		if (p != "All")		src+="|"+p;									// If getting a particular page
-		src+="."+$("#sFormat").prop("selectedIndex");					// Add type
+		src+="."+$("#psFormat").prop("selectedIndex");					// Add type
 		var win=window.open(src,"_blank");								// Open new window
 		$(win).on("load",function() {									// When loaded
 			var str="set|folio|{\"projects\":["+JSON.stringify(sf.projects[curProject])+"]}";				
