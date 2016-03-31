@@ -232,8 +232,10 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 		thisPage=curPage-startPage;											// Progress through section
 		str+="<img class='sf-navPageButs' id='sfPrevSect' src='img/upbut.gif' title='"+(portSections[curSect] ? portSections[curSect].title : "")+"'><br>";
 		}
-	str+="<img class='sf-navPageButs' id='sfPrevPage' src='img/revbut.gif' title='Previous page'>";
-	str+="Page "+(thisPage+1)+" of "+(maxPage+1);							// Page id
+	str+="<img class='sf-navPageButs' id='sfPrevPage' src='img/revbut.gif' title='Previous page'><span";
+	if (p.format == "Matrix")												// If matrix mode
+		str+=" id='sfChoosePage' style='cursor:pointer'";					// Chooose page on click
+	str+=">Page "+(thisPage+1)+" of "+(maxPage+1)+"</span>";				// Page id
 	str+="<img class='sf-navPageButs' id='sfNextPage' src='img/playbut.gif' title='Next page'>"
 	if (p.format == "Matrix") 												// If matrix mode	
 		str+="<br><img class='sf-navPageButs' id='sfNextSect' src='img/downbut.gif' title='"+(portSections[curSect+1] ? portSections[curSect+1].title : "")+"'>";
@@ -243,6 +245,13 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 	$("#sfPageCtr").css("left",$("#playerDiv").width()/2-60+"px");			// Center page controls
 	$("#sfNextSect").css("left",$("#playerDiv").width()-30+"px");			// Position next control
 	
+	$("#sfChoosePage").on("click",function() {								// CHOOSE PAGE
+			Sound("click");													// Click
+			playerObj.ChoosePage("#sfChoosePage", function(p) {				// Matrix overview
+				curPage=p;													// Set page
+				sf.Draw();													// Redraw
+				});
+		});
 	$("#sfNextPage").on("click",function() {								// NEXT PAGE
 		if (curPage < endPage) {											// If somewhere to go
 			curPage++;														// Advance
@@ -272,6 +281,64 @@ player.prototype.AddNavigation=function()								// ADD NAVIGATION
 			Sound("click");													// Click
 			sf.Draw();														// Redraw
 			}
+		});
+}
+
+player.prototype.ChoosePage=function(div, callback)						// CHOOSE PAGE
+{
+	var i,j,l;
+	var _this=this;															// Get context
+	var p=sf.projects[curProject].pages;									// Point at pages
+	$("#alertBoxDiv").remove();												// Remove any old dialogs
+	
+	$("body").append("<div class='unselectable' id='alertBoxDiv'></div>");	// Content													
+	var str="<p><img src='img/shantilogo32.png' style='vertical-align:-10px'/>"; 	// Logo
+	str+="&nbsp;&nbsp;<span style='font-size:18px;text-shadow:1px 1px #ccc;color:#666'><b>Choose page to show</b></span><p>";
+	str+="<div class='sf-matrixOverview'>";									// Scrolling div
+	
+	var trsty=" onMouseOver='this.style.backgroundColor=\"#dee7f1\"' ";		// Hover style
+	trsty+="onMouseOut='this.style.backgroundColor=\"#f8f8f8\"'";
+
+	for (i=0;i<portSections.length;++i) { 									// For each section
+		str+="<div class='sf-matrixOverSect'>";								// Add section
+		str+="<div class='sf-matrixOverTitle' "; 							// Add section title
+		str+="id='sf-matrixOver-"+portSections[i].start+"' "+trsty+">";		// Add id
+		str+=ShortenString(portSections[i].title,24)+"</div>";				// Add title, shorten if necessary
+		if (portSections[i].num > 1) {										// If child pages
+			str+="<br>|";													// Add line
+			for (j=1;j<portSections[i].num;++j) {							// For each page
+				str+="<br><span class='sf-matrixOverPage' ";				// Start of page display
+				str+="id='sf-matrixOver-"+(portSections[i].start+j)+"' "+trsty+">";	// Add id
+				l=p[portSections[i].start+j].layout;						// Point at page's layout
+				if (l && l.title)											// If named page
+					str+=ShortenString(l.title,16);							// Use namem shorten if neccessry
+				else														// Un-named
+					str+="Page "+(j+1);										// Use page number
+				str+="</span>";												// Close page
+				}
+			}
+		str+="</div>";
+		}
+	$("#alertBoxDiv").append(str);											// Add to dialog
+	
+	$("#alertBoxDiv").dialog({ 	width:$("#playerDiv").width()*.80, 
+								position: {my: "bottom center", at: "top center", of: div},
+								buttons: {
+					           	"Cancel":  	function() {					// DONE
+						          			$(this).remove(); 				// Close dialog			
+											}
+										}
+								});	
+		
+	$(".ui-dialog-titlebar").hide();
+	$(".ui-dialog-buttonpane.ui-widget-content.ui-helper-clearfix").css("border","none");
+	$(".ui-dialog").css({"border-radius":"14px", "box-shadow":"4px 4px 8px #ccc", "z-index":3000});
+	$(".ui-button").css({"border-radius":"30px","outline":"none"});
+
+	$('[id^="sf-matrixOver-"]').on("click", function(e) {					// CLICK ON PAGE
+		var id=e.target.id.substr(14);										// Get id
+		callback(id);														// Do callback
+		$("#alertBoxDiv").remove(); 										// Close dialog			
 		});
 }
 
@@ -379,4 +446,5 @@ player.prototype.AddMenubar=function(page, defLayout)					// ADD MENUBAR NAVIGAT
 			});
 		});
 }
+
 
