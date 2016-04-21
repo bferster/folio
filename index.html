@@ -438,7 +438,7 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 	$("#editDiv").remove();													// Kill edit menu if left open
 	var str="<b>"+this.userInfo.firstName+" "+this.userInfo.lastName+"</b>";// Add name
 	$("#pageMenu").css("color","#00aa00");									// Highlight it
-	if ((curProject != -1) && this.projects[curProject].title)	{			// A valid project
+	if ((curProject != -1) && this.projects[curProject] && this.projects[curProject].title)	{			// A valid project
 		str+=" &nbsp;|&nbsp; ";												// Add to breadcrumb
 		str+=ShortenString(this.projects[curProject].title.replace(/&apos;/,"'"),30);	// Add title with no &apos
 		}
@@ -556,7 +556,7 @@ folio.prototype.MakeGallery=function()									// MAKE GALLERY
 			o=$.parseJSON(v[2]);											// Turn into object and set
 			sf.Init(o,"set");												// Init folio
 			SendMessage("done");											// Send done mnessage
-			if (sf.projects && (curProject == -1))	curProject=0;			// Force to at least to 1st project
+			if (sf.projects && sf.projects.length && (curProject == -1))	curProject=0;	// Force to at least to 1st project
 			sf.Draw();														// Draw 
 			}
 		else if (v[0].toLowerCase() == "add") {								// Get project(s)
@@ -897,7 +897,7 @@ folio.prototype.MakePagePage=function(showOnly)							// MAKE PAGE PAGE
 folio.prototype.AddPageHandlers=function()								// ADD PAGE HANDLERS
 {
 
-	if (!this.projects[curProject].pages)
+	if (!this.projects[curProject] ||!this.projects[curProject].pages)
 		return;
 		
 	playerObj.Update(this.projects[curProject].pages[curPage],this.projects[curProject].layout);	// Add player obj

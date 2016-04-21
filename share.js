@@ -27,6 +27,8 @@ share.prototype.Set=function(project)								// SHARE DIALOG
 	ShowLightBox(600,"Portfolio Sharing",str);							// Create dialog
 
 	$("#sFormat, #sPage, #spFormat").on("change",function() { 			// If changed
+		if (!$("#sFormat").prop("selectedIndex"))						// Format not set			
+			return;														// Quit
 		var f=$("#sFormat").val();										// Get format
 		var p=$("#sPage").val();										// Get page
 		var src="http://www.viseyes.org/folio?"+dataObj.curShow;		// Get source
