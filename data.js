@@ -211,7 +211,6 @@ data.prototype.LoadLocal=function()										// LOAD JSON FROM LOCAL COMPUTER
 	if (localStorage.getItem("Folio-sf")) {									// If JSON stored
 		var data=$.parseJSON(localStorage.getItem("Folio-sf"))				// Set new data													
 		sf.Init(data,"set");												// Init folio
-	 	trace(data)
 	 	sf.Draw();															// Redraw
 		}
 }

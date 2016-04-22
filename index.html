@@ -216,6 +216,10 @@ $(document).ready(function() {											// ON PAGE LOADED
 	isMobile=navigator.userAgent.match(/(ipad|iphone|ipod|android)/i) ? true : false; // Set mobile flag
 	var url=window.location.search.substring(1);							// Get query string
 	drupalMan=(""+url).match(/dr=/);										// If called from Drupal manager
+	if (drupalMan)	{														// If drupal
+		$("#shareMenu").remove();											// Hide sharecmenu
+		curMenu="project";													// Skip splash screen
+		}
 	offlineMode=(""+url).match(/off=/);										// If running offline
 	itemObj=new item();														// Load item object
  	dataObj=new data();														// Load data object
@@ -440,10 +444,11 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 	$("#editDiv").remove();													// Kill edit menu if left open
 	var str="<b>"+this.userInfo.firstName+" "+this.userInfo.lastName+"</b>";// Add name
 	if (offlineMode)														// If offline
-		str+="<b> (offline)</b>";											// Show mode
+		str="<b>Offline</b>";												// Show mode
 	$("#pageMenu").css("color","#00aa00");									// Highlight it
-	if ((curProject != -1) && this.projects[curProject] && this.projects[curProject].title)	{			// A valid project
-		str+=" &nbsp;|&nbsp; ";												// Add to breadcrumb
+	if ((curProject != -1) && this.projects[curProject] && this.projects[curProject].title)	{	// A valid project
+		if (this.userInfo.firstName || this.userInfo.lastName)				// If a name
+			str+=" &nbsp;|&nbsp; ";											// Add pipe to breadcrumb
 		str+=ShortenString(this.projects[curProject].title.replace(/&apos;/,"'"),30);	// Add title with no &apos
 		}
 	if (curPage != -1)														// A page set
