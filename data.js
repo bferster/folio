@@ -48,6 +48,10 @@ data.prototype.Save=function()											// SAVE
 		dat["private"]=1;													// Make it private
 		dat["title"]="Portfolio";											// Add title
 		dat["script"]="LoadShow("+JSON.stringify(sf,null,'\t')+")";			// Add jsonp-wrapped script
+		if (offlineMode) {													// If offline		
+			localStorage.setItem("Folio-sf",JSON.stringify(sf,null,'\t'))	// Set new data	
+			return;															// Quit
+			}
 		LoadingIcon(true,32);												// Show loading icon
 		$.ajax({ url:url,dataType:'text',type:"POST",crossDomain:true,data:dat,  // Post data
 			success:function(d) { 			
@@ -102,11 +106,9 @@ data.prototype.Register=function()										// REGISTER
 		});
 }
 
-
-data.prototype.HandleRegisterLocal=function()								// REGISTER HANDLER
+data.prototype.HandleRegisterLocal=function()							// REGISTER LOCAL HANDLER
 {
-	$("#lightBoxDiv").remove();											// Close
-	trace("local")
+	$("#lightBoxDiv").remove();												// Close
 }
 
 data.prototype.HandleRegister=function()								// REGISTER HANDLER
@@ -205,7 +207,13 @@ data.prototype.ListFiles=function() 									//	LIST PROJECTS IN DB
 data.prototype.LoadLocal=function()										// LOAD JSON FROM LOCAL COMPUTER
 {
 	LoadingIcon(false);														// Clear loading icon
-	$("#lightBoxDiv").remove();											// Close
+	$("#lightBoxDiv").remove();												// Close
+	if (localStorage.getItem("Folio-sf")) {									// If JSON stored
+		var data=$.parseJSON(localStorage.getItem("Folio-sf"))				// Set new data													
+		sf.Init(data,"set");												// Init folio
+	 	trace(data)
+	 	sf.Draw();															// Redraw
+		}
 }
 
 data.prototype.LightBoxAlert=function(msg) 								//	SHOW LIGHTBOX ALERT

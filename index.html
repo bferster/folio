@@ -294,7 +294,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 		$("#editMenu").css("color","#009900");										
 		$("#editDiv").remove();
 		var str="<div class='sf-pullDown' style='left:"+l+"px;top:"+t+"px' id='editDiv'>";
-		if (dataObj.curShow)												// A valid show, allow saving
+		if (dataObj.curShow || offlineMode)																	// A valid show
 			str+="<div class='sf-pullDownItem' style='color:#000' onclick='dataObj.Save()'> Save </div>";
 		str+="<div class='sf-pullDownItem' onclick='dataObj.Save()'> Copy </div>";
 		str+="<div class='sf-pullDownItem' onclick=''dataObj.Load()'> Paste </div>";
@@ -620,8 +620,8 @@ folio.prototype.MakeProjectPage=function()								// MAKE PROJECT PAGE
 	str+="<tr height='50'><td colspan='2' style='text-align:center'>";
 	str+="<button class='sf-bs' style='width:90px' id='setLayout'>Set layout</button>&nbsp; &nbsp;";	// Set layout button
 	str+="<button class='sf-bs' style='width:90px' id='addPages'>Add items</button>&nbsp; &nbsp;";		// Add items button
-	if (dataObj.curShow)																				// A valid show
-		str+="<button class='sf-bs' style='width:90px' id='saveButton'>Save</button>";					// Add Saves button
+	if (dataObj.curShow || offlineMode)																	// A valid show
+		str+="<button class='sf-bs' style='width:90px' id='saveButton'>Save</button>";					// Add Save button
 	str+="</table>";
 	str+="<div id='projectItemsDiv' class='sf-projectItems'></div>";		// Items div
 	return str+"</div>";													// Return project page
