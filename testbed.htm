@@ -37,14 +37,6 @@
 
 	$("#sendToFolio").on("click",function() {
 		var v=$("#payload").val().split("|");								// Split in command and payload
-		if (v[0] == "set") {
-		
-		console.log(v[1])
-		console.log("parse")
-		var	o=$.parseJSON(v[1]);											// Turn into object and set
-		console.log(o)
-		console.log("parse2")
-}
 		SendMessage(v[0],v[1]);												// Send to folio
 		});
 
