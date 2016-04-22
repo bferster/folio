@@ -95,8 +95,18 @@ data.prototype.Register=function()										// REGISTER
 	});
 
 	$("#regBut").click(function() {											// LOGIN BUTTON
-		dataObj.HandleRegister();											// Register
+		if (offlineMode) 													// If offline
+			dataObj.HandleRegisterLocal();									// Register on local computer
+		else
+			dataObj.HandleRegister();										// Register
 		});
+}
+
+
+data.prototype.HandleRegisterLocal=function()								// REGISTER HANDLER
+{
+	$("#lightBoxDiv").remove();											// Close
+	trace("local")
 }
 
 data.prototype.HandleRegister=function()								// REGISTER HANDLER
@@ -145,7 +155,6 @@ data.prototype.HandleRegister=function()								// REGISTER HANDLER
 		});		
 }
 
-
 data.prototype.Load=function()											// LOAD 
 {
 	var str="<br><br>"
@@ -167,7 +176,10 @@ data.prototype.Load=function()											// LOAD
 
 	$("#logBut").click(function() {											// LOGIN BUTTON
 		LoadingIcon(true,32);												// Show loading icon
-		dataObj.ListFiles();												// Get list of files
+		if (offlineMode) 													// If offline
+			dataObj.LoadLocal();											// Load from local computer
+		else
+			dataObj.ListFiles();											// Get list of files
 		});
 
 	$("#registerBut").click(function() {									// REGISTER 
@@ -190,6 +202,12 @@ data.prototype.ListFiles=function() 									//	LIST PROJECTS IN DB
 	$.ajax({ url:url, dataType:'jsonp', complete:function() { Sound('click'); } });	// Get data and pass qmfListFiles()
 }
 	
+data.prototype.LoadLocal=function()										// LOAD JSON FROM LOCAL COMPUTER
+{
+	LoadingIcon(false);														// Clear loading icon
+	$("#lightBoxDiv").remove();											// Close
+}
+
 data.prototype.LightBoxAlert=function(msg) 								//	SHOW LIGHTBOX ALERT
 {
 	Sound("delete");														// Delete sound

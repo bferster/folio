@@ -202,6 +202,7 @@ var inhibitNav=false;														// Flag to inhibit navigation
 var itemType="All types",itemFilter="";										// Filtering
 var curMenu="splash";														// Current menu item
 var drupalMan=false;														// Flag for drupal manager
+var offlineMode=false;														// Flag for offline mode
 var portSections=null;														// Holds section info
 var projectFormats=["Web-page","Slides","Wide screen","Matrix"];			// Available formats		
 var projectFormat=projectFormats[0];										// Project format
@@ -215,6 +216,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 	isMobile=navigator.userAgent.match(/(ipad|iphone|ipod|android)/i) ? true : false; // Set mobile flag
 	var url=window.location.search.substring(1);							// Get query string
 	drupalMan=(""+url).match(/dr=/);										// If called from Drupal manager
+	offlineMode=(""+url).match(/off=/);										// If running offline
 	itemObj=new item();														// Load item object
  	dataObj=new data();														// Load data object
 	shareObj=new share();													// Load layout object
@@ -222,7 +224,7 @@ $(document).ready(function() {											// ON PAGE LOADED
 	playerObj=new player();													// Load player object
   	sf=new folio();															// Load main object
 
-	if (drupalMan)	url="";													// If drupal, kill url
+	if (drupalMan || offlineMode)	url="";									// If drupal or offline, kill url
 	if (url) {																// If a url spec'd
 		curPage=0;															// Assume 1st page
 		curMenu="show";														// Show mode
@@ -437,6 +439,8 @@ folio.prototype.DrawMenu=function()										// DRAW MENU AREA
 	$('[id$="Menu"]').css("color","#000");									// Reset
 	$("#editDiv").remove();													// Kill edit menu if left open
 	var str="<b>"+this.userInfo.firstName+" "+this.userInfo.lastName+"</b>";// Add name
+	if (offlineMode)														// If offline
+		str+="<b> (offline)</b>";											// Show mode
 	$("#pageMenu").css("color","#00aa00");									// Highlight it
 	if ((curProject != -1) && this.projects[curProject] && this.projects[curProject].title)	{			// A valid project
 		str+=" &nbsp;|&nbsp; ";												// Add to breadcrumb
