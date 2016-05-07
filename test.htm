@@ -1,13 +1,67 @@
 <!DOCTYPE html>
 <html>
-  <head>
-   <script type="text/javascript" src="https://apis.google.com/js/api.js"></script>
-	</head>
+<head>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script>	
+	<style type="text/css">
+		body { 		font-family:Verdana,Geneva,sans-serif;font-size:14px;
+					text-align:center
+			}
+	</style>
+</head>		
+<body>
+  <div id='resbox' style='display:inline-block'>
+   <br><br>Paste emailed response in this box:<br><br>
+   <textarea id='res' style='width:400px;height:60px'></textarea><br><br>
+   <button onclick='convert()'>Click here to convert</button>
+   </div>
+ </body>
 <script>
+
+	function convert()  
+	{
+		var i=0;
+		var res=$("#res").val();
+		if (!res) 
+			return;
+		str="<b>"+res.match(/form\.(.*) Student's/)[1]+"<br><br><br>";
+		str+="Student's name: </b>"+res.match(/Name: :(.*?) Address/)[1]+"<br><br>";
+		str+="<b>Address Line 1: </b>"+res.match(/Address Line 1: :(.*?) City/)[1]+"<br>";
+		str+="<b>City: </b>"+res.match(/City: : (.*) State/)[1]+"<br>";
+		str+="<b>State/Province: </b>"+res.match(/State\/Province: :(.*?) ZIP/)[1]+"<br>";
+		str+="<b>ZIP/Postal Code: </b>"+res.match(/ZIP\/Postal Code: :(.*?) Student Type/)[1]+"<br>";
+		str+="<b>Student Type: </b>"+res.match(/Student Type :(.*?) Age/)[1]+"<br>";
+		str+="<b>Age (if under 18): </b>"+res.match(/Age \(if under 18\): : (.*?) Grade/)[1]+"<br>";
+		str+="<b>Grade: </b>"+res.match(/Grade: : (.*?) School/)[1]+"<br>";
+		str+="<b>School: </b>"+res.match(/School: : (.*?) Employer/)[1]+"<br>";
+		str+="<b>Employer (adult students): </b>"+res.match(/Employer \(adult students\): : (.*?) Email/)[1]+"<br>";
+		str+="<b>Email: </b>"+res.match(/Email: : (.*?) Home/)[1]+"<br>";
+		str+="<b>Home Phone: </b>"+res.match(/Home Phone: : (.*?) Cell/)[1]+"<br>";
+		str+="<b>Cell Phone: </b>"+res.match(/Cell Phone: : (.*?) Mother/)[1]+"<br><br>";
+		str+="<b>Mother's Name: </b>"+res.match(/Mother's Name: : (.*?) Mother/)[1]+"<br>";
+		str+="<b>Mother's Email: </b>"+res.match(/Mother's Email: : (.*?) Mother/)[1]+"<br>";
+		str+="<b>Mother's Cell Phone: </b>"+res.match(/Mother's Cell Phone: : (.*?) Father/)[1]+"<br><br>";
+		str+="<b>Father's Name: </b>"+res.match(/Father's Name: : (.*?) Father/)[1]+"<br>";
+		str+="<b>Father's Email: </b>"+res.match(/Father's Email: : (.*?) Father/)[1]+"<br>";
+		str+="<b>Father's Cell Phone: </b>"+res.match(/Father's Cell Phone: : (.*?) Location/)[1]+"<br><br>";
+		str+="<b>Location: </b>"+res.match(/Location: : (.*?) Instrument/)[1]+"<br>";
+		str+="<b>Instrument for Lessons: </b>"+res.match(/Instrument for Lessons: : (.*?) Requested/)[1]+"<br>";
+		str+="<b>Requested Teacher (if known): </b>"+res.match(/Requested Teacher \(if known\): : (.*?) Lesson/)[1]+"<br>";
+		str+="<b>Lesson Length: </b>"+res.match(/Lesson Legnth: : (.*?) Please/)[1]+"<br>";
+		str+="<b>Please indicate all days available for lessons: </b>"+res.match(/Please indicate all days available for lessons: : (.*?) Classes/)[1]+"<br>";
+		str+="<b>Classes/Workshops: </b>"+res.match(/Classes\/Workshops: : (.*?) Tee/)[1]+"<br>";
+		str+="<b>Tee shirt size: </b>"+res.match(/Tee shirt size: : (.*?) Questions/)[1]+"<br>";
+		str+="<b>Questions/Comments: </b>"+res.match(/Questions\/Comments: : (.*?)/)[1]+"<br>";
+		$("#resbox").html(str)
+		$("#resbox").css("text-align","left")
+		$("#resbox").css("display","block")
+		$("#resbox").css("margin-left","24px")
+		
+		
+		
+	
+	}
+  
+  
     
-    
-    </script>
-  </head>
-  <body>
-   </body>
+</script>
 </html>
