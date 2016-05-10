@@ -30,13 +30,15 @@ data.prototype.Save=function()											// SAVE
 		if (_this.password)													// If a password
 			_this.password=_this.password.replace(/#/g,"@");				// #'s are a no-no, replace with @'s	
 		_this.email=$("#email").val();										// Get current email
-		if (!_this.password && !_this.email) 								// Missing both
-			 return _this.LightBoxAlert("Need email and password");			// Quit with alert
-		else if (!_this.password) 											// Missing password
-			 return _this.LightBoxAlert("Need password");					// Quit with alert
-		else if (!_this.email) 												// Missing email
-			 return _this.LightBoxAlert("Need email");						// Quit with alert
-
+		
+		if (!offlineMode) {
+			if (!_this.password && !_this.email) 							// Missing both
+				 return _this.LightBoxAlert("Need email and password");		// Quit with alert
+			else if (!_this.password) 										// Missing password
+				 return _this.LightBoxAlert("Need password");				// Quit with alert
+			else if (!_this.email) 											// Missing email
+				 return _this.LightBoxAlert("Need email");					// Quit with alert
+			}
 		SetCookie("password",_this.password,7);								// Save cookie
 		SetCookie("email",_this.email,7);									// Save cookie
 		$("#lightBoxDiv").remove();											// Close
