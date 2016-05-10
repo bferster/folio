@@ -31,7 +31,7 @@ data.prototype.Save=function()											// SAVE
 			_this.password=_this.password.replace(/#/g,"@");				// #'s are a no-no, replace with @'s	
 		_this.email=$("#email").val();										// Get current email
 		
-		if (!offlineMode) {
+		if (!offlineMode) {													// If not in offline mode
 			if (!_this.password && !_this.email) 							// Missing both
 				 return _this.LightBoxAlert("Need email and password");		// Quit with alert
 			else if (!_this.password) 										// Missing password
