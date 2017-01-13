@@ -608,7 +608,7 @@ item.prototype.ImportMandala=function()											// MANDALA IMPORTER
 			search+=", caption%3A*"+$("#mdFilter").val().toLowerCase()+"*";			// Add filter to query
 		
 		$.ajax({
-			'url': 'http://kidx.shanti.virginia.edu/solr/kmindex-dev/select?q='+search,
+			'url': 'https://ss558499-us-east-1-aws.measuredsearch.com/solr/kmassets_dev/select?q='+search,
 		  	'data': {'wt':'json', 'json.wrf':'itemObj.FormatMandalaItems', rows:50 },
 		  	'dataType': 'jsonp',
 		});
@@ -703,5 +703,6 @@ item.prototype.AddMandalaFile=function(num)										// ADD MANDALA ITEM
 	
 	function loadMandala1234(solrData)
 	{
+		trace(solrData)
 		itemObj.FormatMandalaItems(solrData);
 	}
