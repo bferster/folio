@@ -4,7 +4,7 @@
 
 function data()															// CONSTRUCTOR
 {
-	this.host="//qmediaplayer.com/";										// Get host
+	this.host="//stagetools.com/qmedia/";									// Get host
 	this.version=5;															// Get version
 	this.email=GetCookie("email");											// Get email from cookie
 	this.password=GetCookie("password");									// Password
