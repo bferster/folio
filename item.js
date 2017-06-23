@@ -600,7 +600,6 @@ item.prototype.ImportMandala=function()											// MANDALA IMPORTER
  
  	function LoadCollection(coll)												// LOAD COLLECTION FROM SOLR
 	{
-
 		LoadingIcon(true,64);														// Show loading icon
 		var search="service%3A"+coll.toLowerCase()+"*";								// Add servoce						
 		if ($("#mdFilter").val())													// If a filter spec'd
