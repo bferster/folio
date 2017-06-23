@@ -597,23 +597,21 @@ item.prototype.ImportMandala=function()											// MANDALA IMPORTER
 			itemObj.filter=$(this).val();											// Save for later											
 		 	LoadCollection($(this).val());											// Load it
 			});
-	
- 
  
  	function LoadCollection(coll)												// LOAD COLLECTION FROM SOLR
 	{
+
 		LoadingIcon(true,64);														// Show loading icon
 		var search="service%3A"+coll.toLowerCase()+"*";								// Add servoce						
 		if ($("#mdFilter").val())													// If a filter spec'd
 			search+=", caption%3A*"+$("#mdFilter").val().toLowerCase()+"*";			// Add filter to query
-		
-		$.ajax({
-			'url': 'https://ss558499-us-east-1-aws.measuredsearch.com/solr/kmassets_dev/select?q='+search,
-		  	'data': {'wt':'json', 'json.wrf':'itemObj.FormatMandalaItems', rows:50 },
-		  	'dataType': 'jsonp',
-		});
+  		var url="https://ss251856-us-east-1-aws.measuredsearch.com/solr/kmassets_predev/select?"+"q="+search + 
+   				 "&fl=*&wt=json&json.wrf=?&rows=50&limit=50";
+   		$.ajax( { url: url,  dataType: 'jsonp', jsonp: 'json.wrf' }).done(function(data) {
+			   		itemObj.FormatMandalaItems(data);
+			   		});
 	}
-	
+
  }	// End closure
 
 item.prototype.FormatMandalaItems=function(data, sortBy)						// SHOW MANDALA ITEMS
@@ -699,10 +697,4 @@ item.prototype.AddMandalaFile=function(num)										// ADD MANDALA ITEM
 	this.data=null;																	// Release data
 }
 
-//////	JSON CALLBACKS
-	
-	function loadMandala1234(solrData)
-	{
-		trace(solrData)
-		itemObj.FormatMandalaItems(solrData);
-	}
+	//responseHeader":{"kConnected":true,"status":0,"QTime":0,"params":{"q":"id:places-433","json.wrf":"jQuery111306004484984461298_1498230170368","fl":"*","limit":"50","rows":"50","wt":"json","_":"1498230170369"}},"response":{"numFound":1,"start":0,"docs":[{"tree":"places","feature_types":["Large Monastery"],"feature_type_ids":[2942],"associated_subjects":["Geluk","Monk","Founding"],"associated_subject_ids":[10288,10289,10286],"has_shapes":true,"has_altitudes":false,"block_type":"parent","interactive_map_url":"http://dev.thlib.org/places/maps/interactive/#fid:433","kmz_url":"http://dev.shanti.virginia.edu/features/gis_resources/433.kmz","closest_fid_with_shapes":433,"ancestor_id_closest_cult.reg_path":"13735/13740/13734/1/2/317/637/434/433","level_closest_cult.reg_i":9,"ancestor_id_cult.reg_path":"13735/13740/13734","ancestors_closest_cult.reg":["Earth","Asia","Greater Himalayas & Tibetan Plateau","China","Tibet Autonomous Region","Lhasa","Lhasa","Nyangdren","Sera Monastery"],"ancestor_ids_closest_cult.reg":[13735,13740,13734,1,2,317,637,434,433],"ancestor_id_closest_pol.admin.hier_path":"13735/13740/1/2/317/637/434/433","level_closest_pol.admin.hier_i":8,"ancestor_id_pol.admin.hier_path":"13735/13740/1/2/317/637/434","ancestors_closest_pol.admin.hier":["Earth","Asia","China","Tibet Autonomous Region","Lhasa","Lhasa","Nyangdren","Sera Monastery"],"ancestor_ids_closest_pol.admin.hier":[13735,13740,1,2,317,637,434,433],"ancestor_id_closest_hist.pol.admin.unit_path":"15431/13740/13734/1/2/317/637/434/433","level_closest_hist.pol.admin.unit_i":9,"ancestor_id_hist.pol.admin.unit_path":"24107","ancestors_closest_hist.pol.admin.unit":["Earth","Asia","Greater Himalayas & Tibetan Plateau","China","Tibet Autonomous Region","Lhasa","Lhasa","Nyangdren","Sera Monastery"],"ancestor_ids_closest_hist.pol.admin.unit":[15431,13740,13734,1,2,317,637,434,433],"ancestor_id_closest_elect.rel_path":"15431/13740/13734/1/2/317/637/434/433","level_closest_elect.rel_i":9,"ancestor_id_elect.rel_path":"13735","ancestors_closest_elect.rel":["Earth","Asia","Greater Himalayas & Tibetan Plateau","China","Tibet Autonomous Region","Lhasa","Lhasa","Nyangdren","Sera Monastery"],"ancestor_ids_closest_elect.rel":[15431,13740,13734,1,2,317,637,434,433],"id":"places-433","uid":"places-433","header":"Sera Monastery","created_at":"2008-02-25T12:16:51Z","updated_at":"2014-05-03T21:18:19Z","name_bod_tibt":["སེ་ར།","སེ་ར་དགོན།","ཆོས་སྡེ་ཆེན་པོ་སེ་ར་ཐེག་ཆེན་གླིང་།"],"name_autocomplete":["སེ་ར།","སེ་ར་དགོན།","ཆོས་སྡེ་ཆེན་པོ་སེ་ར་ཐེག་ཆེན་གླིང་།","Sela","Sera","Sera Gön","Chödé Chenpo Sera Tekchen Ling","Sera Tekchen Ling","se ra","se ra dgon","chos sde chen po se ra theg chen gling","se ra theg chen gling","Sera Monastery","སེ་ར་ཐེག་ཆེན་གླིང་།"],"name_bod_pinyin.transcrip_latin":["Sela"],"text":["Sela","Sera","Sera Gön","Chödé Chenpo Sera Tekchen Ling","Sera Tekchen Ling","se ra","se ra dgon","chos sde chen po se ra theg chen gling","se ra theg chen gling","Sera Monastery"],"name":["Sela","Sera","Sera Gön","Chödé Chenpo Sera Tekchen Ling","Sera Tekchen Ling","se ra","se ra dgon","chos sde chen po se ra theg chen gling","se ra theg chen gling","Sera Monastery"],"name_bod_thl.simple.transcrip_latin":["Sera","Sera Gön","Chödé Chenpo Sera Tekchen Ling","Sera Tekchen Ling"],"name_bod_tib.to.chi.transcrip_hans":["色拉寺"],"name_zh":["色拉寺"],"name_bod_thl.ext.wyl.translit_latin":["se ra","se ra dgon","chos sde chen po se ra theg chen gling","se ra theg chen gling"],"name_bod_translation_latin":["Sera Monastery"],"name_bod_contract_tibt":["སེ་ར་ཐེག་ཆེན་གླིང་།"],"ancestors":["Earth","Asia","China","Tibet Autonomous Region","Lhasa","Lhasa","Nyangdren","Sera Monastery"],"ancestor_ids_generic":[13735,13740,1,2,317,637,434,433],"ancestor_id_path":"13735/13740/1/2/317/637/434/433","_version_":1570760645861703700,"_timestamp_":"2017-06-20T21:28:05.097Z"}]}}
